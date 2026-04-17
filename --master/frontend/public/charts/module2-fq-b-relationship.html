@@ -220,7 +220,11 @@
                 fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },
               formatter: function (p) {
+                if (p.dataType === "edge") {
+                  return "";
+                }
                 const d = p.data || {};
+                if (!d.name) return "";
                 if (typeof d.value === "number") {
                   return `<b>${d.name}</b><br/>出现频率：<span style="color:#A34343;font-weight:700">${d.value}</span>`;
                 }

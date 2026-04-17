@@ -7,10 +7,10 @@
     <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #F8F6F0;
-        --title-color: #2b333e;
-        --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --paper-bg: #fef7ec;
+        --title-color: #3a2a1c;
+        --subtitle-color: #9e8a68;
+        --line-color: #c47a44;
       }
 
       html,
@@ -94,44 +94,46 @@
         // 空间位置：入口 → 庭院 → 天井 → 门厅 → 厅房
         const locations = ["入口", "庭院", "天井", "门厅", "厅房"];
 
-        // 颜色方案（完全按照图片）
+        // 颜色方案：与“马头墙热力矩阵”统一的蓝灰-米棕-砖红体系
         const colors = {
-          maxTemp: "#E74C3C",      // 最高温度 - 红色
-          minTemp: "#3498DB",      // 最低温度 - 蓝色
-          maxHumid: "#27AE60",     // 最高湿度 - 绿色
-          minHumid: "#85C1E2",     // 最低湿度 - 浅蓝色
-          tempDiff: "#F39C12",     // 温度日较差 - 橙色虚线
-          humidDiff: "#F1C40F",    // 湿度日较差 - 黄色虚线
-          windSpeed: "#16A085",    // 平均风速 - 深绿色
-          windArea: "rgba(22, 160, 133, 0.12)",  // 风速区域 - 浅绿
+          maxTemp: "#AB5C46",      // 最高温度 - 砖红
+          minTemp: "#6A7F95",      // 最低温度 - 蓝灰
+          maxHumid: "#C58A5C",     // 最高湿度 - 棕橙
+          minHumid: "#A8B8C4",     // 最低湿度 - 浅蓝灰
+          tempDiff: "#7F3028",     // 温度日较差 - 深砖红虚线
+          humidDiff: "#D8B88A",    // 湿度日较差 - 米棕虚线
+          windSpeed: "#3F4F66",    // 平均风速 - 深蓝灰
+          windArea: "rgba(106, 127, 149, 0.18)", // 风速区域 - 蓝灰透明
         };
 
         const option = {
           backgroundColor: "transparent",
           tooltip: {
             trigger: "axis",
-            backgroundColor: "rgba(250, 247, 240, 0.98)",
-            borderColor: "rgba(180, 170, 150, 0.6)",
+            backgroundColor: "rgba(45,35,22,0.88)",
+            borderColor: "#c8b88a",
             borderWidth: 1,
             padding: [12, 16],
-            textStyle: { color: "#2B333E", fontSize: 12 },
+            textStyle: { color: "#f7efdb", fontSize: 12, fontFamily: "KaiTi, serif" },
             axisPointer: { type: "cross" },
           },
           legend: {
             data: ["最高温度", "最低温度", "最高湿度", "最低湿度", "温度日较差", "湿度日较差", "平均风速"],
-            top: "3%",
-            left: "center",
-            textStyle: { color: "#2B333E", fontSize: 11, fontWeight: 500 },
-            itemGap: 20,
+            orient: "vertical",
+            top: "10%",
+            bottom: "10%",
+            left: "1%",
+            height: "80%",
+            textStyle: { color: "#4a3624", fontSize: 12, fontWeight: 500, fontFamily: "KaiTi, serif" },
+            itemGap: 16,
             itemWidth: 12,
             itemHeight: 12,
-            itemMarginRight: 10,
-            padding: [0, 20],
+            padding: [0, 0, 0, 0],
           },
           xAxis: {
             type: "category",
             data: locations,
-            axisLine: { lineStyle: { color: "rgba(108, 122, 137, 0.4)" } },
+            axisLine: { lineStyle: { color: "#bcab8a" } },
             axisLabel: { color: "#666", fontSize: 12, fontWeight: 500 },
             splitLine: { show: false },
             axisTick: { show: true },
@@ -140,33 +142,33 @@
             {
               type: "value",
               name: "温度（℃）/ 湿度（%）",
-              nameTextStyle: { color: "#2B333E", fontSize: 12, fontWeight: 600, align: "left" },
+              nameTextStyle: { color: "#6c5a44", fontSize: 12, fontWeight: 600, align: "left", fontFamily: "KaiTi, serif" },
               nameGap: 8,
               min: 0,
               max: 100,
               interval: 20,
-              axisLine: { lineStyle: { color: "rgba(108, 122, 137, 0.4)" } },
-              splitLine: { lineStyle: { color: "rgba(200, 200, 200, 0.2)", type: "solid" } },
+              axisLine: { lineStyle: { color: "#bcab8a" } },
+              splitLine: { lineStyle: { color: "#e2d5bf", type: "dashed" } },
               axisLabel: { color: "#666", fontSize: 11 },
             },
             {
               type: "value",
               name: "风速（m/s）",
-              nameTextStyle: { color: "#2B333E", fontSize: 12, fontWeight: 600, align: "right" },
+              nameTextStyle: { color: "#6c5a44", fontSize: 12, fontWeight: 600, align: "right", fontFamily: "KaiTi, serif" },
               nameGap: 8,
               min: 0,
               max: 1.5,
               interval: 0.3,
               position: "right",
-              axisLine: { lineStyle: { color: "rgba(108, 122, 137, 0.4)" } },
+              axisLine: { lineStyle: { color: "#bcab8a" } },
               splitLine: { show: false },
               axisLabel: { color: "#666", fontSize: 11 },
             },
           ],
           grid: {
-            left: "8%",
-            right: "10%",
-            top: "14%",
+            left: "20%",
+            right: "8%",
+            top: "10%",
             bottom: "8%",
             containLabel: false,
           },

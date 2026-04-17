@@ -104,6 +104,7 @@ function baseCountyItemStyle() {
 export function ProvinceHeatMap(props: {
   cities: CityHeatDatum[]
   buildings: BuildingMarker[]
+  complianceNote?: string
   selectedCityId?: string
   hoveredCityId?: string
   selectedBuildingId?: string
@@ -116,6 +117,7 @@ export function ProvinceHeatMap(props: {
   const {
     cities,
     buildings,
+    complianceNote,
     selectedCityId,
     hoveredCityId,
     selectedBuildingId,
@@ -565,6 +567,7 @@ export function ProvinceHeatMap(props: {
           />
         </div>
       )}
+      {complianceNote ? <div className={styles.complianceNote}>{complianceNote}</div> : null}
     </div>
   )
 }

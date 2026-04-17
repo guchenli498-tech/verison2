@@ -90,55 +90,47 @@
           devicePixelRatio: Math.max(1, window.devicePixelRatio || 1),
         });
 
-        // 16种天井平面形态数据
+        // 16种天井平面形态数据（与气泡图一致）
         const data = [
-          // M1组（面阔3.85m）
-          [3.85, 3.0, 14.8, 42, 35, 68, "M1J1"],
-          [3.85, 3.5, 18.5, 48, 42, 72, "M1J2"],
-          [3.85, 4.0, 22.1, 52, 48, 75, "M1J3"],
-          [3.85, 4.5, 25.8, 55, 55, 78, "M1J4"],
-          // M2组（面阔5.25m）
-          [5.25, 3.0, 20.1, 50, 38, 75, "M2J1"],
-          [5.25, 3.5, 25.3, 58, 45, 82, "M2J2"],
-          [5.25, 4.0, 30.6, 64, 52, 86, "M2J3"],
-          [5.25, 4.5, 35.8, 68, 58, 88, "M2J4"],
-          // M3组（面阔6.30m）
-          [6.30, 3.0, 24.1, 54, 40, 78, "M3J1"],
-          [6.30, 3.5, 30.4, 62, 48, 84, "M3J2"],
-          [6.30, 4.0, 36.8, 70, 55, 89, "M3J3"],
-          [6.30, 4.5, 43.2, 75, 62, 91, "M3J4"],
-          // M4组（面阔7.35m）
-          [7.35, 3.0, 28.4, 58, 42, 80, "M4J1"],
-          [7.35, 3.5, 35.8, 66, 50, 86, "M4J2"],
-          [7.35, 4.0, 43.2, 74, 58, 91, "M4J3"],
-          [7.35, 4.5, 50.6, 80, 65, 93, "M4J4"],
+          [3.85, 1.05, 4.04, 44.2, 8.02, 31, "M1J1"],
+          [3.85, 1.75, 6.73, 54.54, 5.94, 28, "M1J2"],
+          [3.85, 2.10, 8.09, 57.68, 5.23, 30, "M1J3"],
+          [3.85, 2.80, 10.78, 64.14, 4.36, 25, "M1J4"],
+          [5.25, 1.05, 5.51, 44.2, 8.02, 50, "M2J1"],
+          [5.25, 1.75, 9.19, 54.54, 5.94, 54, "M2J2"],
+          [5.25, 2.10, 11.02, 57.68, 5.23, 56, "M2J3"],
+          [5.25, 2.80, 14.70, 64.14, 4.36, 60, "M2J4"],
+          [6.30, 1.05, 6.62, 57.61, 8.71, 48, "M3J1"],
+          [6.30, 1.75, 11.03, 61.54, 5.58, 52, "M3J2"],
+          [6.30, 2.10, 13.23, 64.30, 4.86, 55, "M3J3"],
+          [6.30, 2.80, 17.64, 67.17, 3.81, 58, "M3J4"],
+          [7.35, 1.05, 7.72, 60.20, 8.20, 52, "M4J1"],
+          [7.35, 1.75, 12.86, 64.80, 5.30, 58, "M4J2"],
+          [7.35, 2.10, 15.44, 67.50, 4.50, 62, "M4J3"],
+          [7.35, 2.80, 20.58, 70.00, 3.60, 66, "M4J4"],
         ];
 
-        const groupColors = {
-          M1: "#7A8B9E",
-          M2: "#6B9B8C",
-          M3: "#8B9B6C",
-          M4: "#9B8B6C",
-        };
-
-        function getGroupColor(name) {
-          const group = name.substring(0, 2);
-          return groupColors[group] || "#999";
-        }
+        // 线色采用高对比离散色板，视觉更接近你给的第二张图
+        const linePalette = [
+          "#3f5f7f", "#d65a3a", "#69a36f", "#e0ad46",
+          "#5d748e", "#c44730", "#5f9f67", "#d89d33",
+          "#4f7e70", "#c45e3a", "#6c8f57", "#8aa2b9",
+          "#4b6d8a", "#cf7048", "#6ea783", "#9c8d67",
+        ];
 
         const option = {
           backgroundColor: "transparent",
           tooltip: {
             trigger: "item",
-            backgroundColor: "rgba(250, 247, 240, 0.98)",
-            borderColor: "rgba(180, 170, 150, 0.6)",
+            backgroundColor: "rgba(45,35,22,0.88)",
+            borderColor: "#c8b88a",
             borderWidth: 1,
             padding: [12, 16],
-            textStyle: { color: "#2B333E", fontSize: 12 },
+            textStyle: { color: "#f7efdb", fontSize: 12, fontFamily: "KaiTi, serif" },
             formatter: function (p) {
               if (p.componentSubType === "parallel") {
                 const d = p.value;
-                return `<b>${d[6]}</b><br/>
+                return `<strong>${d[6]}</strong><br/>
                   面阔：${d[0]} m<br/>
                   进深：${d[1]} m<br/>
                   面积：${d[2].toFixed(1)} ㎡<br/>
@@ -150,54 +142,62 @@
             },
           },
           parallelAxis: [
-            { dim: 0, name: "面阔（m）", type: "value", min: 3.5, max: 7.5 },
-            { dim: 1, name: "进深（m）", type: "value", min: 2.8, max: 4.8 },
-            { dim: 2, name: "面积（㎡）", type: "value", min: 10, max: 55 },
-            { dim: 3, name: "和风区占比（%）", type: "value", min: 40, max: 85 },
-            { dim: 4, name: "单位风速（%）", type: "value", min: 30, max: 70 },
-            { dim: 5, name: "综合得分", type: "value", min: 65, max: 95 },
+            { dim: 0, name: "面阔（m）", type: "value", min: 3.5, max: 7.6 },
+            { dim: 1, name: "进深（m）", type: "value", min: 1, max: 3 },
+            { dim: 2, name: "面积（㎡）", type: "value", min: 4, max: 22 },
+            { dim: 3, name: "和风区占比（%）", type: "value", min: 45, max: 72 },
+            { dim: 4, name: "单位风速（%）", type: "value", min: 3, max: 9 },
+            { dim: 5, name: "综合得分", type: "value", min: 20, max: 70 },
           ],
           parallel: {
-            left: "8%",
-            right: "8%",
-            top: "12%",
-            bottom: "8%",
+            left: "7%",
+            right: "10%",
+            top: "10%",
+            bottom: "10%",
             layout: "horizontal",
+            parallelAxisDefault: {
+              nameLocation: "middle",
+              nameGap: 26,
+              nameTextStyle: { color: "#7f684c", fontSize: 12, fontFamily: "KaiTi, serif" },
+              axisLine: { lineStyle: { color: "#bcab8a", width: 1.6 } },
+              axisLabel: { color: "#6f5d48", fontSize: 10 },
+            },
           },
           series: [
             {
               type: "parallel",
               data: data,
               lineStyle: {
-                width: 1.5,
-                opacity: 0.6,
+                width: 2.1,
+                opacity: 0.82,
               },
+              smooth: 0.15,
+              inactiveOpacity: 0.18,
               itemStyle: {
                 borderWidth: 0,
               },
               emphasis: {
                 lineStyle: {
-                  width: 3,
-                  opacity: 0.95,
+                  width: 4,
+                  opacity: 1,
                 },
               },
-              smooth: false,
             },
           ],
         };
 
-        // 为每条线着色
+        // 为每条线着色（独立颜色，提高可分辨性）
         const seriesData = data.map((d) => ({
           value: d,
           lineStyle: {
-            color: getGroupColor(d[6]),
-            width: 1.5,
-            opacity: 0.65,
+            color: linePalette[parseInt(d[6].slice(3), 10) - 1] || "#6f7f8f",
+            width: 2.1,
+            opacity: 0.82,
           },
           emphasis: {
             lineStyle: {
-              width: 3,
-              opacity: 0.95,
+              width: 4,
+              opacity: 1,
             },
           },
         }));

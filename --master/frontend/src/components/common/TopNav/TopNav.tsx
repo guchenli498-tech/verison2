@@ -19,7 +19,7 @@ export function TopNav() {
       <div className={styles.inner}>
         <nav className={styles.nav} aria-label="模块导航">
           <NavLink
-            to="/module1"
+            to="/"
             className={({ isActive }) =>
               `${styles.home} ${isActive ? styles.homeActive : ''}`
             }

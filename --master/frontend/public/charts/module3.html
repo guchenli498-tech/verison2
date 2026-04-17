@@ -137,8 +137,10 @@
       aspect-ratio: 4 / 3;
       border-radius: var(--radius-sm);
       overflow: hidden;
+      position: relative;
       background: #ebe1d5;
       border: 1px solid rgba(214, 201, 184, 0.45);
+      perspective: 1000px;
     }
 
     .card-thumb img {
@@ -146,6 +148,95 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    .card-thumb.is-clickable {
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-thumb.is-clickable:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px -8px rgba(50, 47, 43, 0.5);
+    }
+
+    .card-thumb img {
+      transition: transform 0.45s ease, opacity 0.35s ease;
+      backface-visibility: hidden;
+      transform: rotateY(0deg);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 10px 12px 30px;
+      overflow: auto;
+      background:
+        linear-gradient(165deg, rgba(81, 62, 43, 0.95), rgba(47, 37, 28, 0.94)),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 2px, transparent 2px, transparent 6px);
+      color: #efe6d8;
+      font-size: 14px;
+      line-height: 1.9;
+      letter-spacing: 0.2px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.45s ease, opacity 0.35s ease;
+      z-index: 2;
+      backface-visibility: hidden;
+      transform: rotateY(-180deg);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+
+    .card-thumb-overlay-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #f9efe0;
+    }
+
+    .card-thumb-overlay-meta {
+      font-size: 12px;
+      color: rgba(245, 228, 203, 0.9);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .card-thumb-overlay-body {
+      text-align: justify;
+      text-indent: 2em;
+    }
+
+    .card-thumb.is-flipped img {
+      opacity: 0.06;
+      transform: rotateY(180deg);
+    }
+
+    .card-thumb.is-flipped .card-thumb-overlay {
+      opacity: 1;
+      pointer-events: auto;
+      transform: rotateY(0deg);
+    }
+
+    .card-thumb-name {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      z-index: 3;
+      max-width: calc(100% - 16px);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(36, 30, 24, 0.68);
+      color: #f8efe2;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .card h3 {
@@ -231,12 +322,22 @@
     .graph-head-right {
       display: flex;
       align-items: center;
+      gap: 8px;
+    }
+
+    .graph-controls-group {
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
+      padding: 2px 6px;
+      border: 1px solid rgba(143, 114, 80, 0.2);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.18);
     }
 
     .graph-action {
-      border: 1px solid rgba(143, 114, 80, 0.2);
-      background: transparent;
+      border: 1px solid rgba(143, 114, 80, 0.24);
+      background: rgba(255, 255, 255, 0.28);
       color: #6b5f52;
       border-radius: var(--radius-xs);
       font-size: 11px;
@@ -248,9 +349,9 @@
     }
 
     .graph-action:hover {
-      border-color: rgba(143, 114, 80, 0.45);
+      border-color: rgba(143, 114, 80, 0.5);
       color: #433d36;
-      background: rgba(255, 255, 255, 0.26);
+      background: rgba(255, 255, 255, 0.42);
     }
 
     .graph-action.active {
@@ -1079,12 +1180,16 @@
           <span>传承关系网络</span>
           <div class="graph-head-right">
             <small id="graphHint">当前：木雕</small>
-            <button id="btnLevelsAll" class="graph-action active" type="button">全谱</button>
-            <button id="btnLevelsNP" class="graph-action" type="button">国+省</button>
-            <button id="btnLevelsNPC" class="graph-action" type="button">国+省+市</button>
-            <button id="btnAutoLayout" class="graph-action" type="button">自动布局</button>
-            <button id="btnToggleFix" class="graph-action" type="button">固定节点</button>
-            <button id="btnResetLayout" class="graph-action" type="button">重置布局</button>
+            <div class="graph-controls-group" aria-label="层级筛选">
+              <button id="btnLevelsAll" class="graph-action active" type="button">全谱</button>
+              <button id="btnLevelsNP" class="graph-action" type="button">国+省</button>
+              <button id="btnLevelsNPC" class="graph-action" type="button">国+省+市</button>
+            </div>
+            <div class="graph-controls-group" aria-label="布局控制">
+              <button id="btnAutoLayout" class="graph-action" type="button">自动布局</button>
+              <button id="btnToggleFix" class="graph-action" type="button">固定节点</button>
+              <button id="btnResetLayout" class="graph-action" type="button">重置布局</button>
+            </div>
           </div>
         </div>
         <div class="graph-wrap">
@@ -1127,14 +1232,29 @@
 
   <script>
     const scientists = [
-      { name: '李诫 (1035–1110)', meta: '《营造法式》编撰者', desc: '北宋官式营造体系奠基者，提出材份制，对徽派祠堂木构影响深远。', img: '/charts/module3-cards/lijie.jpg' },
-      { name: '喻皓 (约960–1004)', meta: '《木经》作者', desc: '总结木构比例法则，梁柱尺度关系成为徽派民居木作的重要参照。', img: '/charts/module3-cards/yuhao.jpg' },
-      { name: '雷发达 (1619–1693)', meta: '样式雷奠基人', desc: '推动官式营造与地域工艺融合，促进徽派形制与装饰技法传播。', img: '/charts/module3-cards/leifada.jpg' },
-      { name: '计成 (1582–约1642)', meta: '《园冶》作者', desc: '系统阐释园林营造思想，借景与理水观念深刻影响徽州聚落空间。', img: '/charts/module3-cards/jicheng.jpg' },
-      { name: '江永 (1681–1762)', meta: '江湾村格局整治', desc: '清代徽学学者，推动婺源江湾一带聚落格局整治与文化脉络梳理，影响徽州乡土空间秩序。', img: '/charts/module3-cards/jiangyong.png' },
-      { name: '许国 (1527–1596)', meta: '建造八脚牌楼', desc: '明嘉靖朝重臣，故里立许国石坊（八脚牌楼），为徽州最具代表性的纪念性牌楼遗存之一。', img: '/charts/module3-cards/xuguo.png' },
-      { name: '汪定贵 (清末徽商)', meta: '参与宏村建设', desc: '清末盐商，捐资兴建宏村承志堂等大型宅第，推动村落建设与徽派宅第装饰艺术。', img: '/charts/module3-cards/wangdinggui.png' },
-      { name: '胡宗宪 (1512–1565)', meta: '龙川徽派宗祠建设', desc: '明代名臣，与绩溪龙川胡氏宗族渊源深厚，宗祠营造体现徽派礼制空间与木石工艺传统。', img: '/charts/module3-cards/huzongxian.png' }
+      { name: '李诫 (1035–1110)', meta: '《营造法式》编撰者', desc: '北宋官式营造体系奠基者，提出材份制，对徽派祠堂木构影响深远。', contribution: '北宋官式营造体系奠基者，提出材份制，对徽派祠堂木构影响深远。', img: '/charts/module3-cards/lijie.jpg' },
+      { name: '喻皓 (约960–1004)', meta: '《木经》作者', desc: '总结木构比例法则，梁柱尺度关系成为徽派民居木作的重要参照。', contribution: '总结木构比例法则，梁柱尺度关系成为徽派民居木作的重要参照。', img: '/charts/module3-cards/yuhao.jpg' },
+      { name: '雷发达 (1619–1693)', meta: '样式雷奠基人', desc: '推动官式营造与地域工艺融合，促进徽派形制与装饰技法传播。', contribution: '推动官式营造与地域工艺融合，促进徽派形制与装饰技法传播。', img: '/charts/module3-cards/leifada.jpg' },
+      { name: '计成 (1582–约1642)', meta: '《园冶》作者', desc: '系统阐释园林营造思想，借景与理水观念深刻影响徽州聚落空间。', contribution: '系统阐释园林营造思想，借景与理水观念深刻影响徽州聚落空间。', img: '/charts/module3-cards/jicheng.jpg' },
+      { name: '江永 (1681–1762)', meta: '江湾村格局整治', desc: '清代徽学学者，推动婺源江湾一带聚落格局整治与文化脉络梳理，影响徽州乡土空间秩序。', contribution: '推动婺源江湾一带聚落格局整治与文化脉络梳理，影响徽州乡土空间秩序。', img: '/charts/module3-cards/jiangyong.png' },
+      { name: '许国 (1527–1596)', meta: '建造八脚牌楼', desc: '明嘉靖朝重臣，故里立许国石坊（八脚牌楼），为徽州最具代表性的纪念性牌楼遗存之一。', contribution: '故里立许国石坊（八脚牌楼），是徽州纪念性牌楼遗存代表，对徽州石作与礼制空间表达影响突出。', img: '/charts/module3-cards/xuguo.png' },
+      { name: '汪定贵 (清末徽商)', meta: '参与宏村建设', desc: '清末盐商，捐资兴建宏村承志堂等大型宅第，推动村落建设与徽派宅第装饰艺术。', contribution: '捐资兴建宏村承志堂等大型宅第，推动村落建设与徽派宅第装饰艺术。', img: '/charts/module3-cards/wangdinggui.png' },
+      { name: '胡宗宪 (1512–1565)', meta: '龙川徽派宗祠建设', desc: '明代名臣，与绩溪龙川胡氏宗族渊源深厚，宗祠营造体现徽派礼制空间与木石工艺传统。', contribution: '与绩溪龙川胡氏宗族渊源深厚，相关宗祠营造体现徽派礼制空间与木石工艺传统。', img: '/charts/module3-cards/huzongxian.png' },
+      { name: '胡重', meta: '文档新增 | 生卒：明永乐年间（1360-1424）', desc: '宏村牛形水系与建筑总体规划者。', contribution: '主持完成黟县宏村牛形村落水系与整体建筑布局规划，联合何可达完成地形勘测和建筑排布规范，确定依山傍水、天井连缀、马头墙错落、粉墙黛瓦沿水系排布等形制，成为徽州古村落建筑规划标杆。', img: '/charts/module3-cards/doc-huzhong.png' },
+      { name: '汪舜民', meta: '文档新增 | 生卒：1440-1508', desc: '《徽州府志》建筑规制系统记载者。', contribution: '主持纂修明弘治《徽州府志》，系统记录封火山墙、粉墙黛瓦、天井采光排水设计，并附建筑舆图，覆盖徽州六县民居、祠堂、牌坊等规制，是明代徽州建筑营造核心官方规范。', img: '/charts/module3-cards/doc-wangshunmin.png' },
+      { name: '程敏政', meta: '文档新增 | 生卒：1446-1499', desc: '《休宁县志》中的徽州建筑标准化记录。', contribution: '主持纂修明嘉靖《休宁县志》，详载村落布局、祠堂结构、牌坊规制及粉墙黛瓦、天井中庭、马头墙叠落等核心特征，为徽州民间建筑营造提供标准化参考。', img: '/charts/module3-cards/doc-chengminzheng.png' },
+      { name: '赵吉士', meta: '文档新增 | 生卒：1628-1706', desc: '清代《徽州府志》核心纂修者。', contribution: '主持纂修清康熙《徽州府志》，系统描述四水归堂天井、五岳朝天马头墙、粉墙黛瓦审美和祠堂木构做法，详载六县地域差异，是清代徽州建筑营造核心典籍。', img: '/charts/module3-cards/doc-zhaojishi.png' },
+      { name: '俞正燮', meta: '文档新增 | 生卒：1775-1840', desc: '西递、宏村早期系统文献记录者。', contribution: '主持纂修清嘉庆《黟县志》，专记西递、宏村等古村民居形制，详述天井连缀院落、马头墙防火、粉墙工艺与依山就势排水，是世界遗产古建筑早期系统文献记录。', img: '/charts/module3-cards/doc-yuzhengxie.png' },
+      { name: '午荣', meta: '文档新增 | 生卒：明万历年间（1573-1620）', desc: '《鲁班经匠家镜》汇编者。', contribution: '汇编《鲁班经匠家镜》，记录马头墙尺寸、天井比例、粉墙抹灰、瓦作规制和榫卯做法，对明清徽州民居和祠堂营造尺度形成持续影响。', img: '/charts/module3-cards/doc-wurong.png' },
+      { name: '张佩芳', meta: '文档新增 | 生卒：1732-1793', desc: '《歙县志》中的古建筑细节整理者。', contribution: '主持纂修清乾隆《歙县志》，详细记载歙县民居高墙封闭、马头翘角、天井采光排水、木构屋顶和粉墙装饰细节，是徽州核心县域古建筑权威记载。', img: '/charts/module3-cards/doc-zhangpeifang.png' },
+      { name: '江峰青', meta: '文档新增 | 生卒：1860-1931', desc: '《婺源乡土志》记录晚清徽州建筑形态。', contribution: '1908年纂修《婺源乡土志》，记述婺源民居粉墙瓦檐、马头墙防火、天井聚气排水、硬山屋顶等特征，记录清代晚期徽州建筑发展形态。', img: '/charts/module3-cards/doc-jiangfengqing.png' },
+      { name: '顾炎武', meta: '文档新增 | 生卒：1613-1682', desc: '明末清初徽州建筑实地考察记录者。', contribution: '在《天下郡国利病书》中实地记载徽州“马头墙御火、天井通风采光、高墙御盗、粉墙防潮”等特征，是明末清初徽州古建筑一手考察记录。', img: '/charts/module3-cards/doc-guyanwu.png' },
+      { name: '徐弘祖（徐霞客）', meta: '文档新增 | 生卒：1587-1641', desc: '《徐霞客游记》中的徽州建筑观察。', contribution: '游历歙县、休宁、黟县后，在《徐霞客游记》中记录“马头墙连绵错落、天井幽深、粉墙映山、木构精巧”等特征，是明代徽州建筑的一手旅行观察。', img: '/charts/module3-cards/doc-xuhongzu.png' },
+      { name: '李渔', meta: '文档新增 | 生卒：1611-1680', desc: '居室理念影响徽州宅第与园林融合。', contribution: '在《闲情偶寄·居室部》中提出粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏而透等理念，契合徽州建筑审美与营造法则。', img: '/charts/module3-cards/doc-liyu.png' },
+      { name: '赵翼', meta: '文档新增 | 生卒：1727-1814', desc: '清中期徽州民居实地记录。', contribution: '在《檐曝杂记·徽州民居》中记载徽州高墙峻宇、马头墙参差、天井通风采光、粉墙素净等特征，是清代中期徽州建筑一手记录。', img: '/charts/module3-cards/doc-zhaoyi.png' },
+      { name: '柳宗元', meta: '文档新增 | 生卒：773-819', desc: '《梓人传》奠定古代营造制度叙述。', contribution: '《梓人传》系统记述营造制度、设计方法与施工管理体系，为后世工匠范式提供理论源头，影响徽州明清时期匠师体系与营造流程。', img: '/charts/module3-cards/doc-liuzongyuan.png' },
+      { name: '蒯祥', meta: '文档新增 | 生卒：1398-1481', desc: '明代官式营造规范的重要奠定者。', contribution: '主持故宫、明十三陵等官式建筑营造，完善抬梁木构、屋顶规制和石作技法，其官式规范影响徽州明清祠堂与牌坊营造。', img: '/charts/module3-cards/doc-kuaixiang.png' },
+      { name: '郑玄', meta: '文档新增 | 生卒：127-200', desc: '《考工记》注疏影响礼制空间布局。', contribution: '为《考工记》作注，阐释“前朝后寝、中轴对称、匠人营国”等理念，深刻影响徽州民居与祠堂前厅后堂、中轴对称、天井居中的布局逻辑。', img: '/charts/module3-cards/doc-zhengxuan.png' }
     ];
 
     const works = [
@@ -1145,42 +1265,88 @@
       { name: '《新安志》', meta: '成书于1175年', desc: '南宋罗愿纂修，早期徽州方志名篇，记述山川城郭与营建沿革，为徽州历史地理重要文献。', img: '/charts/module3-cards/xinan-zhi.png' },
       { name: '《鲁班经》', meta: '成书于元末明初', desc: '民间匠作秘本，辑录房舍尺度、工序与行规，反映传统木作营造经验。', img: '/charts/module3-cards/lubanjing.png' },
       { name: '《徽州府志》', meta: '成书于1502年', desc: '明代弘治间修纂，系统记录徽州一府六县建置、祠庙城池与风土，为徽派建筑史研究基本文献。', img: '/charts/module3-cards/huizhou-fuzhi.png' },
-      { name: '《歙县志》', meta: '体现歙县历史', desc: '历代续修，详载县域城池、桥梁、祠庙与人物，浓缩歙县作为徽州核心区域的营建与人文底蕴。', img: '/charts/module3-cards/shexian-zhi.png' }
+      { name: '《歙县志》', meta: '体现歙县历史', desc: '历代续修，详载县域城池、桥梁、祠庙与人物，浓缩歙县作为徽州核心区域的营建与人文底蕴。', img: '/charts/module3-cards/shexian-zhi.png' },
+      { name: '《家礼》', meta: '文档新增 | 南宋淳熙三年（1176年）', desc: '徽州所有民居、祠堂、牌坊的营造均严格遵循此书规范，明确了徽州建筑前厅…', contribution: '徽州所有民居、祠堂、牌坊的营造均严格遵循此书规范，明确了徽州建筑前厅后堂、天井中庭、左右厢房、中轴对称的核心布局，划定了祠堂开间、屋顶形制、马头墙等级的礼制标准，定义了天井“四水归堂”的文化内涵。', img: '/charts/module3-cards/doc-work-2-家礼.png' },
+      { name: '《鲁班经匠家镜》', meta: '文档新增 | 明万历三十四年（1606年）', desc: '明清时期徽州工匠人手一册的营造圭臬，完整记载了江南民居（核心含徽州）…', contribution: '明清时期徽州工匠人手一册的营造圭臬，完整记载了江南民居（核心含徽州）的马头墙营造尺寸、天井的开间进深比例、粉墙的抹灰工艺、屋顶的瓦作规制、木构的榫卯做法，徽州现存明清民居、祠堂的营造尺寸与形制均与此书完全契合，是徽州民间建筑营造的核心法典。', img: '/charts/module3-cards/doc-work-6-鲁班经匠家镜.png' },
+      { name: '嘉靖《休宁县志》', meta: '文档新增 | 明嘉靖二十九年（1550年）', desc: '详载休宁村落布局、民居形制、祠堂结构、牌坊规制，明确记录了徽州民居“…', contribution: '详载休宁村落布局、民居形制、祠堂结构、牌坊规制，明确记录了徽州民居“粉墙黛瓦、天井中庭、马头墙叠落、木构雕饰”的核心特征，附多幅村落、祠堂建筑图，是徽州县域建筑最早的系统记载。', img: '/charts/module3-cards/doc-work-8-嘉靖休宁县志.png' },
+      { name: '嘉庆《黟县志》', meta: '文档新增 | 清嘉庆十七年（1812年）', desc: '专门记述了黟县西递、宏村等古村落的民居形制，详细描述了天井连缀的院落…', contribution: '专门记述了黟县西递、宏村等古村落的民居形制，详细描述了天井连缀的院落布局、马头墙的错落防火设计、粉墙的营造工艺、依山就势的屋顶排水做法，是徽州古村落民居建筑的核心文献。', img: '/charts/module3-cards/doc-work-10-嘉庆黟县志.jpeg' },
+      { name: '《婺源乡土志》', meta: '文档新增 | 清光绪三十四年（1908年，严格符合1910年前要求）', desc: '清代晚期徽州建筑的最新文献记录，专门记述了婺源古村落的民居建筑，明确…', contribution: '清代晚期徽州建筑的最新文献记录，专门记述了婺源古村落的民居建筑，明确记载了婺源民居“粉墙瓦檐、马头墙防火、天井聚气排水、硬山屋顶”的核心特征，是1910年前最晚的徽州建筑本土文献。', img: '/charts/module3-cards/doc-work-11-婺源乡土志.jpeg' },
+      { name: '万历《祁门县志》', meta: '文档新增 | 明万历二十八年（1600年）', desc: '详细记载了祁门善和村、左田村等宗族村落的祠堂、民居的基址、结构、营造…', contribution: '详细记载了祁门善和村、左田村等宗族村落的祠堂、民居的基址、结构、营造规制，记录了徽州山区民居的天井布局、马头墙形制、木构屋顶的山地适应做法，是徽州山区建筑的核心记载。', img: '/charts/module3-cards/doc-work-12-万历祁门县志.jpeg' },
+      { name: '乾隆《绩溪县志》', meta: '文档新增 | 清乾隆二十一年（1756年）', desc: '记载了绩溪胡氏、汪氏等大宗族的民居、祠堂建筑，详细描述了**“天井深…', contribution: '记载了绩溪胡氏、汪氏等大宗族的民居、祠堂建筑，详细描述了**“天井深幽、马头墙高耸、木构精巧、粉墙素净”**的建筑特征，附祠堂、民居平面图，是徽州北乡建筑的权威记载。', img: '/charts/module3-cards/doc-work-13-乾隆绩溪县志.jpeg' },
+      { name: '《新安大族志》', meta: '文档新增 | 明嘉靖二十八年（1549年）', desc: '详细记载了徽州程、汪、吴、黄、胡等各大宗族的祠堂、宅第的布局、结构、…', contribution: '详细记载了徽州程、汪、吴、黄、胡等各大宗族的祠堂、宅第的布局、结构、装饰、营造规制，附祠堂、宅第的平面图、立面图，是徽州宗族建筑（祠堂、府第）的核心文献。', img: '/charts/module3-cards/doc-work-14-新安大族志.png' },
+      { name: '《休宁西门汪氏族谱》', meta: '文档新增 | 明嘉靖四十五年（1566年）', desc: '附完整的汪氏宗祠平面图、立面图、民居院落图，详细记录了祠堂的抬梁穿斗…', contribution: '附完整的汪氏宗祠平面图、立面图、民居院落图，详细记录了祠堂的抬梁穿斗混合木构、马头墙封火、天井藻井、屋顶规制，是徽州祠堂建筑最完整的明代原始记录，也是徽州建筑结构最直观的明代一手图录。', img: '/charts/module3-cards/doc-work-15-休宁西门汪氏族谱.jpeg' },
+      { name: '《三才图会·宫室卷》', meta: '文档新增著作', desc: '明代百科式图录，绘制了江南民居（含徽州核心类型）的马头墙、天井、粉墙…', contribution: '明代百科式图录，绘制了江南民居（含徽州核心类型）的马头墙、天井、粉墙、硬山屋顶的完整图式，标注了营造尺寸，是徽州建筑形制最早的可视化图谱之一，徽州工匠多参考此图谱营造。', img: '/charts/module3-cards/doc-work-16-三才图会宫室卷.jpeg' },
+      { name: '乾隆《江南通志》', meta: '文档新增 | 清乾隆元年（1736年）', desc: '清代江南省官方通志，专门记载了**“徽州民居，高墙峻宇，马头墙叠落，…', contribution: '清代江南省官方通志，专门记载了**“徽州民居，高墙峻宇，马头墙叠落，天井四水归堂，粉墙黛瓦，为江南民居之冠”**，系统描述了徽州建筑的核心特征，是官方对徽州建筑的权威认定。', img: '/charts/module3-cards/doc-work-17-乾隆江南通志.png' },
+      { name: '光绪《安徽通志》', meta: '文档新增 | 清光绪四年（1878年）', desc: '安徽省官方通志，专设《宫室志》，详细记述了徽州府6县的民居、祠堂、牌…', contribution: '安徽省官方通志，专设《宫室志》，详细记述了徽州府6县的民居、祠堂、牌坊、寺观建筑，明确记载了徽州建筑“粉墙黛瓦，天井深邃，马头墙防火御盗，木构雕饰精美”的核心特征，是省级官方对徽州建筑的系统记载。', img: '/charts/module3-cards/doc-work-18-光绪安徽通志.png' },
+      { name: '《天下郡国利病书·江南备要·徽州府》', meta: '文档新增 | 清康熙元年（1662年）', desc: '实地考察后记载了徽州**“地窄人稠，屋宇密集，马头墙以御火，天井以通…', contribution: '实地考察后记载了徽州**“地窄人稠，屋宇密集，马头墙以御火，天井以通风采光，高墙以御盗，粉墙以防潮”**的建筑特征，是明末清初徽州建筑的一手实地考察记录。', img: '/charts/module3-cards/doc-work-19-天下郡国利病书江南备要徽州府.png' },
+      { name: '《徐霞客游记·江右游日记·徽州府》', meta: '文档新增 | 明崇祯十五年（1642年）', desc: '实地游历后记录了徽州**“白屋依山而建，马头墙连绵错落，天井幽深，粉…', contribution: '实地游历后记录了徽州**“白屋依山而建，马头墙连绵错落，天井幽深，粉墙映山，木构精巧”**的建筑特征，是明代徽州建筑的一手旅行考察记录。', img: '/charts/module3-cards/doc-work-20-徐霞客游记江右游日记徽州府.png' },
+      { name: '《黄山图经》', meta: '文档新增 | 宋景祐三年（1036年）', desc: '宋代黄山地区的地理图志，记载了黄山周边徽州地区的寺院、山居建筑，记录…', contribution: '宋代黄山地区的地理图志，记载了黄山周边徽州地区的寺院、山居建筑，记录了徽州山居“依山就势、粉墙瓦舍、天井庭院、硬山屋顶”的早期形制，是徽州山地建筑最早的文献记录。', img: '/charts/module3-cards/doc-work-21-黄山图经.png' },
+      { name: '《檐曝杂记·徽州民居》', meta: '文档新增 | 清乾隆六十年（1795年）', desc: '专门记载了**“徽州人屋宇，皆高墙峻宇，马头墙参差高下，天井如井，通…', contribution: '专门记载了**“徽州人屋宇，皆高墙峻宇，马头墙参差高下，天井如井，通风采光，粉墙素净，不施彩绘，为江南民居之特色”**，是清代中期徽州建筑的实地记录。', img: '/charts/module3-cards/doc-work-22-檐曝杂记徽州民居.jpeg' },
+      { name: '《闲情偶寄·居室部》', meta: '文档新增 | 清康熙十年（1671年）', desc: '专门记述了**“粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏…', contribution: '专门记述了**“粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏而透”**的营造理念，完全契合徽州建筑的审美与营造法则，深刻影响了清代徽州民居与园林的营造。', img: '/charts/module3-cards/doc-work-23-闲情偶寄居室部.png' },
+      { name: '《考工记》', meta: '文档新增 | 先秦时期', desc: '中国古代最早的营造典籍，提出的**“前朝后寝、中轴对称、匠人营国”*…', contribution: '中国古代最早的营造典籍，提出的**“前朝后寝、中轴对称、匠人营国”**布局理念，是徽州民居、祠堂“前厅后堂、中轴对称、天井居中”布局的核心源头，深刻影响了徽州建筑的礼制布局。', img: '/charts/module3-cards/doc-work-25-考工记.png' },
+      { name: '《梓人传》', meta: '文档新增 | 唐永贞元年（805年）', desc: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确…', contribution: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确立了古代工匠的营造范式，徽州明清时期的工匠体系、营造流程、设计方法，均继承了《梓人传》中记载的传统，是徽州营造匠师体系的源头文献。', img: '/charts/module3-cards/doc-work-29-梓人传.png' }
     ];
 
     const cardGrid = document.getElementById('cardGrid');
     const btnScientist = document.getElementById('btnScientist');
     const btnWork = document.getElementById('btnWork');
 
-    function renderCards(list) {
+    function escapeHtml(text) {
+      return String(text ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function expandContributionText(item) {
+      const base = (item.contribution || item.desc || '暂无贡献介绍').trim();
+      const extension = `从徽州建筑演进来看，${item.name}所体现的方法与经验，不仅作用于单体构件或局部装饰，也推动了村落空间秩序、礼制表达与工艺传承的协同发展。其影响长期体现在马头墙、天井、粉墙黛瓦与木石构造等关键要素的组织方式中，对后续保护研究与展示传播仍有重要参照价值。`;
+      return `${base}${base.endsWith('。') ? '' : '。'}${extension}`;
+    }
+
+    function renderCards(list, options = {}) {
+      const { clickable = false } = options;
       cardGrid.innerHTML = list.map(item => `
         <article class="card">
-          <div class="card-thumb"><img src="${item.img}" alt="${item.name}" loading="lazy" referrerpolicy="no-referrer" /></div>
-          <h3>${item.name}</h3>
-          <div class="meta">${item.meta}</div>
-          <p class="desc">${item.desc}</p>
+          <div class="card-thumb ${clickable ? 'is-clickable' : ''}">
+            <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.name)}" loading="lazy" referrerpolicy="no-referrer" />
+            <div class="card-thumb-name">${escapeHtml(item.name)}</div>
+            ${clickable ? `<div class="card-thumb-overlay"><div class="card-thumb-overlay-title">背景信息</div><div class="card-thumb-overlay-meta">${escapeHtml(item.name)} ｜ ${escapeHtml(item.meta || '营建先哲')}</div><div class="card-thumb-overlay-body">${escapeHtml(expandContributionText(item))}</div></div>` : ''}
+          </div>
+          <h3>${escapeHtml(item.name)}</h3>
+          <div class="meta">${escapeHtml(item.meta)}</div>
+          <p class="desc">${escapeHtml(item.desc)}</p>
         </article>
       `).join('');
+
+      if (clickable) {
+        cardGrid.querySelectorAll('.card-thumb.is-clickable').forEach((thumb) => {
+          thumb.addEventListener('click', () => {
+            thumb.classList.toggle('is-flipped');
+          });
+        });
+      }
     }
 
     btnScientist.addEventListener('click', () => {
       btnScientist.classList.add('active');
       btnWork.classList.remove('active');
-      renderCards(scientists);
+      renderCards(scientists, { clickable: true });
     });
 
     btnWork.addEventListener('click', () => {
       btnWork.classList.add('active');
       btnScientist.classList.remove('active');
-      renderCards(works);
+      renderCards(works, { clickable: true });
     });
 
-    renderCards(scientists);
+    renderCards(scientists, { clickable: true });
 
     const craftOrder = ['wood', 'stone', 'brick'];
-    const detailTabs = ['intro', 'process', 'pattern', 'tools', 'theme', 'history'];
+    const detailTabs = ['process', 'pattern', 'tools', 'theme', 'history'];
     const detailName = {
-      intro: '简介',
       process: '工艺流程',
       pattern: '常用纹样',
       tools: '使用工具',
@@ -1315,7 +1481,7 @@
 
     const state = {
       activeCraft: 'wood',
-      activeDetailTab: 'intro',
+      activeDetailTab: 'process',
       activeNodeId: null,
       hoverNodeId: null,
       expandedKey: null,
@@ -1561,24 +1727,9 @@
       const current = craftData[state.activeCraft];
       const value = current[state.activeDetailTab];
       detailHint.textContent = `${current.name} · ${detailName[state.activeDetailTab]}`;
-      const isIntro = state.activeDetailTab === 'intro';
-
       detailContentEl.classList.remove('show');
       let html = '';
-      if (isIntro) {
-        const lead = value.startsWith('徽州木雕') || value.startsWith('徽州石雕') || value.startsWith('徽州砖雕')
-          ? value.slice(0, 4)
-          : value.slice(0, 1);
-        const rest = value.slice(lead.length);
-        const tags = (current.introTags || []).map(tag => `<span class="intro-tag">${tag}</span>`).join('');
-        html = `
-          <article class="intro-block">
-            <div class="intro-main"><span class="intro-dropcap">${lead}</span>${rest}</div>
-            <div class="intro-tags">${tags}</div>
-            <div class="intro-watermark">${current.name}</div>
-          </article>
-        `;
-      } else if (state.activeDetailTab === 'process') {
+      if (state.activeDetailTab === 'process') {
         const seq = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
         html = `<div class="detail-step-list process-rail">${value.map((step, idx) => `
           <article class="detail-step expand-item ${state.expandedKey === `process:${idx}` ? 'is-open' : ''}" data-expand-key="process:${idx}">

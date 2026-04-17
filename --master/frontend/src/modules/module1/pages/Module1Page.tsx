@@ -11,6 +11,9 @@ import buildingMarkersJson from '../data/building-markers.json'
 import buildingCategoriesJson from '../data/building-categories.json'
 import styles from './Module1Page.module.css'
 
+const MAP_COMPLIANCE_NOTE =
+  '底图来源：黄山市自然资源和规划局标准地图，审图号：皖黄S（2023）13号。'
+
 export function Module1Page() {
   const wrapRef = useRef<HTMLDivElement>(null)
 
@@ -84,6 +87,7 @@ export function Module1Page() {
             <ProvinceHeatMap
               cities={cities}
               buildings={buildings}
+              complianceNote={MAP_COMPLIANCE_NOTE}
               selectedCityId={selectedCityId}
               hoveredCityId={hoveredCityId}
               selectedBuildingId={selectedBuildingId}

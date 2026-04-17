@@ -76,18 +76,6 @@ const regionData: Record<string, { label: string; value: number }[]> = {
   ],
 }
 
-const cityNames: Record<string, string> = {
-  sheXian: '歙县',
-  xiuNing: '休宁县',
-  jiXi: '绩溪县',
-  huiZhouQu: '徽州区',
-  wuYuan: '婺源县',
-  yiXian: '黟县',
-  qiMen: '祁门县',
-  huangShanQu: '黄山区',
-  tunXiQu: '屯溪区',
-}
-
 export function DynastyLineChart(props: {
   selectedCityId?: string
   height?: number
@@ -97,9 +85,6 @@ export function DynastyLineChart(props: {
 
   const cityData = selectedCityId ? regionData[selectedCityId] : null
   const points = cityData ?? dynastyTotals
-  const title = cityData
-    ? `${cityNames[selectedCityId!] ?? selectedCityId} · 历朝建筑数量`
-    : '历朝徽派古建筑留存数量'
 
   const x = points.map((p) => p.label)
   const y = points.map((p) => p.value)
@@ -170,8 +155,20 @@ export function DynastyLineChart(props: {
   }
 
   return (
-    <div style={{ height: '100%', width: '100%', padding: 6, boxSizing: 'border-box' }}>
-      <ReactECharts option={option} style={{ height: '100%', width: '100%' }} notMerge />
+    <div
+      style={{
+        height: '100%',
+        minHeight: height,
+        width: '100%',
+        padding: 6,
+        boxSizing: 'border-box',
+      }}
+    >
+      <ReactECharts
+        option={option}
+        style={{ height: '100%', minHeight: height, width: '100%' }}
+        notMerge
+      />
     </div>
   )
 }

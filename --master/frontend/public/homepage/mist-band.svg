@@ -1,0 +1,17 @@
+<svg width="1600" height="420" viewBox="0 0 1600 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mistFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="35%" stop-color="white" stop-opacity="0.78"/>
+      <stop offset="65%" stop-color="white" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blurMist" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <g filter="url(#blurMist)">
+    <path d="M68 238C118 180 201 172 248 222C274 152 370 137 422 197C454 135 548 126 597 182C650 136 742 142 790 202C832 163 906 154 962 196C1002 140 1100 128 1156 188C1214 148 1293 157 1340 212C1381 185 1453 186 1509 226V286H68V238Z" fill="url(#mistFade)"/>
+    <path d="M18 288C78 238 173 236 230 275C269 225 346 212 410 258C459 207 549 203 611 250C674 218 760 224 818 270C872 220 959 212 1015 259C1071 221 1162 224 1216 278C1269 240 1360 240 1420 283C1475 259 1547 262 1581 288V352H18V288Z" fill="url(#mistFade)" opacity="0.85"/>
+  </g>
+</svg>
