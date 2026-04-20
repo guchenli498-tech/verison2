@@ -7,10 +7,10 @@
     <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #fef7ec;
-        --title-color: #3a2a1c;
-        --subtitle-color: #9e8a68;
-        --line-color: #c47a44;
+        --paper-bg: #f2eee6;
+        --title-color: #4a4a48;
+        --subtitle-color: #6e6e6b;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -94,24 +94,24 @@
         // 空间位置：入口 → 庭院 → 天井 → 门厅 → 厅房
         const locations = ["入口", "庭院", "天井", "门厅", "厅房"];
 
-        // 颜色方案：与“马头墙热力矩阵”统一的蓝灰-米棕-砖红体系
+        // 颜色方案：统一到模块二的米白-灰褐-青灰页面体系
         const colors = {
-          maxTemp: "#AB5C46",      // 最高温度 - 砖红
-          minTemp: "#6A7F95",      // 最低温度 - 蓝灰
-          maxHumid: "#C58A5C",     // 最高湿度 - 棕橙
-          minHumid: "#A8B8C4",     // 最低湿度 - 浅蓝灰
-          tempDiff: "#7F3028",     // 温度日较差 - 深砖红虚线
-          humidDiff: "#D8B88A",    // 湿度日较差 - 米棕虚线
-          windSpeed: "#3F4F66",    // 平均风速 - 深蓝灰
-          windArea: "rgba(106, 127, 149, 0.18)", // 风速区域 - 蓝灰透明
+          maxTemp: "#9a6c52",      // 最高温度 - 暖褐陶色
+          minTemp: "#6c7a89",      // 最低温度 - 青灰
+          maxHumid: "#b89a78",     // 最高湿度 - 浅棕米金
+          minHumid: "#aeb9c3",     // 最低湿度 - 雾蓝灰
+          tempDiff: "#7e5945",     // 温度日较差 - 深褐虚线
+          humidDiff: "#cbb89c",    // 湿度日较差 - 浅米褐虚线
+          windSpeed: "#4f6477",    // 平均风速 - 深青灰
+          windArea: "rgba(108, 122, 137, 0.16)", // 风速区域 - 青灰透明
         };
 
         const option = {
           backgroundColor: "transparent",
           tooltip: {
             trigger: "axis",
-            backgroundColor: "rgba(45,35,22,0.88)",
-            borderColor: "#c8b88a",
+            backgroundColor: "rgba(74,74,72,0.9)",
+            borderColor: "#d7cec0",
             borderWidth: 1,
             padding: [12, 16],
             textStyle: { color: "#f7efdb", fontSize: 12, fontFamily: "KaiTi, serif" },
@@ -124,7 +124,7 @@
             bottom: "10%",
             left: "1%",
             height: "80%",
-            textStyle: { color: "#4a3624", fontSize: 12, fontWeight: 500, fontFamily: "KaiTi, serif" },
+            textStyle: { color: "#4a4a48", fontSize: 12, fontWeight: 500, fontFamily: "KaiTi, serif" },
             itemGap: 16,
             itemWidth: 12,
             itemHeight: 12,
@@ -133,7 +133,7 @@
           xAxis: {
             type: "category",
             data: locations,
-            axisLine: { lineStyle: { color: "#bcab8a" } },
+            axisLine: { lineStyle: { color: "#c9cfd6" } },
             axisLabel: { color: "#666", fontSize: 12, fontWeight: 500 },
             splitLine: { show: false },
             axisTick: { show: true },
@@ -142,25 +142,25 @@
             {
               type: "value",
               name: "温度（℃）/ 湿度（%）",
-              nameTextStyle: { color: "#6c5a44", fontSize: 12, fontWeight: 600, align: "left", fontFamily: "KaiTi, serif" },
+              nameTextStyle: { color: "#6e6e6b", fontSize: 12, fontWeight: 600, align: "left", fontFamily: "KaiTi, serif" },
               nameGap: 8,
               min: 0,
               max: 100,
               interval: 20,
-              axisLine: { lineStyle: { color: "#bcab8a" } },
-              splitLine: { lineStyle: { color: "#e2d5bf", type: "dashed" } },
+              axisLine: { lineStyle: { color: "#c9cfd6" } },
+              splitLine: { lineStyle: { color: "#e4e1da", type: "dashed" } },
               axisLabel: { color: "#666", fontSize: 11 },
             },
             {
               type: "value",
               name: "风速（m/s）",
-              nameTextStyle: { color: "#6c5a44", fontSize: 12, fontWeight: 600, align: "right", fontFamily: "KaiTi, serif" },
+              nameTextStyle: { color: "#6e6e6b", fontSize: 12, fontWeight: 600, align: "right", fontFamily: "KaiTi, serif" },
               nameGap: 8,
               min: 0,
               max: 1.5,
               interval: 0.3,
               position: "right",
-              axisLine: { lineStyle: { color: "#bcab8a" } },
+              axisLine: { lineStyle: { color: "#c9cfd6" } },
               splitLine: { show: false },
               axisLabel: { color: "#666", fontSize: 11 },
             },
