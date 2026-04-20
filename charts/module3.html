@@ -1,0 +1,2223 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>模块三</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f2eee6;
+      --panel: #f7f3ea;
+      --ink: #4a4a48;
+      --muted: #8eb8b7;
+      --border: #e7dfd2;
+      --accent: #f25c33;
+      --title-color: #2b333e;
+      --subtitle-color: #8c939d;
+      --line-color: #6C7A89;
+      --shadow: rgba(74, 74, 72, 0.18);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+      --radius-xs: 6px;
+      --stroke-soft: 1px solid rgba(214, 201, 184, 0.55);
+      --stroke-faint: 1px solid rgba(214, 201, 184, 0.38);
+      --elev-soft: 0 10px 22px -18px var(--shadow);
+      --elev-float: 0 8px 20px -14px rgba(50, 47, 43, 0.55);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Georgia, 'KaiTi', '楷体', '华文楷体', STKaiti, serif;
+    }
+
+    .canvas {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 43% 57%;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .panel {
+      background: #f5f0e7;
+      border: var(--stroke-soft);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--elev-soft);
+      min-height: 360px;
+      overflow: hidden;
+    }
+
+    /* 上半：卡片区 */
+    .top {
+      display: grid;
+      grid-template-rows: 38px 1fr;
+      gap: 8px;
+      padding: 8px;
+      min-height: 0;
+    }
+
+    .top-tabs {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(150, 136, 116, 0.32);
+      background: rgba(255, 255, 255, 0.35);
+      color: #5a534a;
+      border-radius: var(--radius-sm);
+      padding: 5px 14px;
+      font-size: 13px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: rgba(110, 88, 63, 0.12);
+      border-color: rgba(110, 88, 63, 0.48);
+      color: #473d33;
+      font-weight: 700;
+    }
+
+    .card-grid {
+      display: flex;
+      gap: 8px;
+      min-height: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding: 0 8px;
+    }
+
+    .card-grid::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .card-grid::-webkit-scrollbar-track {
+      background: rgba(214, 201, 184, 0.2);
+      border-radius: 3px;
+    }
+
+    .card-grid::-webkit-scrollbar-thumb {
+      background: rgba(143, 114, 80, 0.4);
+      border-radius: 3px;
+    }
+
+    .card-grid::-webkit-scrollbar-thumb:hover {
+      background: rgba(143, 114, 80, 0.6);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.33);
+      border: var(--stroke-faint);
+      border-radius: var(--radius-md);
+      padding: 10px 10px 8px;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 6px;
+      overflow: hidden;
+      min-height: 0;
+      flex: 0 0 calc(25% - 6px);
+      min-width: 200px;
+    }
+
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+      background: #ebe1d5;
+      border: 1px solid rgba(214, 201, 184, 0.45);
+      perspective: 1000px;
+    }
+
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-thumb.is-clickable {
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-thumb.is-clickable:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px -8px rgba(50, 47, 43, 0.5);
+    }
+
+    .card-thumb img {
+      transition: transform 0.45s ease, opacity 0.35s ease;
+      backface-visibility: hidden;
+      transform: rotateY(0deg);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 10px 12px 30px;
+      overflow: auto;
+      background:
+        linear-gradient(165deg, rgba(81, 62, 43, 0.95), rgba(47, 37, 28, 0.94)),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 2px, transparent 2px, transparent 6px);
+      color: #efe6d8;
+      font-size: 14px;
+      line-height: 1.9;
+      letter-spacing: 0.2px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.45s ease, opacity 0.35s ease;
+      z-index: 2;
+      backface-visibility: hidden;
+      transform: rotateY(-180deg);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+
+    .card-thumb-overlay-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #f9efe0;
+    }
+
+    .card-thumb-overlay-meta {
+      font-size: 12px;
+      color: rgba(245, 228, 203, 0.9);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .card-thumb-overlay-body {
+      text-align: justify;
+      text-indent: 2em;
+    }
+
+    .card-thumb.is-flipped img {
+      opacity: 0.06;
+      transform: rotateY(180deg);
+    }
+
+    .card-thumb.is-flipped .card-thumb-overlay {
+      opacity: 1;
+      pointer-events: auto;
+      transform: rotateY(0deg);
+    }
+
+    .card-thumb-name {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      z-index: 3;
+      max-width: calc(100% - 16px);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(36, 30, 24, 0.68);
+      color: #f8efe2;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card h3 {
+      font-size: 15px;
+      line-height: 1.2;
+      color: #3f3f3d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card .meta {
+      font-size: 12px;
+      color: #8a7a64;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card .desc {
+      font-size: 12px;
+      line-height: 1.35;
+      color: #5a5854;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    /* 下半：三雕三列 */
+    .bottom {
+      display: grid;
+      grid-template-columns: 1.4fr 1.2fr 1.4fr;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .side-panel {
+      background: #f5efe5;
+      border: var(--stroke-soft);
+      border-radius: var(--radius-lg);
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 40px 1fr;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px 10px 26px;
+      border-bottom: 1px solid rgba(214, 201, 184, 0.55);
+      font-size: 18px;
+      color: var(--title-color);
+      letter-spacing: 2px;
+      font-weight: 800;
+      background: rgba(249, 243, 234, 0.6);
+      position: relative;
+    }
+
+    .panel-head::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 2px;
+      background: var(--line-color);
+    }
+
+    .panel-head small {
+      color: var(--subtitle-color);
+      letter-spacing: 1.5px;
+      font-size: 11px;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .graph-head-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .graph-controls-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 6px;
+      border: 1px solid rgba(143, 114, 80, 0.2);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .graph-action {
+      border: 1px solid rgba(143, 114, 80, 0.24);
+      background: rgba(255, 255, 255, 0.28);
+      color: #6b5f52;
+      border-radius: var(--radius-xs);
+      font-size: 11px;
+      padding: 2px 7px;
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1.2;
+      transition: all .2s ease;
+    }
+
+    .graph-action:hover {
+      border-color: rgba(143, 114, 80, 0.5);
+      color: #433d36;
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .graph-action.active {
+      background: rgba(143, 114, 80, 0.12);
+      border-color: rgba(143, 114, 80, 0.5);
+      color: #4a3f34;
+      font-weight: 700;
+    }
+
+    .center {
+      background: #f5f0e8;
+      border: var(--stroke-soft);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--elev-soft);
+      min-height: 0;
+      padding: 8px;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) 34px minmax(86px, auto);
+      gap: 8px;
+      position: relative;
+    }
+
+    .carving-image-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      min-height: 0;
+      width: 92%;
+      margin: 0 auto;
+      background: #ebe1d5;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .carving-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .carving-name {
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 4px;
+      color: #5b5046;
+      line-height: 30px;
+      user-select: none;
+    }
+
+    .switch-btn {
+      width: 100%;
+      height: 34px;
+      border-radius: 0;
+      border: 0;
+      border-bottom: 1px solid rgba(143, 114, 80, 0.26);
+      background: transparent;
+      color: #655b50;
+      font-size: 13px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .switch-btn.active {
+      background: rgba(143, 114, 80, 0.06);
+      border-bottom: 2px solid #8f7250;
+      color: #453a30;
+      font-weight: 700;
+    }
+
+    .center-brief {
+      font-size: 16px;
+      line-height: 1.65;
+      color: #5f5a53;
+      background: #f8f3ea;
+      border: 1px solid #e8e1d6;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      overflow: auto;
+      display: block;
+    }
+
+    .triangle-btn {
+      position: absolute;
+      top: 42%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(143, 114, 80, 0.48);
+      background: rgba(245, 240, 232, 0.9);
+      box-shadow: 0 2px 8px rgba(91, 75, 61, 0.18);
+      cursor: pointer;
+      z-index: 5;
+      padding: 0;
+      color: #8f7250;
+      line-height: 22px;
+      font-size: 14px;
+    }
+
+    .triangle-btn.left {
+      left: calc(4% - 24px);
+    }
+
+    .triangle-btn.right {
+      right: calc(4% - 24px);
+    }
+
+    .triangle-btn.left::before {
+      content: '‹';
+      display: inline-block;
+      transform: translateX(-1px);
+    }
+
+    .triangle-btn.right::before {
+      content: '›';
+      display: inline-block;
+      transform: translateX(1px);
+    }
+
+    .triangle-btn:hover {
+      border-color: rgba(143, 114, 80, 0.55);
+      color: #5b4b3d;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .graph-wrap {
+      min-height: 0;
+      padding: 8px;
+      background: #f4efea;
+      position: relative;
+    }
+
+    .graph-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .graph-legend {
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      z-index: 6;
+      background: rgba(246, 241, 232, 0.62);
+      border: 0;
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      display: grid;
+      gap: 4px;
+      font-size: 11px;
+      color: #585147;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(217, 208, 193, 0.3);
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .legend-line {
+      width: 24px;
+      height: 0;
+      border-top: 2px solid #8f867b;
+    }
+
+    .legend-line.dashed {
+      border-top-style: dashed;
+    }
+
+    .legend-line.dotted {
+      border-top-style: dotted;
+    }
+
+    .legend-dot {
+      border-radius: 50%;
+      background: #7f7468;
+      border: 1px solid rgba(80, 63, 47, 0.22);
+      display: inline-block;
+    }
+
+    .legend-dot.lg { width: 10px; height: 10px; }
+    .legend-dot.md { width: 8px; height: 8px; }
+    .legend-dot.sm { width: 6px; height: 6px; }
+    .legend-dot.national { background: #5C2C26; }
+    .legend-dot.provincial { background: #5B6770; }
+    .legend-dot.city { background: #5A5550; }
+    .legend-dot.work {
+      width: 10px;
+      height: 10px;
+      background: transparent;
+      border: 1.6px dashed rgba(143, 114, 80, 0.9);
+    }
+
+    .graph-tooltip {
+      position: absolute;
+      max-width: 240px;
+      background: #F5F4EE;
+      border: 1px solid #D9D0C1;
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #333;
+      box-shadow: var(--elev-float);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .12s ease, transform .12s ease;
+      z-index: 10;
+      white-space: normal;
+    }
+
+    .graph-tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tooltip-media {
+      width: 100%;
+      height: 76px;
+      border: 1px solid #d8cebf;
+      border-radius: var(--radius-xs);
+      margin-bottom: 6px;
+      overflow: hidden;
+      background: #faf6ee;
+      display: grid;
+      place-items: center;
+      color: #8e8578;
+      font-size: 11px;
+    }
+
+    .tooltip-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .right-wrap {
+      min-height: 0;
+      padding: 24px 24px 20px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      background: #f4efea;
+    }
+
+    .detail-top-nav {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e7ddd0;
+    }
+
+    .detail-top-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mini-btn {
+      border: 1px solid rgba(199, 185, 164, 0.45);
+      background: rgba(247, 242, 233, 0.44);
+      color: #5a5248;
+      border-radius: var(--radius-sm);
+      min-height: 40px;
+      padding: 0 18px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+      position: relative;
+      overflow: visible;
+    }
+
+    .mini-btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      border-color: rgba(143, 114, 80, 0.42);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .mini-btn.active {
+      color: #3f342b;
+      border-color: rgba(143, 114, 80, 0.38);
+      background: rgba(143, 114, 80, 0.12);
+      box-shadow: inset 0 -2px 0 rgba(143, 114, 80, 0.7);
+      font-weight: 700;
+    }
+
+    .mini-btn.active::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: -5px;
+      height: 8px;
+      border: 1px solid rgba(180, 161, 132, 0.45);
+      border-top: 0;
+      border-radius: 0 0 6px 6px;
+      background: linear-gradient(180deg, rgba(245, 236, 223, 0.92) 0%, rgba(236, 223, 204, 0.92) 100%);
+      z-index: -1;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      transform: scaleX(1);
+    }
+
+    .mini-btn::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: -5px;
+      height: 8px;
+      border: 1px solid rgba(180, 161, 132, 0.38);
+      border-top: 0;
+      border-radius: 0 0 6px 6px;
+      background: linear-gradient(180deg, rgba(245, 236, 223, 0.6) 0%, rgba(236, 223, 204, 0.6) 100%);
+      z-index: -1;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      transform: scaleX(0);
+      transition: transform .18s ease, opacity .18s ease;
+      opacity: 0;
+    }
+
+    .mini-btn:hover::before {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+    .mini-btn.active::before {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+
+    .detail-content {
+      border: 0;
+      border-radius: 0;
+      background: #F5F4EE;
+      box-shadow: none;
+      padding: 24px 24px 20px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.95;
+      color: #4f4a43;
+      min-height: 340px;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .detail-content.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .detail-content ul {
+      padding-left: 18px;
+    }
+
+    .detail-content li + li {
+      margin-top: 2px;
+    }
+
+    .detail-content p,
+    .detail-content span,
+    .detail-content li,
+    .detail-content div {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+
+    .detail-content strong,
+    .step-title,
+    .gallery-tag,
+    .timeline-item strong,
+    .intro-dropcap,
+    .intro-stamp {
+      font-family: "STSong", "SimSun", "KaiTi", serif;
+    }
+
+    .detail-step-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-step {
+      display: grid;
+      grid-template-columns: 30px 78px 1fr;
+      gap: 12px;
+      align-items: center;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 7px 0 12px;
+      border-bottom: 1px solid #D9D0C1;
+    }
+
+    .expand-item {
+      cursor: pointer;
+    }
+
+    .expand-more {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.75;
+      color: #6b6258;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(2px);
+      transition: max-height .22s ease, opacity .22s ease, transform .22s ease;
+    }
+
+    .expand-item.is-open .expand-more {
+      max-height: 220px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .detail-step:last-child {
+      border-bottom: 0;
+    }
+
+    .step-no {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid #8f7250;
+      color: #5f4a34;
+      font-size: 14px;
+      line-height: 34px;
+      text-align: center;
+      background: rgba(183, 146, 93, 0.16);
+      font-weight: 700;
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #463e35;
+      margin-bottom: 2px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .item-media {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #E6DED1;
+      border-radius: 3px;
+      background: #F9F7F3;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: #7d7366;
+      font-size: 11px;
+      line-height: 1.2;
+      text-align: center;
+      padding: 0;
+      position: relative;
+    }
+
+    .item-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      padding: 1px;
+      background: #f9f7f3;
+      display: block;
+    }
+
+    .item-media::before,
+    .item-media::after {
+      content: none;
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-color: rgba(143, 114, 80, 0.55);
+      border-style: solid;
+      pointer-events: none;
+    }
+
+    .item-media::before {
+      top: 2px;
+      left: 2px;
+      border-width: 1px 0 0 1px;
+    }
+
+    .item-media::after {
+      right: 2px;
+      bottom: 2px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .detail-step .item-media {
+      height: 70px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px 14px;
+    }
+
+    .grid-item {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 6px 6px 10px;
+      min-height: 84px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      text-align: center;
+      border-bottom: 1px solid #D9D0C1;
+    }
+
+    .grid-item .item-media {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 4px;
+      margin-bottom: 2px;
+    }
+
+    .grid-item strong {
+      font-size: 14px;
+      color: #3f372f;
+      font-weight: 700;
+    }
+
+    .grid-item span {
+      font-size: 12px;
+      color: #8a8176;
+      line-height: 1.45;
+    }
+
+    .detail-gallery {
+      display: grid;
+      gap: 10px;
+    }
+
+    .gallery-item {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 8px 0 10px;
+      display: grid;
+      grid-template-columns: max-content 58px 1fr;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid #D9D0C1;
+    }
+
+    .gallery-text {
+      display: grid;
+      gap: 2px;
+    }
+
+    .gallery-sub {
+      font-size: 12px;
+      color: #7f756a;
+      line-height: 1.6;
+    }
+
+    .gallery-tag {
+      border-radius: 2px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #5d4f40;
+      color: #f8f2e8;
+      padding: 4px 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      width: max-content;
+      white-space: nowrap;
+    }
+
+    .timeline-item .item-media {
+      width: 78px;
+      height: 44px;
+      margin-top: 7px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      padding-left: 4px;
+      border-left: 3px solid rgba(143, 114, 80, 0.66);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 10px 10px 10px 26px;
+      background: rgba(255, 255, 255, 0.28);
+      border: 1px solid #e2d9cd;
+      border-radius: var(--radius-sm);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      transform: rotate(45deg);
+      background: #8f7250;
+      box-shadow: 0 0 0 2px #f5f4ee;
+    }
+
+    .timeline-item strong {
+      display: block;
+      font-size: 15px;
+      color: #3f3327;
+      margin-bottom: 2px;
+    }
+
+    .timeline-detail {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.75;
+      color: #5b544c;
+    }
+
+    .intro-block {
+      max-width: 82%;
+      margin: 0 auto;
+      position: relative;
+      padding-right: 8px;
+      line-height: 2;
+    }
+
+    .intro-main {
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .intro-tags {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .intro-tag {
+      border: 1px solid #9b7b58;
+      border-radius: 2px;
+      padding: 3px 10px 4px;
+      font-size: 12px;
+      color: #f6efe4;
+      background: linear-gradient(180deg, #6e543f 0%, #5c4636 100%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 1px 1px rgba(70, 54, 40, 0.18);
+      font-family: "STSong", "SimSun", "KaiTi", serif;
+      letter-spacing: 1px;
+      position: relative;
+    }
+
+    .intro-tag::before,
+    .intro-tag::after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-color: rgba(214, 186, 150, 0.55);
+      border-style: solid;
+      pointer-events: none;
+    }
+
+    .intro-tag::before {
+      top: 1px;
+      left: 1px;
+      border-width: 1px 0 0 1px;
+    }
+
+    .intro-tag::after {
+      right: 1px;
+      bottom: 1px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .intro-block.vertical {
+      max-width: none;
+      margin: 0 auto;
+      min-height: 360px;
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 10px 18px 12px;
+    }
+
+    .intro-block.vertical .intro-main {
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      line-height: 1.6;
+      letter-spacing: 0.2px;
+      font-size: 19px;
+      color: #3f3a34;
+      max-height: 330px;
+      max-width: 92%;
+      margin-left: 8px;
+    }
+
+    .intro-dropcap {
+      font-size: 34px;
+      line-height: 1;
+      float: left;
+      margin: 3px 6px 0 0;
+      color: #7b2f28;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .intro-stamp {
+      width: 40px;
+      height: 28px;
+      margin-right: 4px;
+      transform: rotate(-3deg);
+      object-fit: contain;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .intro-watermark {
+      position: absolute;
+      right: 0;
+      bottom: -6px;
+      font-size: 44px;
+      color: rgba(93, 79, 64, 0.06);
+      font-family: "STSong", "KaiTi", serif;
+      letter-spacing: 2px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .intro-block.vertical .intro-dropcap {
+      display: none;
+    }
+
+    .intro-block.vertical .intro-watermark {
+      right: 8px;
+      left: auto;
+      top: 8px;
+      bottom: auto;
+      writing-mode: vertical-lr;
+      font-size: 24px;
+      opacity: 0.7;
+    }
+
+    .intro-block.vertical .intro-stamp {
+      display: none;
+    }
+
+    .process-rail {
+      border-left: 1px solid rgba(143, 114, 80, 0.5);
+      margin-left: 10px;
+      padding-left: 14px;
+    }
+
+    .top {
+      position: relative;
+    }
+
+    .card-scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(143, 114, 80, 0.4);
+      background: rgba(245, 240, 232, 0.85);
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8f7250;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .card-scroll-btn:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(143, 114, 80, 0.6);
+      color: #5b4b3d;
+    }
+
+    .card-scroll-btn.left {
+      left: 8px;
+    }
+
+    .card-scroll-btn.right {
+      right: 8px;
+    }
+
+    .card-scroll-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <section class="panel top">
+      <div class="top-tabs">
+        <button class="tab-btn active" id="btnScientist">营建先哲</button>
+        <button class="tab-btn" id="btnWork">珍籍撷英</button>
+      </div>
+      <div class="card-grid" id="cardGrid"></div>
+    </section>
+
+    <section class="bottom">
+      <div class="side-panel">
+        <div class="panel-head">
+          <span>传承关系网络</span>
+          <div class="graph-head-right">
+            <small id="graphHint">当前：木雕</small>
+            <div class="graph-controls-group" aria-label="层级筛选">
+              <button id="btnLevelsAll" class="graph-action active" type="button">全谱</button>
+              <button id="btnLevelsNP" class="graph-action" type="button">国+省</button>
+              <button id="btnLevelsNPC" class="graph-action" type="button">国+省+市</button>
+            </div>
+            <div class="graph-controls-group" aria-label="布局控制">
+              <button id="btnAutoLayout" class="graph-action" type="button">自动布局</button>
+              <button id="btnToggleFix" class="graph-action" type="button">固定节点</button>
+              <button id="btnResetLayout" class="graph-action" type="button">重置布局</button>
+            </div>
+          </div>
+        </div>
+        <div class="graph-wrap">
+          <div class="graph-legend">
+            <div class="legend-row"><span class="legend-line"></span><span>师承/归属</span></div>
+            <div class="legend-row"><span class="legend-line dashed"></span><span>指导</span></div>
+            <div class="legend-row"><span class="legend-line dotted"></span><span>家族</span></div>
+            <div class="legend-row"><span class="legend-dot lg national"></span><span>国家级</span><span class="legend-dot md provincial"></span><span>省级</span><span class="legend-dot sm city"></span><span>市级</span></div>
+            <div class="legend-row"><span class="legend-dot work"></span><span>代表作节点（空心）</span></div>
+          </div>
+          <svg id="graphSvg" class="graph-svg" viewBox="0 0 560 360" preserveAspectRatio="xMidYMid meet"></svg>
+          <div id="graphTooltip" class="graph-tooltip"></div>
+        </div>
+      </div>
+
+      <div class="center">
+        <button class="triangle-btn left" id="btnPrev" aria-label="上一雕"></button>
+        <button class="triangle-btn right" id="btnNext" aria-label="下一雕"></button>
+
+        <div class="carving-image-wrap">
+          <img id="carvingImage" class="carving-image" src="/charts/三雕图片/木雕.png" alt="木雕" />
+        </div>
+
+        <div class="carving-name" id="carvingName">木雕</div>
+        <div class="center-brief" id="carvingBrief"></div>
+
+      </div>
+
+      <div class="side-panel">
+        <div class="panel-head">
+          <span>三雕知识面板</span>
+          <small id="detailHint">简介</small>
+        </div>
+        <div class="right-wrap">
+          <div class="detail-top-nav" id="detailTabs"></div>
+          <div class="detail-content show" id="detailContent"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const scientists = [
+      { name: '李诫 (1035–1110)', meta: '《营造法式》编撰者', desc: '北宋官式营造体系奠基者，提出材份制，对徽派祠堂木构影响深远。', contribution: '北宋官式营造体系奠基者，提出材份制，对徽派祠堂木构影响深远。', img: '/charts/module3-cards/lijie.jpg' },
+      { name: '喻皓 (约960–1004)', meta: '《木经》作者', desc: '总结木构比例法则，梁柱尺度关系成为徽派民居木作的重要参照。', contribution: '总结木构比例法则，梁柱尺度关系成为徽派民居木作的重要参照。', img: '/charts/module3-cards/yuhao.jpg' },
+      { name: '雷发达 (1619–1693)', meta: '样式雷奠基人', desc: '推动官式营造与地域工艺融合，促进徽派形制与装饰技法传播。', contribution: '推动官式营造与地域工艺融合，促进徽派形制与装饰技法传播。', img: '/charts/module3-cards/leifada.jpg' },
+      { name: '计成 (1582–约1642)', meta: '《园冶》作者', desc: '系统阐释园林营造思想，借景与理水观念深刻影响徽州聚落空间。', contribution: '系统阐释园林营造思想，借景与理水观念深刻影响徽州聚落空间。', img: '/charts/module3-cards/jicheng.jpg' },
+      { name: '江永 (1681–1762)', meta: '江湾村格局整治', desc: '清代徽学学者，推动婺源江湾一带聚落格局整治与文化脉络梳理，影响徽州乡土空间秩序。', contribution: '推动婺源江湾一带聚落格局整治与文化脉络梳理，影响徽州乡土空间秩序。', img: '/charts/module3-cards/jiangyong.png' },
+      { name: '许国 (1527–1596)', meta: '建造八脚牌楼', desc: '明嘉靖朝重臣，故里立许国石坊（八脚牌楼），为徽州最具代表性的纪念性牌楼遗存之一。', contribution: '故里立许国石坊（八脚牌楼），是徽州纪念性牌楼遗存代表，对徽州石作与礼制空间表达影响突出。', img: '/charts/module3-cards/xuguo.png' },
+      { name: '汪定贵 (清末徽商)', meta: '参与宏村建设', desc: '清末盐商，捐资兴建宏村承志堂等大型宅第，推动村落建设与徽派宅第装饰艺术。', contribution: '捐资兴建宏村承志堂等大型宅第，推动村落建设与徽派宅第装饰艺术。', img: '/charts/module3-cards/wangdinggui.png' },
+      { name: '胡宗宪 (1512–1565)', meta: '龙川徽派宗祠建设', desc: '明代名臣，与绩溪龙川胡氏宗族渊源深厚，宗祠营造体现徽派礼制空间与木石工艺传统。', contribution: '与绩溪龙川胡氏宗族渊源深厚，相关宗祠营造体现徽派礼制空间与木石工艺传统。', img: '/charts/module3-cards/huzongxian.png' },
+      { name: '胡重', meta: '文档新增 | 生卒：明永乐年间（1360-1424）', desc: '宏村牛形水系与建筑总体规划者。', contribution: '主持完成黟县宏村牛形村落水系与整体建筑布局规划，联合何可达完成地形勘测和建筑排布规范，确定依山傍水、天井连缀、马头墙错落、粉墙黛瓦沿水系排布等形制，成为徽州古村落建筑规划标杆。', img: '/charts/module3-cards/doc-huzhong.png' },
+      { name: '汪舜民', meta: '文档新增 | 生卒：1440-1508', desc: '《徽州府志》建筑规制系统记载者。', contribution: '主持纂修明弘治《徽州府志》，系统记录封火山墙、粉墙黛瓦、天井采光排水设计，并附建筑舆图，覆盖徽州六县民居、祠堂、牌坊等规制，是明代徽州建筑营造核心官方规范。', img: '/charts/module3-cards/doc-wangshunmin.png' },
+      { name: '程敏政', meta: '文档新增 | 生卒：1446-1499', desc: '《休宁县志》中的徽州建筑标准化记录。', contribution: '主持纂修明嘉靖《休宁县志》，详载村落布局、祠堂结构、牌坊规制及粉墙黛瓦、天井中庭、马头墙叠落等核心特征，为徽州民间建筑营造提供标准化参考。', img: '/charts/module3-cards/doc-chengminzheng.png' },
+      { name: '赵吉士', meta: '文档新增 | 生卒：1628-1706', desc: '清代《徽州府志》核心纂修者。', contribution: '主持纂修清康熙《徽州府志》，系统描述四水归堂天井、五岳朝天马头墙、粉墙黛瓦审美和祠堂木构做法，详载六县地域差异，是清代徽州建筑营造核心典籍。', img: '/charts/module3-cards/doc-zhaojishi.png' },
+      { name: '俞正燮', meta: '文档新增 | 生卒：1775-1840', desc: '西递、宏村早期系统文献记录者。', contribution: '主持纂修清嘉庆《黟县志》，专记西递、宏村等古村民居形制，详述天井连缀院落、马头墙防火、粉墙工艺与依山就势排水，是世界遗产古建筑早期系统文献记录。', img: '/charts/module3-cards/doc-yuzhengxie.png' },
+      { name: '午荣', meta: '文档新增 | 生卒：明万历年间（1573-1620）', desc: '《鲁班经匠家镜》汇编者。', contribution: '汇编《鲁班经匠家镜》，记录马头墙尺寸、天井比例、粉墙抹灰、瓦作规制和榫卯做法，对明清徽州民居和祠堂营造尺度形成持续影响。', img: '/charts/module3-cards/doc-wurong.png' },
+      { name: '张佩芳', meta: '文档新增 | 生卒：1732-1793', desc: '《歙县志》中的古建筑细节整理者。', contribution: '主持纂修清乾隆《歙县志》，详细记载歙县民居高墙封闭、马头翘角、天井采光排水、木构屋顶和粉墙装饰细节，是徽州核心县域古建筑权威记载。', img: '/charts/module3-cards/doc-zhangpeifang.png' },
+      { name: '江峰青', meta: '文档新增 | 生卒：1860-1931', desc: '《婺源乡土志》记录晚清徽州建筑形态。', contribution: '1908年纂修《婺源乡土志》，记述婺源民居粉墙瓦檐、马头墙防火、天井聚气排水、硬山屋顶等特征，记录清代晚期徽州建筑发展形态。', img: '/charts/module3-cards/doc-jiangfengqing.png' },
+      { name: '顾炎武', meta: '文档新增 | 生卒：1613-1682', desc: '明末清初徽州建筑实地考察记录者。', contribution: '在《天下郡国利病书》中实地记载徽州“马头墙御火、天井通风采光、高墙御盗、粉墙防潮”等特征，是明末清初徽州古建筑一手考察记录。', img: '/charts/module3-cards/doc-guyanwu.png' },
+      { name: '徐弘祖（徐霞客）', meta: '文档新增 | 生卒：1587-1641', desc: '《徐霞客游记》中的徽州建筑观察。', contribution: '游历歙县、休宁、黟县后，在《徐霞客游记》中记录“马头墙连绵错落、天井幽深、粉墙映山、木构精巧”等特征，是明代徽州建筑的一手旅行观察。', img: '/charts/module3-cards/doc-xuhongzu.png' },
+      { name: '李渔', meta: '文档新增 | 生卒：1611-1680', desc: '居室理念影响徽州宅第与园林融合。', contribution: '在《闲情偶寄·居室部》中提出粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏而透等理念，契合徽州建筑审美与营造法则。', img: '/charts/module3-cards/doc-liyu.png' },
+      { name: '赵翼', meta: '文档新增 | 生卒：1727-1814', desc: '清中期徽州民居实地记录。', contribution: '在《檐曝杂记·徽州民居》中记载徽州高墙峻宇、马头墙参差、天井通风采光、粉墙素净等特征，是清代中期徽州建筑一手记录。', img: '/charts/module3-cards/doc-zhaoyi.png' },
+      { name: '柳宗元', meta: '文档新增 | 生卒：773-819', desc: '《梓人传》奠定古代营造制度叙述。', contribution: '《梓人传》系统记述营造制度、设计方法与施工管理体系，为后世工匠范式提供理论源头，影响徽州明清时期匠师体系与营造流程。', img: '/charts/module3-cards/doc-liuzongyuan.png' },
+      { name: '蒯祥', meta: '文档新增 | 生卒：1398-1481', desc: '明代官式营造规范的重要奠定者。', contribution: '主持故宫、明十三陵等官式建筑营造，完善抬梁木构、屋顶规制和石作技法，其官式规范影响徽州明清祠堂与牌坊营造。', img: '/charts/module3-cards/doc-kuaixiang.png' },
+      { name: '郑玄', meta: '文档新增 | 生卒：127-200', desc: '《考工记》注疏影响礼制空间布局。', contribution: '为《考工记》作注，阐释“前朝后寝、中轴对称、匠人营国”等理念，深刻影响徽州民居与祠堂前厅后堂、中轴对称、天井居中的布局逻辑。', img: '/charts/module3-cards/doc-zhengxuan.png' }
+    ];
+
+    const works = [
+      { name: '《营造法式》', meta: '1103年刊行', desc: '中国现存最早建筑技术官书，确立制度化营造标准。', img: '/charts/module3-cards/yingzao-fashi.jpg' },
+      { name: '《木经》', meta: '约980年成书', desc: '聚焦木构尺度与构造比例，是后世匠作实践的重要源头。', img: '/charts/module3-cards/mujing.jpg' },
+      { name: '《园冶》', meta: '1634年刊行', desc: '明代造园经典，提出相地、借景、掇山等系统方法。', img: '/charts/module3-cards/yuanye.jpg' },
+      { name: '《长物志》', meta: '1635年成书', desc: '记录室庐与陈设美学，对民居空间营造与审美有持续影响。', img: '/charts/module3-cards/changwuzhi.png' },
+      { name: '《新安志》', meta: '成书于1175年', desc: '南宋罗愿纂修，早期徽州方志名篇，记述山川城郭与营建沿革，为徽州历史地理重要文献。', img: '/charts/module3-cards/xinan-zhi.png' },
+      { name: '《鲁班经》', meta: '成书于元末明初', desc: '民间匠作秘本，辑录房舍尺度、工序与行规，反映传统木作营造经验。', img: '/charts/module3-cards/lubanjing.png' },
+      { name: '《徽州府志》', meta: '成书于1502年', desc: '明代弘治间修纂，系统记录徽州一府六县建置、祠庙城池与风土，为徽派建筑史研究基本文献。', img: '/charts/module3-cards/huizhou-fuzhi.png' },
+      { name: '《歙县志》', meta: '体现歙县历史', desc: '历代续修，详载县域城池、桥梁、祠庙与人物，浓缩歙县作为徽州核心区域的营建与人文底蕴。', img: '/charts/module3-cards/shexian-zhi.png' },
+      { name: '《家礼》', meta: '文档新增 | 南宋淳熙三年（1176年）', desc: '徽州所有民居、祠堂、牌坊的营造均严格遵循此书规范，明确了徽州建筑前厅…', contribution: '徽州所有民居、祠堂、牌坊的营造均严格遵循此书规范，明确了徽州建筑前厅后堂、天井中庭、左右厢房、中轴对称的核心布局，划定了祠堂开间、屋顶形制、马头墙等级的礼制标准，定义了天井“四水归堂”的文化内涵。', img: '/charts/module3-cards/doc-work-2-家礼.png' },
+      { name: '《鲁班经匠家镜》', meta: '文档新增 | 明万历三十四年（1606年）', desc: '明清时期徽州工匠人手一册的营造圭臬，完整记载了江南民居（核心含徽州）…', contribution: '明清时期徽州工匠人手一册的营造圭臬，完整记载了江南民居（核心含徽州）的马头墙营造尺寸、天井的开间进深比例、粉墙的抹灰工艺、屋顶的瓦作规制、木构的榫卯做法，徽州现存明清民居、祠堂的营造尺寸与形制均与此书完全契合，是徽州民间建筑营造的核心法典。', img: '/charts/module3-cards/doc-work-6-鲁班经匠家镜.png' },
+      { name: '嘉靖《休宁县志》', meta: '文档新增 | 明嘉靖二十九年（1550年）', desc: '详载休宁村落布局、民居形制、祠堂结构、牌坊规制，明确记录了徽州民居“…', contribution: '详载休宁村落布局、民居形制、祠堂结构、牌坊规制，明确记录了徽州民居“粉墙黛瓦、天井中庭、马头墙叠落、木构雕饰”的核心特征，附多幅村落、祠堂建筑图，是徽州县域建筑最早的系统记载。', img: '/charts/module3-cards/doc-work-8-嘉靖休宁县志.png' },
+      { name: '嘉庆《黟县志》', meta: '文档新增 | 清嘉庆十七年（1812年）', desc: '专门记述了黟县西递、宏村等古村落的民居形制，详细描述了天井连缀的院落…', contribution: '专门记述了黟县西递、宏村等古村落的民居形制，详细描述了天井连缀的院落布局、马头墙的错落防火设计、粉墙的营造工艺、依山就势的屋顶排水做法，是徽州古村落民居建筑的核心文献。', img: '/charts/module3-cards/doc-work-10-嘉庆黟县志.jpeg' },
+      { name: '《婺源乡土志》', meta: '文档新增 | 清光绪三十四年（1908年，严格符合1910年前要求）', desc: '清代晚期徽州建筑的最新文献记录，专门记述了婺源古村落的民居建筑，明确…', contribution: '清代晚期徽州建筑的最新文献记录，专门记述了婺源古村落的民居建筑，明确记载了婺源民居“粉墙瓦檐、马头墙防火、天井聚气排水、硬山屋顶”的核心特征，是1910年前最晚的徽州建筑本土文献。', img: '/charts/module3-cards/doc-work-11-婺源乡土志.jpeg' },
+      { name: '万历《祁门县志》', meta: '文档新增 | 明万历二十八年（1600年）', desc: '详细记载了祁门善和村、左田村等宗族村落的祠堂、民居的基址、结构、营造…', contribution: '详细记载了祁门善和村、左田村等宗族村落的祠堂、民居的基址、结构、营造规制，记录了徽州山区民居的天井布局、马头墙形制、木构屋顶的山地适应做法，是徽州山区建筑的核心记载。', img: '/charts/module3-cards/doc-work-12-万历祁门县志.jpeg' },
+      { name: '乾隆《绩溪县志》', meta: '文档新增 | 清乾隆二十一年（1756年）', desc: '记载了绩溪胡氏、汪氏等大宗族的民居、祠堂建筑，详细描述了**“天井深…', contribution: '记载了绩溪胡氏、汪氏等大宗族的民居、祠堂建筑，详细描述了**“天井深幽、马头墙高耸、木构精巧、粉墙素净”**的建筑特征，附祠堂、民居平面图，是徽州北乡建筑的权威记载。', img: '/charts/module3-cards/doc-work-13-乾隆绩溪县志.jpeg' },
+      { name: '《新安大族志》', meta: '文档新增 | 明嘉靖二十八年（1549年）', desc: '详细记载了徽州程、汪、吴、黄、胡等各大宗族的祠堂、宅第的布局、结构、…', contribution: '详细记载了徽州程、汪、吴、黄、胡等各大宗族的祠堂、宅第的布局、结构、装饰、营造规制，附祠堂、宅第的平面图、立面图，是徽州宗族建筑（祠堂、府第）的核心文献。', img: '/charts/module3-cards/doc-work-14-新安大族志.png' },
+      { name: '《休宁西门汪氏族谱》', meta: '文档新增 | 明嘉靖四十五年（1566年）', desc: '附完整的汪氏宗祠平面图、立面图、民居院落图，详细记录了祠堂的抬梁穿斗…', contribution: '附完整的汪氏宗祠平面图、立面图、民居院落图，详细记录了祠堂的抬梁穿斗混合木构、马头墙封火、天井藻井、屋顶规制，是徽州祠堂建筑最完整的明代原始记录，也是徽州建筑结构最直观的明代一手图录。', img: '/charts/module3-cards/doc-work-15-休宁西门汪氏族谱.jpeg' },
+      { name: '《三才图会·宫室卷》', meta: '文档新增著作', desc: '明代百科式图录，绘制了江南民居（含徽州核心类型）的马头墙、天井、粉墙…', contribution: '明代百科式图录，绘制了江南民居（含徽州核心类型）的马头墙、天井、粉墙、硬山屋顶的完整图式，标注了营造尺寸，是徽州建筑形制最早的可视化图谱之一，徽州工匠多参考此图谱营造。', img: '/charts/module3-cards/doc-work-16-三才图会宫室卷.jpeg' },
+      { name: '乾隆《江南通志》', meta: '文档新增 | 清乾隆元年（1736年）', desc: '清代江南省官方通志，专门记载了**“徽州民居，高墙峻宇，马头墙叠落，…', contribution: '清代江南省官方通志，专门记载了**“徽州民居，高墙峻宇，马头墙叠落，天井四水归堂，粉墙黛瓦，为江南民居之冠”**，系统描述了徽州建筑的核心特征，是官方对徽州建筑的权威认定。', img: '/charts/module3-cards/doc-work-17-乾隆江南通志.png' },
+      { name: '光绪《安徽通志》', meta: '文档新增 | 清光绪四年（1878年）', desc: '安徽省官方通志，专设《宫室志》，详细记述了徽州府6县的民居、祠堂、牌…', contribution: '安徽省官方通志，专设《宫室志》，详细记述了徽州府6县的民居、祠堂、牌坊、寺观建筑，明确记载了徽州建筑“粉墙黛瓦，天井深邃，马头墙防火御盗，木构雕饰精美”的核心特征，是省级官方对徽州建筑的系统记载。', img: '/charts/module3-cards/doc-work-18-光绪安徽通志.png' },
+      { name: '《天下郡国利病书·江南备要·徽州府》', meta: '文档新增 | 清康熙元年（1662年）', desc: '实地考察后记载了徽州**“地窄人稠，屋宇密集，马头墙以御火，天井以通…', contribution: '实地考察后记载了徽州**“地窄人稠，屋宇密集，马头墙以御火，天井以通风采光，高墙以御盗，粉墙以防潮”**的建筑特征，是明末清初徽州建筑的一手实地考察记录。', img: '/charts/module3-cards/doc-work-19-天下郡国利病书江南备要徽州府.png' },
+      { name: '《徐霞客游记·江右游日记·徽州府》', meta: '文档新增 | 明崇祯十五年（1642年）', desc: '实地游历后记录了徽州**“白屋依山而建，马头墙连绵错落，天井幽深，粉…', contribution: '实地游历后记录了徽州**“白屋依山而建，马头墙连绵错落，天井幽深，粉墙映山，木构精巧”**的建筑特征，是明代徽州建筑的一手旅行考察记录。', img: '/charts/module3-cards/doc-work-20-徐霞客游记江右游日记徽州府.png' },
+      { name: '《黄山图经》', meta: '文档新增 | 宋景祐三年（1036年）', desc: '宋代黄山地区的地理图志，记载了黄山周边徽州地区的寺院、山居建筑，记录…', contribution: '宋代黄山地区的地理图志，记载了黄山周边徽州地区的寺院、山居建筑，记录了徽州山居“依山就势、粉墙瓦舍、天井庭院、硬山屋顶”的早期形制，是徽州山地建筑最早的文献记录。', img: '/charts/module3-cards/doc-work-21-黄山图经.png' },
+      { name: '《檐曝杂记·徽州民居》', meta: '文档新增 | 清乾隆六十年（1795年）', desc: '专门记载了**“徽州人屋宇，皆高墙峻宇，马头墙参差高下，天井如井，通…', contribution: '专门记载了**“徽州人屋宇，皆高墙峻宇，马头墙参差高下，天井如井，通风采光，粉墙素净，不施彩绘，为江南民居之特色”**，是清代中期徽州建筑的实地记录。', img: '/charts/module3-cards/doc-work-22-檐曝杂记徽州民居.jpeg' },
+      { name: '《闲情偶寄·居室部》', meta: '文档新增 | 清康熙十年（1671年）', desc: '专门记述了**“粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏…', contribution: '专门记述了**“粉墙宜白、瓦宜青、天井宜小而深、墙宜高而峻、门窗宜漏而透”**的营造理念，完全契合徽州建筑的审美与营造法则，深刻影响了清代徽州民居与园林的营造。', img: '/charts/module3-cards/doc-work-23-闲情偶寄居室部.png' },
+      { name: '《考工记》', meta: '文档新增 | 先秦时期', desc: '中国古代最早的营造典籍，提出的**“前朝后寝、中轴对称、匠人营国”*…', contribution: '中国古代最早的营造典籍，提出的**“前朝后寝、中轴对称、匠人营国”**布局理念，是徽州民居、祠堂“前厅后堂、中轴对称、天井居中”布局的核心源头，深刻影响了徽州建筑的礼制布局。', img: '/charts/module3-cards/doc-work-25-考工记.png' },
+      { name: '《梓人传》', meta: '文档新增 | 唐永贞元年（805年）', desc: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确…', contribution: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确立了古代工匠的营造范式，徽州明清时期的工匠体系、营造流程、设计方法，均继承了《梓人传》中记载的传统，是徽州营造匠师体系的源头文献。', img: '/charts/module3-cards/doc-work-29-梓人传.png' }
+    ];
+
+    function inferChronologyYear(item) {
+      const text = `${item?.name || ''} ${item?.meta || ''}`;
+      const years = Array.from(text.matchAll(/\d{3,4}/g)).map(m => Number(m[0]));
+      if (years.length) return years[0];
+      if (/先秦/.test(text)) return -2000;
+      if (/元末明初/.test(text)) return 1368;
+      if (/明末清初/.test(text)) return 1644;
+      if (/清末/.test(text)) return 1880;
+      return Number.POSITIVE_INFINITY;
+    }
+
+    function sortByChronology(items) {
+      return items
+        .map((item, index) => ({ item, index, year: inferChronologyYear(item) }))
+        .sort((a, b) => a.year - b.year || a.index - b.index)
+        .map(entry => entry.item);
+    }
+
+    const sortedScientists = sortByChronology(scientists);
+    const sortedWorks = sortByChronology(works);
+
+    const cardGrid = document.getElementById('cardGrid');
+    const btnScientist = document.getElementById('btnScientist');
+    const btnWork = document.getElementById('btnWork');
+
+    function escapeHtml(text) {
+      return String(text ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function expandContributionText(item) {
+      const base = (item.contribution || item.desc || '暂无贡献介绍').trim();
+      const extension = `从徽州建筑演进来看，${item.name}所体现的方法与经验，不仅作用于单体构件或局部装饰，也推动了村落空间秩序、礼制表达与工艺传承的协同发展。其影响长期体现在马头墙、天井、粉墙黛瓦与木石构造等关键要素的组织方式中，对后续保护研究与展示传播仍有重要参照价值。`;
+      return `${base}${base.endsWith('。') ? '' : '。'}${extension}`;
+    }
+
+    function renderCards(list, options = {}) {
+      const { clickable = false } = options;
+      cardGrid.innerHTML = list.map(item => `
+        <article class="card">
+          <div class="card-thumb ${clickable ? 'is-clickable' : ''}">
+            <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.name)}" loading="lazy" referrerpolicy="no-referrer" />
+            <div class="card-thumb-name">${escapeHtml(item.name)}</div>
+            ${clickable ? `<div class="card-thumb-overlay"><div class="card-thumb-overlay-title">背景信息</div><div class="card-thumb-overlay-meta">${escapeHtml(item.name)} ｜ ${escapeHtml(item.meta || '营建先哲')}</div><div class="card-thumb-overlay-body">${escapeHtml(expandContributionText(item))}</div></div>` : ''}
+          </div>
+          <h3>${escapeHtml(item.name)}</h3>
+          <div class="meta">${escapeHtml(item.meta)}</div>
+          <p class="desc">${escapeHtml(item.desc)}</p>
+        </article>
+      `).join('');
+
+      if (clickable) {
+        cardGrid.querySelectorAll('.card-thumb.is-clickable').forEach((thumb) => {
+          thumb.addEventListener('click', () => {
+            thumb.classList.toggle('is-flipped');
+          });
+        });
+      }
+    }
+
+    btnScientist.addEventListener('click', () => {
+      btnScientist.classList.add('active');
+      btnWork.classList.remove('active');
+      renderCards(sortedScientists, { clickable: true });
+    });
+
+    btnWork.addEventListener('click', () => {
+      btnWork.classList.add('active');
+      btnScientist.classList.remove('active');
+      renderCards(sortedWorks, { clickable: true });
+    });
+
+    renderCards(sortedScientists, { clickable: true });
+
+    const craftOrder = ['wood', 'stone', 'brick'];
+    const detailTabs = ['process', 'pattern', 'tools', 'theme', 'history'];
+    const detailName = {
+      process: '工艺流程',
+      pattern: '常用纹样',
+      tools: '使用工具',
+      theme: '常用题材',
+      history: '历史发展'
+    };
+
+    const craftData = {
+      wood: {
+        name: '木雕',
+        src: '/charts/三雕图片/木雕.png',
+        palette: { main: '#5C2C26', soft: '#D4A373' },
+        intro: '徽州木雕是明清徽派建筑和家具的核心装饰，以枫木、樟木、楠木等为材，常见于梁架、雀替、隔扇与家具面板，兼具审美与教化功能。',
+        introTags: ['建筑装饰', '梁架雀替', '透雕浮雕', '教化寓意'],
+        process: [
+          { title: '选料与干燥', desc: '选择无裂木材，先行阴干定性。', detail: '控制含水率，避免后期开裂翘曲；阴干与回潮能让木材应力释放，保证雕刻稳定。', image: '/charts/module3-assets/wood_material_logs.svg' },
+          { title: '放样起稿', desc: '按构件比例在木面布图，确定层次。', detail: '先定对称轴与主体位置，再分前中后景，提前规划透雕镂空区域，避免后续刀路拥挤。', image: '/charts/module3-assets/wood_process_bench.svg' },
+          { title: '打坯定形', desc: '粗凿出体块关系，建立主轮廓。', detail: '粗凿先立“势”，把大起伏与主轮廓做准确，为细部留余量，防止过度削薄。', image: '/charts/module3-assets/wood_relief_carve.svg' },
+          { title: '分层精雕', desc: '细凿衣纹羽毛等细节，形成透雕层次。', detail: '通过穿插、镂空、起伏形成层次；关键在人物面相、花叶筋脉与边饰组织的节奏统一。', image: '/charts/module3-assets/wood_tool_chisel.svg' },
+          { title: '打磨上油', desc: '逐级打磨后上桐油/生漆，突出木纹。', detail: '由粗到细逐级收光，最后薄涂养护，让木纹与明暗层次更温润耐看。', image: '/charts/module3-assets/wood_polish.svg' }
+        ],
+        pattern: [
+          { name: '龙凤纹', note: '尊贵祥瑞，常见于梁架节点。', detail: '常作中心主题或顶角构图，配云纹、卷草形成“主—辅—边”层级，提升仪式感。', image: '/charts/module3-assets/wood_pattern_dragonphoenix.svg' },
+          { name: '蝙蝠纹', note: '“蝠”谐“福”，寓意纳福。', detail: '常与寿字、如意、莲花组合，构成“福寿双全”等吉语表达。', image: '/charts/module3-assets/wood_pattern_sketch.svg' },
+          { name: '回字纹', note: '连绵不断，常作边框组织纹。', detail: '用来稳住画面外缘与节奏，防止主画面发散，是典型的组织纹样。', image: '/charts/module3-assets/wood_pattern_hui.svg' },
+          { name: '卷草纹', note: '生命繁茂，常用于过渡带。', detail: '适合连接人物与器物、边饰与主体，让转场自然，画面更“连贯”。', image: '/charts/module3-assets/wood_pattern_floral.svg' }
+        ],
+        tools: [
+          { name: '平凿', note: '开面与修平', detail: '用于压地与平面整理，是建立层次“底板”的基础工具。', image: '/charts/module3-assets/wood_tool_chisel.svg' },
+          { name: '圆凿', note: '弧面与曲线', detail: '处理花瓣、云头、衣褶等圆转起伏，让光影更柔和。', image: '/charts/module3-assets/wood_tool_hatchet.svg' },
+          { name: '斜口凿', note: '细部切角', detail: '适合转折、棱角与边线收口，决定画面“刀味”的利落程度。', image: '/charts/module3-assets/wood_tool_saw.svg' },
+          { name: '木槌', note: '控制敲击力度', detail: '配合凿具控制入刀深浅；力度均匀才能避免崩口与拉裂。', image: '/charts/module3-assets/wood_tool_mallet.svg' },
+          { name: '砂纸', note: '精磨收光', detail: '用于最后收束与细节统一，让纹样边缘更干净、触感更温润。', image: '/charts/module3-assets/wood_tool_sandpaper.svg' }
+        ],
+        theme: [
+          { name: '儒学文化', note: '忠孝节义、理学教化。', sub: '常用于祠堂与厅堂核心界面。', image: '/charts/module3-assets/wood_process_bench.svg' },
+          { name: '祥禽瑞兽', note: '麒麟、龙凤、蝙蝠。', sub: '以谐音与象征表达吉庆愿景。', image: '/charts/module3-assets/wood_pattern_dragonphoenix.svg' },
+          { name: '历史典故', note: '戏文与历史场景。', sub: '通过叙事图像传递伦理秩序。', image: '/charts/module3-assets/wood_relief_carve.svg' },
+          { name: '花鸟鱼虫', note: '文人自然审美。', sub: '梅兰竹菊等母题高频出现。', image: '/charts/module3-assets/wood_pattern_sketch.svg' }
+        ],
+        history: [
+          { period: '宋代起源', desc: '匠作规则初步出现。', detail: '以木作营造为核心的规范意识开始形成，工序与构件比例逐步标准化。', image: '/charts/module3-assets/history-web-huizhou-wood-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '宋元基础', desc: '木作制度化经验逐步积累。', detail: '木构尺度与榫卯规范在这一阶段逐渐成型，为徽州木雕进入建筑核心构件奠定了技术底板。', image: '/charts/module3-assets/history-web-huizhou-wood-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '明清高峰', desc: '多层透雕成熟，装饰体系完整。', detail: '梁架、雀替、隔扇等部位形成稳定的“叙事+纹样”双重表达，木雕成为徽派空间气质的核心视觉语言。', image: '/charts/module3-assets/history-web-huizhou-wood-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '当代传承', desc: '非遗保护与师徒体系并进。', detail: '在传统师徒制基础上，叠加院校课程、展陈传播与数字记录，形成“活态传承+现代转译”并行路径。', image: '/charts/module3-assets/history-web-huizhou-mansion-real.jpg', source: 'China Daily / Amazing Huangshan' }
+        ]
+      },
+      stone: {
+        name: '石雕',
+        src: '/charts/三雕图片/石雕.png',
+        palette: { main: '#5B6770', soft: '#B8C0C8' },
+        intro: '徽州石雕多用青石、茶园石，风格古朴厚重，广泛用于牌坊、柱础、抱鼓石、石窗和栏杆，是徽派建筑外部识别度最高的装饰系统之一。',
+        introTags: ['牌坊石作', '柱础栏板', '高浮雕', '礼制象征'],
+        process: [
+          { title: '选荒料', desc: '挑选纹理顺直、无暗裂石材。', detail: '常见黟县青、茶园石等；避开暗裂与砂眼，确保耐候与可雕性。', image: '/charts/module3-assets/stone_material_rocks.svg' },
+          { title: '切割整形', desc: '按构件尺度处理体量。', detail: '先定外轮廓与结构尺寸（柱础/抱鼓石/栏板），为纹样留足厚度。', image: '/charts/module3-assets/stone_rough_shape_hammer.svg' },
+          { title: '墨线起稿', desc: '将图样准确转绘到石面。', detail: '以墨线分区定位，先定对称轴与关键节点，确保构图稳重不偏斜。', image: '/charts/module3-assets/stone_draft_relief.svg' },
+          { title: '打荒定形', desc: '大錾去料，确立体积关系。', detail: '先粗后细建立主要起伏，避免直接入细导致边缘崩裂。', image: '/charts/module3-assets/stone_tool_hatchet.svg' },
+          { title: '细部精雕', desc: '小錾修纹样，强化层次。', detail: '通过线刻与浅透结合形成细密石面肌理，让纹样更耐看。', image: '/charts/module3-assets/stone_fine_carve_relief.svg' },
+          { title: '打磨收光', desc: '保持古朴肌理与耐候性。', detail: '保留适度工具纹路与磨面过渡，既有手工味也便于户外长期风化。', image: '/charts/module3-assets/stone_grind_stones.svg' }
+        ],
+        pattern: [
+          { name: '莲花纹', note: '清净吉祥，常用于柱础。', image: '/charts/module3-assets/stone_pattern_floral.svg' },
+          { name: '云水纹', note: '流动感强，适合边带。', image: '/charts/module3-assets/stone_pattern_taotie.svg' },
+          { name: '八仙器纹', note: '寓意庇佑与福泽。', image: '/charts/module3-assets/stone_pattern_dragonphoenix.svg' },
+          { name: '回纹', note: '规整克制，适配石面构图。', image: '/charts/module3-assets/stone_draft_relief.svg' }
+        ],
+        tools: [
+          { name: '大錾', note: '打荒去料', detail: '用于快速去除大体量，决定整体起伏关系。', image: '/charts/module3-assets/stone_tool_chisel.svg' },
+          { name: '扁錾', note: '平面与转折', detail: '处理平面、转折与边线，形成清晰结构骨架。', image: '/charts/module3-assets/stone_tool_knife.svg' },
+          { name: '剁斧', note: '粗肌理塑造', detail: '用于背景肌理与粗面效果，增强古朴厚重的质感。', image: '/charts/module3-assets/stone_tool_hatchet.svg' },
+          { name: '小锤', note: '精细敲击', detail: '与小錾配合控制细部节奏，减少毛边与碎裂。', image: '/charts/module3-assets/stone_tool_mallet.svg' },
+          { name: '磨石', note: '收面处理', detail: '用于收口与过渡，控制亮暗对比与触感。', image: '/charts/module3-assets/stone_grind_stones.svg' }
+        ],
+        theme: [
+          { name: '儒家伦理', note: '忠孝节义叙事。', sub: '强化教化功能与空间秩序。', image: '/charts/module3-assets/stone_draft_relief.svg' },
+          { name: '宗族文化', note: '祠堂与牌坊语义。', sub: '聚焦家族荣誉与谱系记忆。', image: '/charts/module3-assets/stone_fine_carve_relief.svg' },
+          { name: '吉祥寓意', note: '福禄寿与瑞兽符号。', sub: '通过图像符号承载祈愿。', image: '/charts/module3-assets/stone_pattern_dragonphoenix.svg' },
+          { name: '乡土生活', note: '劳作与地域记忆。', sub: '体现地方生活与景观经验。', image: '/charts/module3-assets/stone_pattern_floral.svg' }
+        ],
+        history: [
+          { period: '宋代起源', desc: '石构细部开始分工。', detail: '早期石作从结构支撑扩展到装饰表达，门头、台基与栏板工艺趋于成熟。', image: '/charts/module3-assets/history-web-huizhou-stone-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '宋元阶段', desc: '石作技艺稳定发展。', detail: '青石构件在门头、柱础、栏板等部位广泛应用，工艺从粗放营造转向结构与装饰并重。', image: '/charts/module3-assets/history-web-huizhou-stone-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '明清繁荣', desc: '牌坊石雕达到工艺高峰。', detail: '高浮雕与透雕叠加使用，石坊系统形成完整礼制语义，成为徽州外部空间最具识别度的文化符号。', image: '/charts/module3-assets/history-web-huizhou-stone-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '现代应用', desc: '用于修复与景观转译。', detail: '当代石雕以文保修缮为核心，同时在公共景观中进行尺度、纹样与材料语言的再设计。', image: '/charts/module3-assets/history-web-huizhou-mansion-real.jpg', source: 'China Daily / Amazing Huangshan' }
+        ]
+      },
+      brick: {
+        name: '砖雕',
+        src: '/charts/三雕图片/砖雕.png',
+        palette: { main: '#5A5550', soft: '#8A7F75' },
+        intro: '徽州砖雕以水磨青砖为主材，多用于门楼、门罩、墀头和屋檐，擅长多层透雕，是徽派立面视觉“点睛”部位。',
+        introTags: ['门楼系统', '多层透雕', '叙事构图', '青砖材性'],
+        process: [
+          { title: '制坯烧砖', desc: '黄黏土制坯，控温烧成青砖。', detail: '砖质需细密坚实、敲击有声；烧成与养护决定后续雕刻是否易崩裂。', image: '/charts/module3-assets/brick_material_tree.svg' },
+          { title: '验砖窨水', desc: '检测致密度，稳定材性。', detail: '通过窨水与阴干控制砖体硬度与韧性，让刀口更顺、纹样更干净。', image: '/charts/module3-assets/brick_level_block.svg' },
+          { title: '放样布局', desc: '确定门楼构图与叙事层次。', detail: '门楼砖雕多为段落式叙事：先定主题，再组织边饰与云纹过渡，层级更清楚。', image: '/charts/module3-assets/brick_arch_processing.svg' },
+          { title: '打坯分层', desc: '先开大形，再分深浅层。', detail: '先定前后景深浅，控制镂空层数与薄厚，避免局部薄弱导致断裂。', image: '/charts/module3-assets/brick_draft_relief.svg' },
+          { title: '出细精雕', desc: '人物面部与叶脉细节成形。', detail: '重点在眉眼口鼻与衣纹折线的刀路节奏，决定作品神韵与“活气”。', image: '/charts/module3-assets/brick_fine_carve_relief.svg' },
+          { title: '拼装挂镶', desc: '复杂构件组合安装。', detail: '多块砖雕需对缝咬合；安装后整体画面才连贯，边饰与主画面不“断”。', image: '/charts/module3-assets/brick_paint_bucket.svg' }
+        ],
+        pattern: [
+          { name: '卷草纹', note: '柔性边带，常作过渡。', image: '/charts/module3-assets/brick_pattern_plant.svg' },
+          { name: '云纹', note: '强化屋檐与门罩节奏。', image: '/charts/module3-assets/brick_pattern_geometric.svg' },
+          { name: '缠枝纹', note: '连续组织，适配长条面。', image: '/charts/module3-assets/brick_pattern_plant.svg' },
+          { name: '福寿字纹', note: '直接表达吉祥主题。', image: '/charts/module3-assets/brick_pattern_animal.svg' }
+        ],
+        tools: [
+          { name: '平凿', note: '基层塑形', detail: '用于压地与大面塑形，先把背景打稳，主纹样才立得住。', image: '/charts/module3-assets/brick_tool_chisel.svg' },
+          { name: '细凿', note: '纹样刻画', detail: '刻画叶脉、衣纹、云头等细节，决定精致度与层次。', image: '/charts/module3-assets/brick_tool_gimlet.svg' },
+          { name: '刻刀', note: '转角细节', detail: '处理转折与边线收口，让人物五官与边饰更干净。', image: '/charts/module3-assets/brick_tool_plane.svg' },
+          { name: '小锤', note: '力度控制', detail: '砖材易崩，敲击更轻更稳，避免炸口与掉角。', image: '/charts/module3-assets/brick_tool_charcoal.svg' },
+          { name: '磨料', note: '收边修光', detail: '用于最后修边与过渡，统一整套砖雕的观感与质感。', image: '/charts/module3-assets/brick_tool_brush.svg' }
+        ],
+        theme: [
+          { name: '人物故事', note: '戏文、典故叙事强。', sub: '门楼中段常作完整场景表达。', image: '/charts/module3-assets/brick_arch_processing.svg' },
+          { name: '吉祥图案', note: '双龙、五福等主题。', sub: '以祝愿性图像强化门第象征。', image: '/charts/module3-assets/brick_pattern_animal.svg' },
+          { name: '山水建筑', note: '门楼景窗常见母题。', sub: '构成立面叙事层次与节奏。', image: '/charts/module3-assets/brick_level_block.svg' },
+          { name: '民俗场景', note: '生活理想的图像化。', sub: '贴近日常经验的寓意表达。', image: '/charts/module3-assets/brick_draft_relief.svg' }
+        ],
+        history: [
+          { period: '明初形成', desc: '门楼砖雕体系起步。', detail: '砖雕从局部纹样走向整门楼构图，工匠开始建立分层、分段的叙事组织方式。', image: '/charts/module3-assets/history-web-huizhou-brick-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '明代成型', desc: '门楼砖雕系统化出现。', detail: '砖雕从局部装饰走向门楼系统，题材与构图开始围绕家族伦理与吉祥叙事进行组织。', image: '/charts/module3-assets/history-web-huizhou-brick-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '清代成熟', desc: '多层透雕与叙事并重。', detail: '砖材处理与层次控制技术成熟，人物故事、植物纹与文字纹在立面中形成复合视觉秩序。', image: '/charts/module3-assets/history-web-huizhou-brick-real.jpg', source: 'China Daily / Amazing Huangshan' },
+          { period: '当代修复', desc: '以数字测绘辅助复原。', detail: '通过三维测绘、病害记录与构件级建档，砖雕修复更重视“原工艺逻辑”的可追溯与可复现。', image: '/charts/module3-assets/history-web-huizhou-mansion-real.jpg', source: 'China Daily / Amazing Huangshan' }
+        ]
+      }
+    };
+
+    let graphData = { nodes: [], links: [] };
+    let graphInitialData = null;
+
+    const state = {
+      activeCraft: 'wood',
+      activeDetailTab: 'process',
+      activeNodeId: null,
+      hoverNodeId: null,
+      expandedKey: null,
+      levelFilterKey: 'all'
+    };
+
+    const carvingImage = document.getElementById('carvingImage');
+    const carvingName = document.getElementById('carvingName');
+    const carvingBrief = document.getElementById('carvingBrief');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const graphSvg = document.getElementById('graphSvg');
+    const graphHint = document.getElementById('graphHint');
+    const detailTabsEl = document.getElementById('detailTabs');
+    const detailContentEl = document.getElementById('detailContent');
+    const detailHint = document.getElementById('detailHint');
+    const graphTooltip = document.getElementById('graphTooltip');
+    const graphWrap = document.querySelector('.graph-wrap');
+    const btnAutoLayout = document.getElementById('btnAutoLayout');
+    const btnToggleFix = document.getElementById('btnToggleFix');
+    const btnResetLayout = document.getElementById('btnResetLayout');
+    const btnLevelsAll = document.getElementById('btnLevelsAll');
+    const btnLevelsNP = document.getElementById('btnLevelsNP');
+    const btnLevelsNPC = document.getElementById('btnLevelsNPC');
+
+    const levelFilterMap = {
+      all: { levels: ['national', 'provincial', 'city', 'county', 'general'], label: '全谱' },
+      np: { levels: ['national', 'provincial'], label: '国家+省级' },
+      npc: { levels: ['national', 'provincial', 'city'], label: '国家+省+市' }
+    };
+    const relationMeta = {
+      'master-apprentice': { label: '师承', dash: '', width: 2.1 },
+      guidance: { label: '指导', dash: '6 4', width: 1.9 },
+      family: { label: '家族', dash: '2 3', width: 1.9 },
+      affiliation: { label: '归属', dash: '', width: 1.4 },
+      'work-of': { label: '代表作关联', dash: '10 4', width: 1.6 }
+    };
+    let dragNodeId = null;
+    let dragMoved = false;
+    let layoutLocked = false;
+    let layoutRunning = false;
+    let layoutFrame = null;
+
+    function cloneGraphData(data) {
+      return {
+        nodes: data.nodes.map(n => ({ ...n })),
+        links: data.links.map(l => ({ ...l }))
+      };
+    }
+
+    function generateLinksFromNodes(nodes) {
+      const links = [];
+
+      const craftRoots = nodes.filter(n => n.type === 'craft' && n.level === 'root');
+
+      // 1) 先把每个雕种中心节点与该雕种的所有节点建立“归属”关系，保证整体联通
+      craftRoots.forEach(root => {
+        nodes
+          .filter(n => n.id !== root.id && n.craft === root.craft && n.type !== 'craft')
+          .forEach(n => {
+            links.push({ source: root.id, target: n.id, relationType: 'affiliation' });
+          });
+      });
+
+      // 2) 再根据节点的 mentorNames 生成师承边
+      nodes
+        .filter(n => n.type === 'inheritor' && Array.isArray(n.mentors) && n.mentors.length)
+        .forEach(student => {
+          student.mentors.forEach(mentorName => {
+            const mentor = nodes.find(
+              n => n.type === 'inheritor' && n.craft === student.craft && n.name === mentorName
+            );
+            if (mentor) {
+              links.push({
+                source: mentor.id,
+                target: student.id,
+                relationType: 'master-apprentice'
+              });
+            }
+          });
+        });
+
+      // 3) 生成作品节点与传承人的“代表作关联”
+      nodes
+        .filter(n => (n.type === 'work' || n.type === 'masterpiece' || n.level === 'work') && Array.isArray(n.workOf))
+        .forEach(work => {
+          work.workOf.forEach(personName => {
+            const person = nodes.find(
+              n => n.type === 'inheritor' && n.craft === work.craft && n.name === personName
+            );
+            if (person) {
+              links.push({
+                source: work.id,
+                target: person.id,
+                relationType: 'work-of'
+              });
+            }
+          });
+        });
+
+      return links;
+    }
+
+    function updateLayoutButtons() {
+      btnToggleFix.classList.toggle('active', layoutLocked);
+      btnToggleFix.textContent = layoutLocked ? '已固定' : '固定节点';
+      btnAutoLayout.textContent = layoutRunning ? '布局中...' : '自动布局';
+      btnAutoLayout.classList.toggle('active', layoutRunning);
+    }
+
+    function getActiveCraftCenter() {
+      return { x: 280, y: 180 };
+    }
+
+    function updateLevelFilterButtons() {
+      btnLevelsAll.classList.toggle('active', state.levelFilterKey === 'all');
+      btnLevelsNP.classList.toggle('active', state.levelFilterKey === 'np');
+      btnLevelsNPC.classList.toggle('active', state.levelFilterKey === 'npc');
+    }
+
+    function computeVisibleNodeIds(nodes, allowedLevels) {
+      const allowed = new Set(allowedLevels);
+      return new Set(
+        nodes
+          .filter(n => n.level === 'root' || n.level === 'work' || allowed.has(n.level))
+          .map(n => n.id)
+      );
+    }
+
+    function setLevelFilter(key) {
+      state.levelFilterKey = key;
+      updateLevelFilterButtons();
+      // 切换层级时，直接清空当前选中和 hover，避免引用到已隐藏节点
+      state.activeNodeId = null;
+      state.hoverNodeId = null;
+      renderAll();
+    }
+
+    function getNodeRadius(node) {
+      if (node.level === 'root') return 20;
+      if (node.level === 'national') return 18;
+      if (node.level === 'provincial') return 15;
+      if (node.level === 'city') return 12;
+      if (node.level === 'county') return 10.5;
+      if (node.level === 'work') return 12;
+      if (node.level === 'general') return 11;
+      return 11;
+    }
+
+    function getNodeTooltip(node) {
+      const typeLabel = node.type === 'craft'
+        ? '雕种节点'
+        : (node.type === 'inheritor' ? '传承人节点' : '传世名作节点');
+      const levelLabel = {
+        root: '核心',
+        national: '国家级',
+        provincial: '省级',
+        city: '市级',
+        county: '县级',
+        general: '一般',
+        work: '代表作'
+      }[node.level] || '一般';
+      const craftName = craftData[node.craft]?.name || '';
+      const media = node.image
+        ? `<div class="tooltip-media"><img src="${node.image}" alt="${node.name}" loading="lazy" /></div>`
+        : '';
+
+      const title = `<strong>${node.name}</strong><br/>${craftName} · ${typeLabel} · ${levelLabel}`;
+      const roleLine = node.role ? `${node.role}` : (node.desc ? `${node.desc}` : '');
+      const originLine = node.origin ? `籍贯/地区：${node.origin}` : '';
+      const studioLine = node.studio ? `工作室/机构：${node.studio}` : '';
+      const mentorsLine = Array.isArray(node.mentors) && node.mentors.length
+        ? `师从：${node.mentors.join('、')}`
+        : '';
+      const worksLine = Array.isArray(node.works) && node.works.length
+        ? `代表作品：${node.works.join('、')}`
+        : (typeof node.works === 'string' && node.works.trim() ? `代表作品：${node.works.trim()}` : '');
+
+      const extraLines = [roleLine, originLine, studioLine, mentorsLine, worksLine].filter(Boolean).join('<br/>');
+      return `${media}${title}${extraLines ? `<br/>${extraLines}` : ''}`;
+    }
+
+    function showGraphTooltip(html, x, y) {
+      graphTooltip.innerHTML = html;
+      graphTooltip.classList.add('show');
+
+      const pad = 8;
+      const tw = graphTooltip.offsetWidth || 220;
+      const th = graphTooltip.offsetHeight || 60;
+      const wrapW = graphWrap.clientWidth;
+      const wrapH = graphWrap.clientHeight;
+
+      const clampedX = Math.max(pad, Math.min(wrapW - tw - pad, x));
+      const clampedY = Math.max(pad, Math.min(wrapH - th - pad, y));
+
+      graphTooltip.style.left = `${clampedX}px`;
+      graphTooltip.style.top = `${clampedY}px`;
+    }
+
+    function setCraft(craftId) {
+      state.activeCraft = craftId;
+      if (state.activeNodeId) {
+        const node = graphData.nodes.find(n => n.id === state.activeNodeId);
+        if (!node || node.craft !== craftId) state.activeNodeId = null;
+      }
+      renderAll();
+    }
+
+    function cycleCraft(step) {
+      const idx = craftOrder.indexOf(state.activeCraft);
+      const nextIdx = (idx + step + craftOrder.length) % craftOrder.length;
+      setCraft(craftOrder[nextIdx]);
+    }
+
+    function setDetailTab(tabId) {
+      state.activeDetailTab = tabId;
+      renderAll();
+    }
+
+    function renderCarving() {
+      const current = craftData[state.activeCraft];
+      carvingImage.src = current.src;
+      carvingImage.alt = current.name;
+      carvingName.textContent = current.name;
+      carvingBrief.textContent = current.intro;
+
+    }
+
+    function renderItemMedia(item, altText = '示意图') {
+      if (item && item.image) {
+        return `<div class="item-media"><img src="${item.image}" alt="${altText}" loading="lazy" /></div>`;
+      }
+      return `<div class="item-media">待补图</div>`;
+    }
+
+    function renderRightPanel() {
+      detailTabsEl.innerHTML = detailTabs.map(id => {
+        const active = id === state.activeDetailTab;
+        return `<button class="mini-btn ${active ? 'active' : ''}" data-tab="${id}">${detailName[id]}</button>`;
+      }).join('');
+
+      const current = craftData[state.activeCraft];
+      const value = current[state.activeDetailTab];
+      detailHint.textContent = `${current.name} · ${detailName[state.activeDetailTab]}`;
+      detailContentEl.classList.remove('show');
+      let html = '';
+      if (state.activeDetailTab === 'process') {
+        const seq = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+        html = `<div class="detail-step-list process-rail">${value.map((step, idx) => `
+          <article class="detail-step expand-item ${state.expandedKey === `process:${idx}` ? 'is-open' : ''}" data-expand-key="process:${idx}">
+            <div class="step-no">${seq[idx] || (idx + 1)}</div>
+            ${renderItemMedia(step, step.title)}
+            <div>
+              <div class="step-title">${step.title}</div>
+              <div>${step.desc}</div>
+              ${step.detail ? `<div class="expand-more">${step.detail}</div>` : ''}
+            </div>
+          </article>
+        `).join('')}</div>`;
+      } else if (state.activeDetailTab === 'tools') {
+        html = `<div class="detail-grid">${value.map((item, idx) => `
+          <article class="grid-item expand-item ${state.expandedKey === `tools:${idx}` ? 'is-open' : ''}" data-expand-key="tools:${idx}">
+            ${renderItemMedia(item, item.name)}
+            <strong>${item.name}</strong>
+            <span>${item.note}</span>
+            ${item.detail ? `<div class="expand-more">${item.detail}</div>` : ''}
+          </article>
+        `).join('')}</div>`;
+      } else if (state.activeDetailTab === 'pattern' || state.activeDetailTab === 'theme') {
+        html = `<div class="detail-gallery">${value.map((item, idx) => `
+          <article class="gallery-item expand-item ${state.expandedKey === `${state.activeDetailTab}:${idx}` ? 'is-open' : ''}" data-expand-key="${state.activeDetailTab}:${idx}">
+            <div class="gallery-tag">${item.name}</div>
+            ${renderItemMedia(item, item.name)}
+            <div class="gallery-text">
+              <div>${item.note}</div>
+              ${item.sub ? `<div class="gallery-sub">${item.sub}</div>` : ''}
+              ${item.detail ? `<div class="expand-more">${item.detail}</div>` : ''}
+            </div>
+          </article>
+        `).join('')}</div>`;
+      } else if (state.activeDetailTab === 'history') {
+        html = `<div class="timeline">${value.map(item => `
+          <article class="timeline-item">
+            <strong>${item.period}</strong>
+            <span>${item.desc}</span>
+            <div class="timeline-detail">${item.detail || ''}</div>
+          </article>
+        `).join('')}</div>`;
+      }
+      detailContentEl.innerHTML = html;
+      requestAnimationFrame(() => detailContentEl.classList.add('show'));
+
+      detailTabsEl.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => setDetailTab(btn.getAttribute('data-tab')));
+      });
+
+      detailContentEl.querySelectorAll('[data-expand-key]').forEach(el => {
+        el.addEventListener('click', () => {
+          const key = el.getAttribute('data-expand-key');
+          state.expandedKey = (state.expandedKey === key) ? null : key;
+          renderRightPanel();
+        });
+      });
+    }
+
+    function renderGraph() {
+      if (!graphData.nodes.length) {
+        graphSvg.innerHTML = `<text x="280" y="180" text-anchor="middle" font-size="14" fill="#8a8277">关系数据加载中...</text>`;
+        return;
+      }
+      const activeCraft = state.activeCraft;
+      const activeNodeId = state.activeNodeId;
+      // 只渲染当前雕种（木/石/砖）相关的节点，避免三种雕种全部堆在一团
+      const craftNodes = graphData.nodes.filter(
+        n => n.craft === activeCraft || (n.type === 'craft' && n.craft === activeCraft)
+      );
+      const nodeMap = new Map(craftNodes.map(n => [n.id, n]));
+      const levelConf = levelFilterMap[state.levelFilterKey] || levelFilterMap.all;
+      const visibleNodeIds = computeVisibleNodeIds(craftNodes, levelConf.levels);
+      let focusNodeId = activeNodeId || state.hoverNodeId;
+      if (focusNodeId && !visibleNodeIds.has(focusNodeId)) focusNodeId = null;
+
+      const linkSet = new Set();
+      const neighborSet = new Set();
+      if (focusNodeId) {
+        neighborSet.add(focusNodeId);
+        const linksFiltered = graphData.links.filter(
+          l => visibleNodeIds.has(l.source) && visibleNodeIds.has(l.target)
+        );
+        linksFiltered.forEach(l => {
+          if (l.source === focusNodeId || l.target === focusNodeId) {
+            linkSet.add(`${l.source}|${l.target}`);
+            linkSet.add(`${l.target}|${l.source}`);
+            neighborSet.add(l.source);
+            neighborSet.add(l.target);
+          }
+        });
+      }
+
+      const linksSvg = graphData.links
+        .filter(link => visibleNodeIds.has(link.source) && visibleNodeIds.has(link.target))
+        .map(link => {
+        const s = nodeMap.get(link.source);
+        const t = nodeMap.get(link.target);
+        const rel = relationMeta[link.relationType] || relationMeta.affiliation;
+        const isCraftFocus = s.craft === activeCraft;
+        const isActiveLink = focusNodeId && linkSet.has(`${link.source}|${link.target}`);
+        const color = isActiveLink ? '#A9332A' : craftData[s.craft].palette.soft;
+        const opacity = focusNodeId
+          ? (isActiveLink ? 1 : (isCraftFocus ? 0.25 : 0.06))
+          : (isCraftFocus ? 0.8 : 0.1);
+        const width = isActiveLink ? 2.7 : rel.width;
+        const dash = rel.dash ? `stroke-dasharray="${rel.dash}"` : '';
+        return `<line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="${color}" stroke-width="${width}" stroke-opacity="${opacity}" ${dash} data-link="${link.source}|${link.target}" data-link-label="${rel.label}" />`;
+      }).join('');
+
+      const nodesSvg = craftNodes
+        .filter(node => visibleNodeIds.has(node.id))
+        .map(node => {
+        const r = getNodeRadius(node);
+        const levelColorMap = {
+          root: '#5C2C26',
+          national: '#5C2C26',
+          provincial: '#5B6770',
+          city: '#5A5550',
+          county: '#5A5550',
+          general: '#5A5550',
+          work: '#5B6770'
+        };
+        const color = levelColorMap[node.level] || '#5A5550';
+        const isWorkLike = node.type === 'work' || node.type === 'masterpiece' || node.level === 'work';
+        const isKeyLabel = node.level === 'root' || node.level === 'national' || node.level === 'provincial' || node.level === 'city' || isWorkLike;
+        const isFocusCraft = node.craft === activeCraft;
+        const isActiveNode = node.id === activeNodeId;
+        const isNeighbor = focusNodeId ? neighborSet.has(node.id) : false;
+        const opacity = focusNodeId
+          ? (isNeighbor ? 1 : (isFocusCraft ? 0.26 : 0.08))
+          : (isActiveNode ? 1 : (isFocusCraft ? 1 : 0.15));
+        const stroke = isActiveNode || (focusNodeId && node.id === focusNodeId) ? '#A9332A' : 'rgba(0,0,0,0.18)';
+        const strokeW = isActiveNode ? 3 : (isWorkLike ? 2 : 1);
+        const labelOnRight = node.x < 280;
+        const labelX = labelOnRight ? node.x + r + 7 : node.x - r - 7;
+        const labelAnchor = labelOnRight ? 'start' : 'end';
+        const labelY = node.y + 4;
+        const labelColor = '#1f1f1f';
+        const labelOpacity = 1;
+        const labelSize = (node.level === 'root' || node.level === 'national') ? 14 : (isKeyLabel ? 13 : 11);
+        return `
+          <g data-node="${node.id}" style="cursor:pointer" data-tooltip='${getNodeTooltip(node).replace(/'/g, '&apos;')}'>
+            <circle
+              cx="${node.x}"
+              cy="${node.y}"
+              r="${r}"
+              fill="${isWorkLike ? 'transparent' : color}"
+              fill-opacity="${isWorkLike ? 0 : opacity}"
+              stroke="${stroke}"
+              stroke-width="${strokeW}"
+              ${isWorkLike ? 'stroke-dasharray="4 2"' : ''}
+            />
+            <text
+              x="${labelX}"
+              y="${labelY}"
+              text-anchor="${labelAnchor}"
+              font-size="${labelSize}"
+              fill="${labelColor}"
+              fill-opacity="${labelOpacity}"
+              stroke="#F4EFEA"
+              stroke-width="2.4"
+              paint-order="stroke fill"
+            >
+              ${node.name}
+            </text>
+          </g>
+        `;
+      }).join('');
+
+      graphSvg.innerHTML = linksSvg + nodesSvg;
+      graphHint.textContent = `当前：${craftData[activeCraft].name} · ${levelConf.label}`;
+    }
+
+    function getCraftCenter(craft) {
+      if (craft === 'wood') return { x: 145, y: 88 };
+      if (craft === 'stone') return { x: 155, y: 280 };
+      return { x: 455, y: 186 };
+    }
+
+    function runAutoLayout(iterations = 180) {
+      if (!graphData.nodes.length || layoutLocked) return;
+      if (layoutFrame) cancelAnimationFrame(layoutFrame);
+      layoutRunning = true;
+      updateLayoutButtons();
+
+      const activeCraft = state.activeCraft;
+      const nodes = graphData.nodes.filter(
+        n => n.craft === activeCraft || (n.type === 'craft' && n.craft === activeCraft)
+      );
+      const nodeMap = new Map(nodes.map(n => [n.id, n]));
+      nodes.forEach(n => {
+        n.vx = n.vx || 0;
+        n.vy = n.vy || 0;
+      });
+
+      let step = 0;
+      const tick = () => {
+        if (layoutLocked) {
+          layoutRunning = false;
+          updateLayoutButtons();
+          return;
+        }
+
+        for (let i = 0; i < nodes.length; i++) {
+          const a = nodes[i];
+          for (let j = i + 1; j < nodes.length; j++) {
+            const b = nodes[j];
+            let dx = b.x - a.x;
+            let dy = b.y - a.y;
+            const d2 = dx * dx + dy * dy + 0.01;
+            const d = Math.sqrt(d2);
+            const rep = 6800 / d2;
+            dx /= d;
+            dy /= d;
+            a.vx -= dx * rep;
+            a.vy -= dy * rep;
+            b.vx += dx * rep;
+            b.vy += dy * rep;
+          }
+        }
+
+        graphData.links
+          .filter(l => nodeMap.has(l.source) && nodeMap.has(l.target))
+          .forEach(link => {
+          const s = nodeMap.get(link.source);
+          const t = nodeMap.get(link.target);
+          if (!s || !t) return;
+          let dx = t.x - s.x;
+          let dy = t.y - s.y;
+          const d = Math.sqrt(dx * dx + dy * dy) || 1;
+          const desired = link.relationType === 'affiliation' ? 120 : (link.relationType === 'work-of' ? 145 : 105);
+          const spring = (d - desired) * 0.018;
+          dx /= d;
+          dy /= d;
+          s.vx += dx * spring;
+          s.vy += dy * spring;
+          t.vx -= dx * spring;
+          t.vy -= dy * spring;
+        });
+
+        const center = getActiveCraftCenter();
+        nodes.forEach(n => {
+          n.vx += (center.x - n.x) * 0.0032;
+          n.vy += (center.y - n.y) * 0.0032;
+          n.vx *= 0.84;
+          n.vy *= 0.84;
+          n.x = Math.max(26, Math.min(534, n.x + n.vx));
+          n.y = Math.max(26, Math.min(334, n.y + n.vy));
+        });
+
+        renderGraph();
+        step += 1;
+        if (step < iterations) {
+          layoutFrame = requestAnimationFrame(tick);
+        } else {
+          layoutRunning = false;
+          layoutFrame = null;
+          updateLayoutButtons();
+        }
+      };
+
+      layoutFrame = requestAnimationFrame(tick);
+    }
+
+    function resetLayout() {
+      if (!graphInitialData) return;
+      if (layoutFrame) cancelAnimationFrame(layoutFrame);
+      layoutFrame = null;
+      layoutRunning = false;
+      graphData = cloneGraphData(graphInitialData);
+      state.activeNodeId = null;
+      state.hoverNodeId = null;
+      graphTooltip.classList.remove('show');
+      updateLayoutButtons();
+      renderAll();
+    }
+
+    async function loadGraphData() {
+      const res = await fetch('/charts/module3-graph-data.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`graph data load failed: ${res.status}`);
+      const json = await res.json();
+      graphData = cloneGraphData(json);
+      graphInitialData = cloneGraphData(json);
+
+      // 若数据里没有给 x/y（或给得不完整），用雕种中心附近做初始化，避免 NaN 影响力导向计算
+      graphData.nodes.forEach((n, idx) => {
+        if (typeof n.x !== 'number' || typeof n.y !== 'number') {
+          const c = getActiveCraftCenter();
+          const angle = (idx * 0.62) % (Math.PI * 2);
+          const radius = 55 + (idx % 9) * 16;
+          n.x = c.x + Math.cos(angle) * radius;
+          n.y = c.y + Math.sin(angle) * radius;
+        }
+        n.vx = n.vx || 0;
+        n.vy = n.vy || 0;
+      });
+      graphInitialData.nodes.forEach((n, idx) => {
+        if (typeof n.x !== 'number' || typeof n.y !== 'number') {
+          const c = getActiveCraftCenter();
+          const angle = (idx * 0.62) % (Math.PI * 2);
+          const radius = 55 + (idx % 9) * 16;
+          n.x = c.x + Math.cos(angle) * radius;
+          n.y = c.y + Math.sin(angle) * radius;
+        }
+        n.vx = n.vx || 0;
+        n.vy = n.vy || 0;
+      });
+
+      const shouldGenerate =
+        Array.isArray(json.nodes) &&
+        json.nodes.some(n => (Array.isArray(n.mentors) && n.mentors.length) || (Array.isArray(n.workOf) && n.workOf.length));
+
+      if (shouldGenerate) {
+        const links = generateLinksFromNodes(json.nodes);
+        graphData.links = links;
+        graphInitialData.links = links.map(l => ({ ...l }));
+      }
+    }
+
+    function getSvgPoint(evt) {
+      const pt = graphSvg.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      const matrix = graphSvg.getScreenCTM();
+      if (!matrix) return { x: 0, y: 0 };
+      const res = pt.matrixTransform(matrix.inverse());
+      return {
+        x: Math.max(24, Math.min(536, res.x)),
+        y: Math.max(24, Math.min(336, res.y))
+      };
+    }
+
+    function initGraphInteractions() {
+      graphSvg.addEventListener('mousedown', (e) => {
+        if (layoutLocked) return;
+        const target = e.target.closest('[data-node]');
+        if (!target) return;
+        dragNodeId = target.getAttribute('data-node');
+        dragMoved = false;
+      });
+
+      graphSvg.addEventListener('mousemove', (e) => {
+        const nodeEl = e.target.closest('[data-node]');
+        const linkEl = e.target.closest('[data-link]');
+
+        if (dragNodeId) {
+          const p = getSvgPoint(e);
+          const node = graphData.nodes.find(n => n.id === dragNodeId);
+          if (node) {
+            node.x = p.x;
+            node.y = p.y;
+            node.vx = 0;
+            node.vy = 0;
+            dragMoved = true;
+            graphTooltip.classList.remove('show');
+            renderGraph();
+          }
+          return;
+        }
+
+        if (nodeEl) {
+          const id = nodeEl.getAttribute('data-node');
+          if (state.hoverNodeId !== id) {
+            state.hoverNodeId = id;
+            renderGraph();
+          }
+          const tip = nodeEl.getAttribute('data-tooltip').replace(/&apos;/g, "'");
+          showGraphTooltip(tip, e.offsetX + 12, e.offsetY + 12);
+          return;
+        }
+
+        if (linkEl) {
+          if (state.hoverNodeId !== null) {
+            state.hoverNodeId = null;
+            renderGraph();
+          }
+          const label = linkEl.getAttribute('data-link-label');
+          showGraphTooltip(`<strong>关系类型</strong><br/>${label}`, e.offsetX + 10, e.offsetY + 10);
+          return;
+        }
+
+        if (state.hoverNodeId !== null) {
+          state.hoverNodeId = null;
+          renderGraph();
+        }
+        graphTooltip.classList.remove('show');
+      });
+
+      graphSvg.addEventListener('mouseup', () => {
+        dragNodeId = null;
+      });
+
+      graphSvg.addEventListener('mouseleave', () => {
+        dragNodeId = null;
+        if (state.hoverNodeId !== null) {
+          state.hoverNodeId = null;
+          renderGraph();
+        }
+        graphTooltip.classList.remove('show');
+      });
+
+      graphSvg.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-node]');
+        if (target) {
+          if (dragMoved) {
+            dragMoved = false;
+            return;
+          }
+          const id = target.getAttribute('data-node');
+          const node = graphData.nodes.find(n => n.id === id);
+          state.activeNodeId = id;
+          if (node && node.craft !== state.activeCraft) state.activeCraft = node.craft;
+          renderAll();
+          return;
+        }
+        state.activeNodeId = null;
+        renderAll();
+      });
+    }
+
+    function renderAll() {
+      renderCarving();
+      renderRightPanel();
+      renderGraph();
+    }
+
+    btnPrev.addEventListener('click', () => {
+      cycleCraft(-1);
+    });
+
+    btnNext.addEventListener('click', () => {
+      cycleCraft(1);
+    });
+
+    btnAutoLayout.addEventListener('click', () => {
+      runAutoLayout();
+    });
+    btnToggleFix.addEventListener('click', () => {
+      layoutLocked = !layoutLocked;
+      updateLayoutButtons();
+    });
+    btnResetLayout.addEventListener('click', () => {
+      resetLayout();
+    });
+
+    btnLevelsAll.addEventListener('click', () => setLevelFilter('all'));
+    btnLevelsNP.addEventListener('click', () => setLevelFilter('np'));
+    btnLevelsNPC.addEventListener('click', () => setLevelFilter('npc'));
+
+    initGraphInteractions();
+    updateLayoutButtons();
+    updateLevelFilterButtons();
+    (async () => {
+      try {
+        await loadGraphData();
+        renderAll();
+      } catch (err) {
+        graphSvg.innerHTML = `<text x="280" y="180" text-anchor="middle" font-size="13" fill="#8e3e30">关系数据加载失败，请检查 JSON 文件</text>`;
+      }
+    })();
+  </script>
+</body>
+</html>

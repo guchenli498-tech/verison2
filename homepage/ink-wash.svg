@@ -1,0 +1,16 @@
+<svg width="620" height="620" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="ink" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(307 300) rotate(90) scale(240 255)">
+      <stop offset="0%" stop-color="#4C463E" stop-opacity="0.26"/>
+      <stop offset="55%" stop-color="#6D665D" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#8E877D" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="inkBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <g filter="url(#inkBlur)">
+    <path d="M182 94C219 78 258 73 297 79C341 61 391 63 433 84C472 103 508 137 525 178C557 212 565 257 554 298C561 344 545 392 516 430C494 470 456 503 411 521C373 550 325 556 281 547C237 558 191 551 153 530C111 515 79 481 60 443C32 409 24 368 30 326C19 279 28 230 55 189C73 149 110 118 154 102C163 99 172 96 182 94Z" fill="url(#ink)"/>
+    <path d="M248 130C282 124 317 127 349 140C383 134 419 141 448 162C476 181 497 210 505 243C520 271 519 305 506 336C502 368 483 397 456 419C433 445 400 460 366 463C335 475 301 472 271 461C236 458 205 441 182 414C157 391 142 358 140 324C127 291 131 255 146 225C155 190 177 161 208 142C220 136 234 132 248 130Z" fill="url(#ink)" opacity="0.75"/>
+  </g>
+</svg>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天井性能 · 气泡图</title>
+    <script src="../echarts.min.js"></script>
+    <style>
+      :root {
+        --paper-bg: #F8F6F0;
+        --title-color: #2b333e;
+        --subtitle-color: #8c939d;
+        --line-color: #6C7A89;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--paper-bg);
+        font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
+      }
+
+      .wrap {
+        width: 100%;
+        height: 100%;
+        padding: 24px 32px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        margin-bottom: 20px;
+        position: relative;
+        padding-left: 14px;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 4px;
+        bottom: 2px;
+        width: 4px;
+        background: var(--line-color);
+        border-radius: 2px;
+      }
+
+      .title {
+        font-size: 22px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: var(--title-color);
+        margin: 0 0 4px 0;
+      }
+
+      .subtitle {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        color: var(--subtitle-color);
+        text-transform: uppercase;
+      }
+
+      #chart {
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <div class="title">天井 · 性能评估气泡图</div>
+        <div class="subtitle">Courtyard Performance Bubble Chart</div>
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <script>
+      (function () {
+        const dom = document.getElementById("chart");
+        const chart = echarts.init(dom, null, {
+          renderer: "canvas",
+          devicePixelRatio: Math.max(1, window.devicePixelRatio || 1),
+        });
+
+        // 参考文件：天井气泡图加平行坐标轴图.html
+        // 数据来源：郑志元等《徽州传统民居天井平面几何参数对室内风环境的影响研究》
+        const data = [
+          { id: "M1J1", group: "M1", width: 3.85, depth: 1.05, area: 4.04, gentleZone: 44.2, unitSpeed: 8.02, totalScore: 31 },
+          { id: "M1J2", group: "M1", width: 3.85, depth: 1.75, area: 6.73, gentleZone: 54.54, unitSpeed: 5.94, totalScore: 28 },
+          { id: "M1J3", group: "M1", width: 3.85, depth: 2.1, area: 8.09, gentleZone: 57.68, unitSpeed: 5.23, totalScore: 30 },
+          { id: "M1J4", group: "M1", width: 3.85, depth: 2.8, area: 10.78, gentleZone: 64.14, unitSpeed: 4.36, totalScore: 25 },
+          { id: "M2J1", group: "M2", width: 5.25, depth: 1.05, area: 5.51, gentleZone: 44.2, unitSpeed: 8.02, totalScore: 50 },
+          { id: "M2J2", group: "M2", width: 5.25, depth: 1.75, area: 9.19, gentleZone: 54.54, unitSpeed: 5.94, totalScore: 54 },
+          { id: "M2J3", group: "M2", width: 5.25, depth: 2.1, area: 11.02, gentleZone: 57.68, unitSpeed: 5.23, totalScore: 56 },
+          { id: "M2J4", group: "M2", width: 5.25, depth: 2.8, area: 14.7, gentleZone: 64.14, unitSpeed: 4.36, totalScore: 60 },
+          { id: "M3J1", group: "M3", width: 6.3, depth: 1.05, area: 6.62, gentleZone: 57.61, unitSpeed: 8.71, totalScore: 48 },
+          { id: "M3J2", group: "M3", width: 6.3, depth: 1.75, area: 11.03, gentleZone: 61.54, unitSpeed: 5.58, totalScore: 52 },
+          { id: "M3J3", group: "M3", width: 6.3, depth: 2.1, area: 13.23, gentleZone: 64.3, unitSpeed: 4.86, totalScore: 55 },
+          { id: "M3J4", group: "M3", width: 6.3, depth: 2.8, area: 17.64, gentleZone: 67.17, unitSpeed: 3.81, totalScore: 58 },
+          { id: "M4J1", group: "M4", width: 7.35, depth: 1.05, area: 7.72, gentleZone: 60.2, unitSpeed: 8.2, totalScore: 52 },
+          { id: "M4J2", group: "M4", width: 7.35, depth: 1.75, area: 12.86, gentleZone: 64.8, unitSpeed: 5.3, totalScore: 58 },
+          { id: "M4J3", group: "M4", width: 7.35, depth: 2.1, area: 15.44, gentleZone: 67.5, unitSpeed: 4.5, totalScore: 62 },
+          { id: "M4J4", group: "M4", width: 7.35, depth: 2.8, area: 20.58, gentleZone: 70, unitSpeed: 3.6, totalScore: 66 },
+        ];
+
+        const groupColors = {
+          M1: "#8f6a58",
+          M2: "#a88469",
+          M3: "#c1a27c",
+          M4: "#74685d"
+        };
+
+        const seriesData = data.map((d) => ({
+          name: d.id,
+          value: [d.area, d.gentleZone, d.totalScore, d.unitSpeed],
+          width: d.width,
+          depth: d.depth,
+          group: d.group,
+          itemStyle: {
+            color: groupColors[d.group],
+            borderColor: "#fef0dd",
+            borderWidth: 1.2,
+            shadowBlur: 6,
+            opacity: 0.88,
+          },
+        }));
+
+        const option = {
+          backgroundColor: "transparent",
+          tooltip: {
+            trigger: "item",
+            backgroundColor: "rgba(62,50,39,0.88)",
+            borderColor: "#c5b29a",
+            borderWidth: 1,
+            padding: [12, 16],
+            textStyle: { color: "#f7efdb", fontSize: 12, fontFamily: "KaiTi, serif" },
+            formatter: function (p) {
+              if (p.componentSubType === "scatter") {
+                const d = data.find((x) => x.id === p.name);
+                if (d) {
+                  return `<strong>${d.id}</strong><br/>
+                    面阔 ${d.width}m · 进深 ${d.depth}m<br/>
+                    天井面积 ${d.area.toFixed(2)} m²<br/>
+                    和风区占比 ${d.gentleZone.toFixed(2)}%<br/>
+                    综合得分 ${d.totalScore}<br/>
+                    单位风速 ${d.unitSpeed.toFixed(2)}%`;
+                }
+              }
+              return p.name;
+            },
+          },
+          xAxis: {
+            type: "value",
+            name: "天井面积 (m²)",
+            nameTextStyle: { color: "#6c5a44", fontSize: 12, fontFamily: "KaiTi" },
+            axisLine: { lineStyle: { color: "#bcab8a" } },
+            splitLine: { lineStyle: { color: "#e2d5bf", type: "dashed" } },
+            axisLabel: { color: "#666", fontSize: 11 },
+            min: 2,
+            max: 22,
+          },
+          yAxis: {
+            type: "value",
+            name: "和风区占比（%）",
+            nameTextStyle: { color: "#6c5a44", fontSize: 12, fontFamily: "KaiTi" },
+            axisLine: { lineStyle: { color: "#bcab8a" } },
+            splitLine: { lineStyle: { color: "#e2d5bf", type: "dashed" } },
+            axisLabel: { color: "#666", fontSize: 11 },
+            min: 40,
+            max: 75,
+          },
+          visualMap: {
+            show: true,
+            type: "continuous",
+            min: 3.2,
+            max: 8.8,
+            calculable: true,
+            dimension: 3,
+            inRange: { color: ["#d8c8b2", "#c4ab89", "#a98567", "#856352"] },
+            outOfRange: { color: "#cdbba2" },
+            text: ["高风速 →", "← 低风速"],
+            textStyle: { fontFamily: "KaiTi", fontSize: 10, color: "#7f684c" },
+            left: 15,
+            bottom: 15,
+            orient: "horizontal",
+          },
+          series: [
+            {
+              type: "scatter",
+              symbolSize: function (val) {
+                return Math.min(52, 10 + val[2] * 0.55);
+              },
+              data: seriesData,
+              label: {
+                show: true,
+                formatter: function (p) {
+                  return p.data.name;
+                },
+                position: "top",
+                offset: [0, 6],
+                fontSize: 10,
+                fontFamily: "KaiTi",
+                color: "#4a3a28",
+                fontWeight: "bold",
+                textShadowBlur: 2,
+                textShadowColor: "#fff9ef",
+              },
+              emphasis: {
+                scale: 1.25,
+                itemStyle: {
+                  borderColor: "#eadfce",
+                  borderWidth: 2,
+                  shadowBlur: 10,
+                },
+                label: { show: true, fontSize: 12, fontWeight: "bold" },
+              },
+            },
+          ],
+          grid: {
+            left: "11%",
+            right: "8%",
+            top: "11%",
+            bottom: "14%",
+            containLabel: true,
+          },
+        };
+
+        chart.setOption(option);
+
+        window.addEventListener("resize", () => {
+          chart.resize();
+        });
+      })();
+    </script>
+  </body>
+</html>
