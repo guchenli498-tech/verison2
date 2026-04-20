@@ -1,4 +1,5 @@
 import ReactECharts from 'echarts-for-react'
+import { HEAT_MAP_GRADIENT } from '../theme/module1VisualPalette'
 
 // 各朝代总量（默认）
 const dynastyTotals = [
@@ -135,8 +136,8 @@ export function DynastyLineChart(props: {
         smooth: true,
         symbolSize: 4,
         symbol: 'circle',
-        lineStyle: { width: 3, color: '#c3865a' },
-        itemStyle: { color: '#c3865a' },
+        lineStyle: { width: 3, color: HEAT_MAP_GRADIENT[3] },
+        itemStyle: { color: HEAT_MAP_GRADIENT[3] },
         areaStyle:
           mode === 'area'
             ? {
@@ -144,8 +145,8 @@ export function DynastyLineChart(props: {
                   type: 'linear',
                   x: 0, y: 0, x2: 0, y2: 1,
                   colorStops: [
-                    { offset: 0, color: 'rgba(195,134,90,0.22)' },
-                    { offset: 1, color: 'rgba(195,134,90,0.05)' },
+                    { offset: 0, color: 'rgba(170,91,70,0.28)' },
+                    { offset: 1, color: 'rgba(170,91,70,0.05)' },
                   ],
                 },
               }

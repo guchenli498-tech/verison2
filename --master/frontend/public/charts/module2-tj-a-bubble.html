@@ -111,7 +111,12 @@
           { id: "M4J4", group: "M4", width: 7.35, depth: 2.8, area: 20.58, gentleZone: 70, unitSpeed: 3.6, totalScore: 66 },
         ];
 
-        const groupColors = { M1: "#c4492c", M2: "#2c5f7a", M3: "#e5a03a", M4: "#5b8c5a" };
+        const groupColors = {
+          M1: "#8f6a58",
+          M2: "#a88469",
+          M3: "#c1a27c",
+          M4: "#74685d"
+        };
 
         const seriesData = data.map((d) => ({
           name: d.id,
@@ -132,8 +137,8 @@
           backgroundColor: "transparent",
           tooltip: {
             trigger: "item",
-            backgroundColor: "rgba(45,35,22,0.88)",
-            borderColor: "#c8b88a",
+            backgroundColor: "rgba(62,50,39,0.88)",
+            borderColor: "#c5b29a",
             borderWidth: 1,
             padding: [12, 16],
             textStyle: { color: "#f7efdb", fontSize: 12, fontFamily: "KaiTi, serif" },
@@ -179,7 +184,7 @@
             max: 8.8,
             calculable: true,
             dimension: 3,
-            inRange: { color: ["#8fbc8f", "#d8c99e", "#d98c5f", "#c4492c"] },
+            inRange: { color: ["#d8c8b2", "#c4ab89", "#a98567", "#856352"] },
             outOfRange: { color: "#cdbba2" },
             text: ["高风速 →", "← 低风速"],
             textStyle: { fontFamily: "KaiTi", fontSize: 10, color: "#7f684c" },
@@ -211,9 +216,9 @@
               emphasis: {
                 scale: 1.25,
                 itemStyle: {
-                  borderColor: "#f5c542",
-                  borderWidth: 2.4,
-                  shadowBlur: 12,
+                  borderColor: "#eadfce",
+                  borderWidth: 2,
+                  shadowBlur: 10,
                 },
                 label: { show: true, fontSize: 12, fontWeight: "bold" },
               },

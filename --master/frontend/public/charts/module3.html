@@ -546,9 +546,9 @@
     .legend-dot.lg { width: 10px; height: 10px; }
     .legend-dot.md { width: 8px; height: 8px; }
     .legend-dot.sm { width: 6px; height: 6px; }
-    .legend-dot.national { background: #aa5b46; }
-    .legend-dot.provincial { background: #c39070; }
-    .legend-dot.city { background: #dfc399; }
+    .legend-dot.national { background: #5C2C26; }
+    .legend-dot.provincial { background: #5B6770; }
+    .legend-dot.city { background: #5A5550; }
     .legend-dot.work {
       width: 10px;
       height: 10px;
@@ -1298,6 +1298,27 @@
       { name: '《梓人传》', meta: '文档新增 | 唐永贞元年（805年）', desc: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确…', contribution: '系统记述了古代梓人（营造工匠）的营造制度、设计方法、施工管理体系，确立了古代工匠的营造范式，徽州明清时期的工匠体系、营造流程、设计方法，均继承了《梓人传》中记载的传统，是徽州营造匠师体系的源头文献。', img: '/charts/module3-cards/doc-work-29-梓人传.png' }
     ];
 
+    function inferChronologyYear(item) {
+      const text = `${item?.name || ''} ${item?.meta || ''}`;
+      const years = Array.from(text.matchAll(/\d{3,4}/g)).map(m => Number(m[0]));
+      if (years.length) return years[0];
+      if (/先秦/.test(text)) return -2000;
+      if (/元末明初/.test(text)) return 1368;
+      if (/明末清初/.test(text)) return 1644;
+      if (/清末/.test(text)) return 1880;
+      return Number.POSITIVE_INFINITY;
+    }
+
+    function sortByChronology(items) {
+      return items
+        .map((item, index) => ({ item, index, year: inferChronologyYear(item) }))
+        .sort((a, b) => a.year - b.year || a.index - b.index)
+        .map(entry => entry.item);
+    }
+
+    const sortedScientists = sortByChronology(scientists);
+    const sortedWorks = sortByChronology(works);
+
     const cardGrid = document.getElementById('cardGrid');
     const btnScientist = document.getElementById('btnScientist');
     const btnWork = document.getElementById('btnWork');
@@ -1344,16 +1365,16 @@
     btnScientist.addEventListener('click', () => {
       btnScientist.classList.add('active');
       btnWork.classList.remove('active');
-      renderCards(scientists, { clickable: true });
+      renderCards(sortedScientists, { clickable: true });
     });
 
     btnWork.addEventListener('click', () => {
       btnWork.classList.add('active');
       btnScientist.classList.remove('active');
-      renderCards(works, { clickable: true });
+      renderCards(sortedWorks, { clickable: true });
     });
 
-    renderCards(scientists, { clickable: true });
+    renderCards(sortedScientists, { clickable: true });
 
     const craftOrder = ['wood', 'stone', 'brick'];
     const detailTabs = ['process', 'pattern', 'tools', 'theme', 'history'];
@@ -1369,7 +1390,7 @@
       wood: {
         name: '木雕',
         src: '/charts/三雕图片/木雕.png',
-        palette: { main: '#aa5b46', soft: '#c39070' },
+        palette: { main: '#5C2C26', soft: '#D4A373' },
         intro: '徽州木雕是明清徽派建筑和家具的核心装饰，以枫木、樟木、楠木等为材，常见于梁架、雀替、隔扇与家具面板，兼具审美与教化功能。',
         introTags: ['建筑装饰', '梁架雀替', '透雕浮雕', '教化寓意'],
         process: [
@@ -1408,7 +1429,7 @@
       stone: {
         name: '石雕',
         src: '/charts/三雕图片/石雕.png',
-        palette: { main: '#c39070', soft: '#dfc399' },
+        palette: { main: '#5B6770', soft: '#B8C0C8' },
         intro: '徽州石雕多用青石、茶园石，风格古朴厚重，广泛用于牌坊、柱础、抱鼓石、石窗和栏杆，是徽派建筑外部识别度最高的装饰系统之一。',
         introTags: ['牌坊石作', '柱础栏板', '高浮雕', '礼制象征'],
         process: [
@@ -1448,7 +1469,7 @@
       brick: {
         name: '砖雕',
         src: '/charts/三雕图片/砖雕.png',
-        palette: { main: '#dfc399', soft: '#eadbbd' },
+        palette: { main: '#5A5550', soft: '#8A7F75' },
         intro: '徽州砖雕以水磨青砖为主材，多用于门楼、门罩、墀头和屋檐，擅长多层透雕，是徽派立面视觉“点睛”部位。',
         introTags: ['门楼系统', '多层透雕', '叙事构图', '青砖材性'],
         process: [
@@ -1523,12 +1544,6 @@
       np: { levels: ['national', 'provincial'], label: '国家+省级' },
       npc: { levels: ['national', 'provincial', 'city'], label: '国家+省+市' }
     };
-    const levelNodeColorMap = {
-      national: '#aa5b46',
-      provincial: '#c39070',
-      city: '#dfc399'
-    };
-
     const relationMeta = {
       'master-apprentice': { label: '师承', dash: '', width: 2.1 },
       guidance: { label: '指导', dash: '6 4', width: 1.9 },
@@ -1859,7 +1874,16 @@
         .filter(node => visibleNodeIds.has(node.id))
         .map(node => {
         const r = getNodeRadius(node);
-        const color = levelNodeColorMap[node.level] || craftData[node.craft].palette.main;
+        const levelColorMap = {
+          root: '#5C2C26',
+          national: '#5C2C26',
+          provincial: '#5B6770',
+          city: '#5A5550',
+          county: '#5A5550',
+          general: '#5A5550',
+          work: '#5B6770'
+        };
+        const color = levelColorMap[node.level] || '#5A5550';
         const isWorkLike = node.type === 'work' || node.type === 'masterpiece' || node.level === 'work';
         const isKeyLabel = node.level === 'root' || node.level === 'national' || node.level === 'provincial' || node.level === 'city' || isWorkLike;
         const isFocusCraft = node.craft === activeCraft;

@@ -27,28 +27,28 @@ export const HEAT_MAP_GRADIENT = [
   '#aa5b46',
 ] as const
 
-/** ECharts 地图：底图、标注、图钉（与热力同系青绿） */
+/** ECharts 地图：底图、标注、图钉（与热力同系暖棕） */
 export const MAP_GEO_THEME = {
   land: HEAT_MAP_GRADIENT[0],
-  ink: '#2a4f53',
+  ink: '#6f4b3f',
   border: 'rgba(170, 91, 70, 0.22)',
   focus: '#aa5b46',
-  hoverLine: 'rgba(195, 134, 90, 0.92)',
+  hoverLine: 'rgba(195, 134, 90, 0.9)',
   pinDefault: '#c3865a',
   pinHover: '#dfc399',
   pinSel: '#aa5b46',
   pinBorder: '#ffffff',
-  pinAccent: '#aa5b46',
+  pinAccent: '#e8d3ae',
 } as const
 
 /** 遗存类型（六类） */
 export const TYPE_COLOR: Record<HeritageTypeCategory, string> = {
-  民居: '#5D9EA3',
-  祠堂: '#35666B',
-  牌坊: '#D2B06A',
-  桥梁: '#7EA9C7',
-  '综合用途/建筑群': '#738B78',
-  其他: '#BEB7AA',
+  民居: '#9a5c4a',
+  祠堂: '#b7825f',
+  牌坊: '#d6b77a',
+  桥梁: '#7c6a45',
+  '综合用途/建筑群': '#c5ab86',
+  其他: '#938577',
 }
 
 /** 沿革节点图例（九类，色值互不重复） */

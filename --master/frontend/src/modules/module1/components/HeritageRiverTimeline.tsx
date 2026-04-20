@@ -180,7 +180,7 @@ export function HeritageRiverTimeline() {
       top,
       year: ev.year,
       action: ACTION_LABEL_MAP[ev.action] ?? ev.action,
-      actionColor: ACTION_COLOR_MAP[ev.action] ?? '#254e7a',
+      actionColor: ACTION_COLOR_MAP[ev.action] ?? '#a18d79',
       label: ev.label,
       siteName: site.name,
       region: site.region,
@@ -285,7 +285,7 @@ export function HeritageRiverTimeline() {
             <span className={styles.legendGroupTitle}>沿革事件</span>
             <div className={styles.legendScroll}>
               {EVENT_LEGEND_SEMANTICS.map((s) => {
-                const c = actionMap.get(s.action) ?? '#6F8E89'
+                const c = actionMap.get(s.action) ?? '#a18d79'
                 return (
                   <span key={s.id} className={styles.legendItem}>
                     <span className={styles.legendGlyph}>
@@ -374,7 +374,7 @@ export function HeritageRiverTimeline() {
                           left: `calc(8px + (100% - 16px) * ${t0})`,
                           width: `calc((100% - 16px) * ${t1 - t0})`,
                           background: TYPE_COLOR[seg.typeCategory],
-                          opacity: 0.38,
+                          opacity: 0.54,
                         }}
                       />
                     )
@@ -387,7 +387,7 @@ export function HeritageRiverTimeline() {
                     )
                     .map((ev, idx) => {
                       const t = yearT(ev.year, minY, maxY)
-                      const c = actionMap.get(ev.action) ?? '#254e7a'
+                      const c = actionMap.get(ev.action) ?? '#a18d79'
                       return (
                         <span
                           key={`${site.id}-ev-${idx}`}
