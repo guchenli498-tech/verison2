@@ -1,49 +1,39 @@
-import { useRef } from 'react'
-import { HeroBackground } from './HeroBackground'
-import { HeroMistLayer } from './HeroMistLayer'
-import { HeroTitle } from './HeroTitle'
-import { HeroSeal } from './HeroSeal'
-import { HeroActions } from './HeroActions'
-import { ScrollHint } from './ScrollHint'
-import { HeroGuide } from './HeroGuide'
-import { HERO_COPY } from './constants'
-import styles from './HeroHome.module.css'
+import { useNavigate } from 'react-router-dom'
+import styles from './HeroLanding.module.css'
 
 export function HeroHome() {
-  const guideRef = useRef<HTMLElement>(null)
-
-  const scrollToGuide = () => {
-    guideRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  const navigate = useNavigate()
 
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-label="徽州建筑文化可视化首页">
-        <div className={styles.heroAtmosphere}>
-          <HeroBackground />
-          <HeroMistLayer />
-          <img className={styles.ripple} src="/homepage/ripple-lines.svg" alt="" />
-          <img className={styles.birds} src="/homepage/bird-duo.svg" alt="" />
-          <HeroSeal />
+        <img
+          className={styles.sceneImage}
+          src="/homepage/hero-scene.png"
+          alt="徽州山水村落长卷"
+        />
+
+        <div className={styles.stripesOverlay} aria-hidden />
+        <div className={styles.mistLayer} aria-hidden />
+        <div className={styles.waterRipple} aria-hidden />
+        <div className={styles.centerFog} aria-hidden />
+
+        <div className={styles.titleStage}>
+          <img
+            className={styles.titleImage}
+            src="/homepage/hero-title-overlay.png"
+            alt="数览徽境，艺叙千年"
+          />
         </div>
 
-        <div className={styles.heroVisual}>
-          <HeroTitle />
-        </div>
-
-        <div className={styles.heroBottom}>
-          <HeroActions onGuideClick={scrollToGuide} />
-          <ScrollHint onClick={scrollToGuide} />
-        </div>
-
-        <aside className={styles.heroMeta}>
-          <p>{HERO_COPY.subtitleCn}</p>
-          <p>{HERO_COPY.subtitleEn}</p>
-        </aside>
-      </section>
-
-      <section ref={guideRef}>
-        <HeroGuide />
+        <button
+          type="button"
+          className={styles.enterBtn}
+          onClick={() => navigate('/module1')}
+          aria-label="点击进入模块"
+        >
+          <img src="/homepage/hero-enter-button.png" alt="点击进入" />
+        </button>
       </section>
     </div>
   )

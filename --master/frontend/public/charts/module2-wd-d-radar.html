@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>屋顶举架参数 · 雷达图（图D）</title>
+    <title>屋顶举架参数 · 雷达图</title>
     <script src="../echarts.min.js"></script>
     <style>
       :root {
@@ -75,7 +75,7 @@
       .btn {
         border: 1px solid rgba(215, 195, 165, 0.75);
         background: rgba(247, 241, 231, 0.65);
-        color: rgba(74, 74, 72, 0.95);
+        color: #000000;
         border-radius: 999px;
         padding: 7px 12px;
         font-size: 12px;
@@ -123,13 +123,13 @@
         font-size: 14px;
         font-weight: 800;
         letter-spacing: 1px;
-        color: rgba(43, 51, 62, 0.92);
+        color: #000000;
         margin: 0 0 6px 0;
       }
 
       .sketchNote {
         font-size: 11px;
-        color: rgba(140, 147, 157, 0.95);
+        color: #000000;
         letter-spacing: 0.8px;
         margin: 0 0 10px 0;
         font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
@@ -192,7 +192,7 @@
       .sketchModalTitle {
         font-size: 16px;
         font-weight: 800;
-        color: rgba(43, 51, 62, 0.95);
+        color: #000000;
         letter-spacing: 1px;
         padding-right: 32px;
       }
@@ -248,7 +248,7 @@
     <div class="wrap">
       <div class="headerRow">
         <div class="header">
-          <div class="title">屋顶 · 举架关键参数雷达图（图表四）</div>
+          <div class="title">屋顶 · 举架关键参数雷达图</div>
         </div>
         <div class="toolbar" aria-label="架屋切换">
           <div id="btn5" class="btn active" role="button" tabindex="0">五架屋</div>
@@ -348,7 +348,7 @@
 
           const RED = "rgba(200, 55, 55, 0.88)";
           const RED_DASH = "rgba(200, 55, 55, 0.55)";
-          const INK = "rgba(60, 60, 56, 0.78)";
+          const INK = "#000000";
           const RULE = "rgba(120, 120, 110, 0.42)";
 
           function el(tag, attrs = {}, parent = svg) {
@@ -426,8 +426,8 @@
             el("line", { x1: x1, y1: y + 8, x2: x2, y2: y + 8, stroke: RULE, "stroke-width": 1, "marker-start": "url(#arrow)", "marker-end": "url(#arrow)" });
             text((x0 + x1) / 2, y + 4, `${meta.L1}`, { "text-anchor": "middle", "font-size": 11, fill: INK });
             text((x1 + x2) / 2, y + 4, `${meta.L2}`, { "text-anchor": "middle", "font-size": 11, fill: INK });
-            text((x0 + x1) / 2, y + 18, "檐桁至脊桁的水平距离L", { "text-anchor": "middle", "font-size": 10, fill: "rgba(90,85,78,0.7)" });
-            text((x1 + x2) / 2, y + 18, "檐桁至脊桁的水平距离L", { "text-anchor": "middle", "font-size": 10, fill: "rgba(90,85,78,0.7)" });
+            text((x0 + x1) / 2, y + 18, "檐桁至脊桁的水平距离L", { "text-anchor": "middle", "font-size": 10, fill: "#000000" });
+            text((x1 + x2) / 2, y + 18, "檐桁至脊桁的水平距离L", { "text-anchor": "middle", "font-size": 10, fill: "#000000" });
           }
 
           function drawSideH(meta) {
@@ -437,13 +437,13 @@
             const y1 = ridgeY;
             el("line", { x1: x, y1: y1, x2: x, y2: y0, stroke: RULE, "stroke-width": 1, "marker-start": "url(#arrow)", "marker-end": "url(#arrow)" });
             text(x - 6, (y0 + y1) / 2, `${meta.H1}`, { "text-anchor": "end", "dominant-baseline": "middle", "font-size": 11, fill: INK });
-            text(x - 6, y1 + 10, "檐桁至脊桁的\n垂直距离H", { "text-anchor": "end", "font-size": 10, fill: "rgba(90,85,78,0.7)" });
+            text(x - 6, y1 + 10, "檐桁至脊桁的\n垂直距离H", { "text-anchor": "end", "font-size": 10, fill: "#000000" });
 
             // 右侧 H
             const xr = rightX + 10;
             el("line", { x1: xr, y1: y1, x2: xr, y2: y0, stroke: RULE, "stroke-width": 1, "marker-start": "url(#arrow)", "marker-end": "url(#arrow)" });
             text(xr + 6, (y0 + y1) / 2, `${meta.H2}`, { "text-anchor": "start", "dominant-baseline": "middle", "font-size": 11, fill: INK });
-            text(xr + 6, y1 + 10, "檐桁至脊桁的\n垂直距离H", { "text-anchor": "start", "font-size": 10, fill: "rgba(90,85,78,0.7)" });
+            text(xr + 6, y1 + 10, "檐桁至脊桁的\n垂直距离H", { "text-anchor": "start", "font-size": 10, fill: "#000000" });
           }
 
           function foldGuides(leftPts, folds) {
@@ -594,7 +594,7 @@
               center: ["50%", "48%"],
               radius: "58%",
               axisName: {
-                color: "rgba(43, 51, 62, 0.82)",
+                color: "#000000",
                 fontSize: 12,
                 fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },
@@ -612,7 +612,7 @@
               itemHeight: 10,
               itemGap: 10,
               textStyle: {
-                color: "rgba(43, 51, 62, 0.78)",
+                color: "#000000",
                 fontSize: 12,
                 fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },

@@ -183,7 +183,7 @@
 <body>
   <div class="wrap">
     <div class="header">
-      <div class="title">粉墙 · 砌筑方式热工性能综合对比（图表一）</div>
+      <div class="title">粉墙 · 砌筑方式热工性能综合对比</div>
     </div>
 
     <div class="combo">
@@ -226,8 +226,9 @@
     const thermalResistance = [0.23, 0.46, 0.55, 0.56, 0.56, 0.57, 0.51];   // R
     const heatTransfer = [4.35, 2.17, 1.82, 1.79, 1.79, 1.75, 1.96];         // K
 
-    const areaColors = ["#67b8bf", "#f9d094", "#9cd683"];
-    const avgLineColors = ["#4a848a", "#ffbc78", "#85bf61"];
+    // 配色统一：面积图（上排）+ 平均值虚线（下排）
+    const areaColors = ["#84a8ba", "#b9918b", "#6a8b75"];
+    const avgLineColors = ["#a0cce2", "#f3d7d2", "#9fd1b0"];
     const names = ["导热系数", "热阻", "传热系数"];
     const wallTypeGroup = ["青砖实砌墙", "青砖实砌墙", "青砖空斗墙", "青砖空斗墙", "青砖空斗墙", "青砖空斗墙", "青砖空斗墙"];
     const wallImageMap = [

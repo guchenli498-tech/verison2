@@ -539,12 +539,22 @@
     .legend-dot {
       border-radius: 50%;
       background: #7f7468;
+      border: 1px solid rgba(80, 63, 47, 0.22);
       display: inline-block;
     }
 
     .legend-dot.lg { width: 10px; height: 10px; }
     .legend-dot.md { width: 8px; height: 8px; }
     .legend-dot.sm { width: 6px; height: 6px; }
+    .legend-dot.national { background: #aa5b46; }
+    .legend-dot.provincial { background: #c39070; }
+    .legend-dot.city { background: #dfc399; }
+    .legend-dot.work {
+      width: 10px;
+      height: 10px;
+      background: transparent;
+      border: 1.6px dashed rgba(143, 114, 80, 0.9);
+    }
 
     .graph-tooltip {
       position: absolute;
@@ -1197,7 +1207,8 @@
             <div class="legend-row"><span class="legend-line"></span><span>师承/归属</span></div>
             <div class="legend-row"><span class="legend-line dashed"></span><span>指导</span></div>
             <div class="legend-row"><span class="legend-line dotted"></span><span>家族</span></div>
-            <div class="legend-row"><span class="legend-dot lg"></span><span>国家级</span><span class="legend-dot md"></span><span>省级</span><span class="legend-dot sm"></span><span>一般</span></div>
+            <div class="legend-row"><span class="legend-dot lg national"></span><span>国家级</span><span class="legend-dot md provincial"></span><span>省级</span><span class="legend-dot sm city"></span><span>市级</span></div>
+            <div class="legend-row"><span class="legend-dot work"></span><span>代表作节点（空心）</span></div>
           </div>
           <svg id="graphSvg" class="graph-svg" viewBox="0 0 560 360" preserveAspectRatio="xMidYMid meet"></svg>
           <div id="graphTooltip" class="graph-tooltip"></div>
@@ -1358,7 +1369,7 @@
       wood: {
         name: '木雕',
         src: '/charts/三雕图片/木雕.png',
-        palette: { main: '#5C2C26', soft: '#D4A373' },
+        palette: { main: '#aa5b46', soft: '#c39070' },
         intro: '徽州木雕是明清徽派建筑和家具的核心装饰，以枫木、樟木、楠木等为材，常见于梁架、雀替、隔扇与家具面板，兼具审美与教化功能。',
         introTags: ['建筑装饰', '梁架雀替', '透雕浮雕', '教化寓意'],
         process: [
@@ -1397,7 +1408,7 @@
       stone: {
         name: '石雕',
         src: '/charts/三雕图片/石雕.png',
-        palette: { main: '#5B6770', soft: '#B8C0C8' },
+        palette: { main: '#c39070', soft: '#dfc399' },
         intro: '徽州石雕多用青石、茶园石，风格古朴厚重，广泛用于牌坊、柱础、抱鼓石、石窗和栏杆，是徽派建筑外部识别度最高的装饰系统之一。',
         introTags: ['牌坊石作', '柱础栏板', '高浮雕', '礼制象征'],
         process: [
@@ -1437,7 +1448,7 @@
       brick: {
         name: '砖雕',
         src: '/charts/三雕图片/砖雕.png',
-        palette: { main: '#5A5550', soft: '#8A7F75' },
+        palette: { main: '#dfc399', soft: '#eadbbd' },
         intro: '徽州砖雕以水磨青砖为主材，多用于门楼、门罩、墀头和屋檐，擅长多层透雕，是徽派立面视觉“点睛”部位。',
         introTags: ['门楼系统', '多层透雕', '叙事构图', '青砖材性'],
         process: [
@@ -1511,6 +1522,11 @@
       all: { levels: ['national', 'provincial', 'city', 'county', 'general'], label: '全谱' },
       np: { levels: ['national', 'provincial'], label: '国家+省级' },
       npc: { levels: ['national', 'provincial', 'city'], label: '国家+省+市' }
+    };
+    const levelNodeColorMap = {
+      national: '#aa5b46',
+      provincial: '#c39070',
+      city: '#dfc399'
     };
 
     const relationMeta = {
@@ -1843,9 +1859,9 @@
         .filter(node => visibleNodeIds.has(node.id))
         .map(node => {
         const r = getNodeRadius(node);
-        const color = craftData[node.craft].palette.main;
+        const color = levelNodeColorMap[node.level] || craftData[node.craft].palette.main;
         const isWorkLike = node.type === 'work' || node.type === 'masterpiece' || node.level === 'work';
-        const isKeyLabel = node.level === 'root' || node.level === 'national' || node.level === 'provincial' || isWorkLike;
+        const isKeyLabel = node.level === 'root' || node.level === 'national' || node.level === 'provincial' || node.level === 'city' || isWorkLike;
         const isFocusCraft = node.craft === activeCraft;
         const isActiveNode = node.id === activeNodeId;
         const isNeighbor = focusNodeId ? neighborSet.has(node.id) : false;
@@ -1858,10 +1874,8 @@
         const labelX = labelOnRight ? node.x + r + 7 : node.x - r - 7;
         const labelAnchor = labelOnRight ? 'start' : 'end';
         const labelY = node.y + 4;
-        const labelColor = isFocusCraft ? '#2A2A2A' : '#888';
-        const labelOpacity = focusNodeId
-          ? (isNeighbor ? 1 : (isKeyLabel ? 0.65 : 0.08))
-          : (isKeyLabel ? 1 : 0.14);
+        const labelColor = '#1f1f1f';
+        const labelOpacity = 1;
         const labelSize = (node.level === 'root' || node.level === 'national') ? 14 : (isKeyLabel ? 13 : 11);
         return `
           <g data-node="${node.id}" style="cursor:pointer" data-tooltip='${getNodeTooltip(node).replace(/'/g, '&apos;')}'>

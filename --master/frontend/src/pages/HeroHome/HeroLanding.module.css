@@ -1,0 +1,194 @@
+.page {
+  min-height: 100svh;
+  background: #f2eee5;
+}
+
+.hero {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sceneImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  animation: sceneZoom 18s ease-out forwards;
+}
+
+.stripesOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    radial-gradient(24px 120px at 12% 20%, rgba(223, 211, 177, 0.72) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 32% 22%, rgba(213, 220, 211, 0.72) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 68% 20%, rgba(223, 211, 177, 0.72) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 84% 20%, rgba(213, 220, 211, 0.72) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 20% 78%, rgba(213, 220, 211, 0.7) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 52% 80%, rgba(213, 220, 211, 0.7) 0 98%, transparent 100%),
+    radial-gradient(24px 120px at 74% 78%, rgba(213, 220, 211, 0.7) 0 98%, transparent 100%);
+  animation: stripesBreath 7s ease-in-out infinite;
+}
+
+.mistLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 42%, rgba(255, 255, 255, 0.25) 0, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 68% 45%, rgba(255, 255, 255, 0.22) 0, rgba(255, 255, 255, 0) 45%);
+  filter: blur(8px);
+  animation: mistDrift 16s linear infinite alternate;
+}
+
+.waterRipple {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(205, 218, 214, 0.32), rgba(205, 218, 214, 0) 60%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.11) 0 2px,
+      rgba(255, 255, 255, 0) 2px 10px
+    );
+  mix-blend-mode: screen;
+  animation: waterBreath 5.5s ease-in-out infinite;
+}
+
+.centerFog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(46vw, 760px);
+  height: min(42vh, 420px);
+  transform: translate(-50%, -52%);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75) 0, rgba(255, 255, 255, 0) 70%);
+  filter: blur(12px);
+  opacity: 0.32;
+  animation: fogReveal 2.2s ease-out 1.5s forwards;
+}
+
+.titleStage {
+  position: absolute;
+  left: 50%;
+  top: 47.5%;
+  width: min(29vw, 440px);
+  aspect-ratio: 512 / 889;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+}
+
+.titleImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(24px) scale(1.06);
+  animation: textRevealSoft 1s ease-out 2.2s forwards;
+}
+
+.enterBtn {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(42px, 8vh, 84px);
+  transform: translateX(-50%) translateY(10px);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 5;
+  animation: btnIn 0.8s ease-out 4s forwards;
+}
+
+.enterBtn img {
+  width: clamp(140px, 14vw, 220px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(78, 62, 43, 0.24));
+}
+
+.enterBtn:hover img {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 9px 20px rgba(78, 62, 43, 0.32));
+}
+
+@keyframes sceneZoom {
+  to {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes mistDrift {
+  0% {
+    transform: translateX(-14px);
+  }
+  100% {
+    transform: translateX(18px);
+  }
+}
+
+@keyframes waterBreath {
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes stripesBreath {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes fogReveal {
+  0% {
+    opacity: 0.28;
+    transform: translate(-50%, -52%) scale(1);
+  }
+  45% {
+    opacity: 0.55;
+    transform: translate(-50%, -52%) scale(1.03);
+  }
+  100% {
+    opacity: 0.22;
+    transform: translate(-50%, -52%) scale(1.06);
+  }
+}
+
+@keyframes textReveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes textRevealSoft {
+  to {
+    opacity: 0.95;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes btnIn {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+

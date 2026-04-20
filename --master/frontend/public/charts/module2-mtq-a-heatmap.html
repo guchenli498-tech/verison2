@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>马头墙 · 图A/图B切换</title>
+    <title>马头墙 · 双图切换</title>
     <style>
       html,
       body {
@@ -64,8 +64,8 @@
   <body>
     <div class="wrap">
       <div class="toolbar">
-        <div id="btnA" class="btn active" role="button" tabindex="0">图表一</div>
-        <div id="btnB" class="btn" role="button" tabindex="0">图表二</div>
+        <div id="btnA" class="btn active" role="button" tabindex="0">关系矩阵热力图</div>
+        <div id="btnB" class="btn" role="button" tabindex="0">极坐标综合图</div>
       </div>
 
       <iframe
@@ -259,11 +259,11 @@
     <div class="wrap">
       <div class="headerRow">
         <div class="header">
-          <div id="chartTitle" class="title">马头墙 · 关系矩阵热力图（图表一）</div>
+          <div id="chartTitle" class="title">马头墙 · 关系矩阵热力图</div>
         </div>
         <div class="toolbar">
-          <div id="btnA" class="btn active" role="button" tabindex="0">图表一</div>
-          <div id="btnB" class="btn" role="button" tabindex="0">图表二</div>
+          <div id="btnA" class="btn active" role="button" tabindex="0">关系矩阵热力图</div>
+          <div id="btnB" class="btn" role="button" tabindex="0">极坐标综合图</div>
         </div>
       </div>
       <div id="chart"></div>
@@ -566,8 +566,8 @@
           if (titleEl) {
             titleEl.textContent =
               mode === "A"
-                ? "马头墙 · 关系矩阵热力图（图表一）"
-                : "马头墙 · 极坐标综合对比图（图表二）";
+                ? "马头墙 · 关系矩阵热力图"
+                : "马头墙 · 极坐标综合对比图";
           }
           if (mode === "A") {
             chart.setOption(buildOptionA(), true);

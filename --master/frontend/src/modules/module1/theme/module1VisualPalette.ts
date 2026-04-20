@@ -18,27 +18,27 @@ export const BLUE = {
 
 /**
  * 地图热力：截止 1911 各地徽派建筑总数量，越多越深（浅→深）
- * 深→浅依次为 #4a848a、#67b8bf、#81e8ef、#e1f8fa
+ * 用户新配色（浅→深）：#e8d3ae → #dfc399 → #c3865a → #aa5b46
  */
 export const HEAT_MAP_GRADIENT = [
-  '#e1f8fa',
-  '#81e8ef',
-  '#67b8bf',
-  '#4a848a',
+  '#e8d3ae',
+  '#dfc399',
+  '#c3865a',
+  '#aa5b46',
 ] as const
 
 /** ECharts 地图：底图、标注、图钉（与热力同系青绿） */
 export const MAP_GEO_THEME = {
   land: HEAT_MAP_GRADIENT[0],
   ink: '#2a4f53',
-  border: 'rgba(74, 132, 138, 0.2)',
-  focus: '#4a848a',
-  hoverLine: 'rgba(103, 184, 191, 0.92)',
-  pinDefault: '#67b8bf',
-  pinHover: '#81e8ef',
-  pinSel: '#4a848a',
+  border: 'rgba(170, 91, 70, 0.22)',
+  focus: '#aa5b46',
+  hoverLine: 'rgba(195, 134, 90, 0.92)',
+  pinDefault: '#c3865a',
+  pinHover: '#dfc399',
+  pinSel: '#aa5b46',
   pinBorder: '#ffffff',
-  pinAccent: '#f0a070',
+  pinAccent: '#aa5b46',
 } as const
 
 /** 遗存类型（六类） */

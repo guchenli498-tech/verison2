@@ -166,7 +166,7 @@
               fontSize: 12,
               interval: 0,
               rotate: 30,
-              color: "#5b5246",
+              color: "#000000",
               fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
             },
           },
@@ -178,7 +178,7 @@
             axisLabel: {
               fontSize: 13,
               fontWeight: "500",
-              color: "#4d4539",
+              color: "#000000",
               fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
             },
           },
@@ -205,7 +205,7 @@
             text: ["高提升率(%)", "低提升率(%)"],
             textStyle: {
               fontSize: 12,
-              color: "#5d5548",
+              color: "#000000",
               fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
             },
           },
@@ -217,10 +217,7 @@
               label: {
                 show: true,
                 fontSize: 11,
-                color: function (params) {
-                  const v = params.value[2];
-                  return v >= 52 || v <= -12 ? "#f9f6ef" : "#3e352c";
-                },
+                color: "#000000",
                 formatter: function (params) {
                   return params.value[2].toFixed(2);
                 },
