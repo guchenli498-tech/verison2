@@ -3,13 +3,15 @@ import styles from './HeroLanding.module.css'
 
 export function HeroHome() {
   const navigate = useNavigate()
+  const base = import.meta.env.BASE_URL ?? '/'
+  const asset = (file: string) => `${base}homepage/${file}`
 
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-label="徽州建筑文化可视化首页">
         <img
           className={styles.sceneImage}
-          src="/homepage/hero-scene.png"
+          src={asset('hero-scene.png')}
           alt="徽州山水村落长卷"
         />
 
@@ -21,7 +23,7 @@ export function HeroHome() {
         <div className={styles.titleStage}>
           <img
             className={styles.titleImage}
-            src="/homepage/hero-title-overlay.png"
+            src={asset('hero-title-overlay.png')}
             alt="数览徽境，艺叙千年"
           />
         </div>
@@ -32,7 +34,7 @@ export function HeroHome() {
           onClick={() => navigate('/module1')}
           aria-label="点击进入模块"
         >
-          <img src="/homepage/hero-enter-button.png" alt="点击进入" />
+          <img src={asset('hero-enter-button.png')} alt="点击进入" />
         </button>
       </section>
     </div>

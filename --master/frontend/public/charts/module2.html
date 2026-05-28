@@ -278,9 +278,10 @@
       </div>
       <div class="content">
         <div class="topRow">
-          <div class="panel panelA" id="panelA">
+          <div class="panel panelA" id="panelA" data-guide-id="module2-panel-a">
             <iframe
               id="frameA"
+              data-guide-id="module2-chart-a"
               class="panel-iframe"
               title="module2-panelA"
               src=""
@@ -288,9 +289,10 @@
             ></iframe>
             <div class="placeholder" id="phA">图A占位</div>
           </div>
-          <div class="panel panelB" id="panelB">
+          <div class="panel panelB" id="panelB" data-guide-id="module2-panel-b">
             <iframe
               id="frameB"
+              data-guide-id="module2-chart-b"
               class="panel-iframe"
               title="module2-panelB"
               src=""
@@ -301,7 +303,7 @@
         </div>
 
         <div class="bottomRow">
-          <div class="panel fanWrap" id="fanWrap">
+          <div class="panel fanWrap" id="fanWrap" data-guide-id="module2-fan">
             <svg
               class="fanSwitch"
               id="fanSwitch"
@@ -326,7 +328,7 @@
 
               <!-- 扇形分区图像填充：用 path 作为 clip 形状 -->
               <image
-                href="/charts/module2-fan-images/tj.jpeg"
+                href="./module2-fan-images/tj.jpeg"
                 class="fan-img"
                 data-key="tj"
                 x="-4"
@@ -338,7 +340,7 @@
                 style="pointer-events:none; opacity:0.98;"
               />
               <image
-                href="/charts/module2-fan-images/fq.jpg"
+                href="./module2-fan-images/fq.jpg"
                 class="fan-img"
                 data-key="fq"
                 x="-4"
@@ -350,7 +352,7 @@
                 style="pointer-events:none; opacity:0.98;"
               />
               <image
-                href="/charts/module2-fan-images/mtq.jpg"
+                href="./module2-fan-images/mtq.jpg"
                 class="fan-img"
                 data-key="mtq"
                 x="-4"
@@ -362,7 +364,7 @@
                 style="pointer-events:none; opacity:0.98;"
               />
               <image
-                href="/charts/module2-fan-images/wd.jpg"
+                href="./module2-fan-images/wd.jpg"
                 class="fan-img"
                 data-key="wd"
                 x="-4"
@@ -388,9 +390,10 @@
             </svg>
           </div>
 
-          <div class="panel panelC" id="panelC">
+          <div class="panel panelC" id="panelC" data-guide-id="module2-panel-c">
             <iframe
               id="frameC"
+              data-guide-id="module2-chart-c"
               class="panel-iframe"
               title="module2-panelC"
               src=""
@@ -399,9 +402,10 @@
             <div class="placeholder" id="phC">词云C占位</div>
           </div>
 
-          <div class="panel panelD" id="panelD">
+          <div class="panel panelD" id="panelD" data-guide-id="module2-panel-d">
             <iframe
               id="frameD"
+              data-guide-id="module2-chart-d"
               class="panel-iframe"
               title="module2-panelD"
               src=""
@@ -624,12 +628,12 @@
           // panelA：各构件 A 图
           const panelAVisible = key === 'mtq' || key === 'fq' || key === 'wd' || key === 'tj'
           const panelAUrl = key === 'mtq'
-            ? '/charts/module2-mtq-a-heatmap.html'
+            ? './module2-mtq-a-heatmap.html'
             : (key === 'fq'
-              ? '/charts/module2-fq-a-radial.html'
+              ? './module2-fq-a-radial.html'
               : (key === 'tj'
-                ? '/charts/module2-tj-a-heatmap.html'
-                : '/charts/module2-wd-a-rose.html'))
+                ? './module2-tj-a-heatmap.html'
+                : './module2-wd-a-rose.html'))
           mountFrame(frameA, panelAUrl, panelAVisible)
           if (phA) {
             phA.style.display = panelAVisible ? 'none' : 'flex'
@@ -638,12 +642,12 @@
           // panelB：各构件关系图
           const panelBVisible = key === 'mtq' || key === 'fq' || key === 'wd' || key === 'tj'
           const panelBUrl = key === 'mtq'
-            ? '/charts/module2-mtq-b-relationship.html'
+            ? './module2-mtq-b-relationship.html'
             : (key === 'fq'
-              ? '/charts/module2-fq-b-relationship.html'
+              ? './module2-fq-b-relationship.html'
               : (key === 'tj'
-                ? '/charts/module2-tj-b-relationship.html'
-                : '/charts/module2-wd-b-relationship.html'))
+                ? './module2-tj-b-relationship.html'
+                : './module2-wd-b-relationship.html'))
           mountFrame(frameB, panelBUrl, panelBVisible)
           if (phB) {
             phB.style.display = panelBVisible ? 'none' : 'flex'
@@ -652,12 +656,12 @@
           // panelC：各构件词云
           const panelCVisible = key === 'mtq' || key === 'fq' || key === 'wd' || key === 'tj'
           const panelCUrl = key === 'mtq'
-            ? '/charts/module2-mtq-c-wordcloud.html'
+            ? './module2-mtq-c-wordcloud.html'
             : (key === 'fq'
-              ? '/charts/module2-fq-c-wordcloud.html'
+              ? './module2-fq-c-wordcloud.html'
               : (key === 'tj'
-                ? '/charts/module2-tj-c-wordcloud.html'
-                : '/charts/module2-wd-c-wordcloud.html'))
+                ? './module2-tj-c-wordcloud.html'
+                : './module2-wd-c-wordcloud.html'))
           mountFrame(frameC, panelCUrl, panelCVisible)
           if (phC) {
             phC.style.display = panelCVisible ? 'none' : 'flex'
@@ -666,12 +670,12 @@
           // panelD：各构件 D 图
           const panelDVisible = key === 'mtq' || key === 'fq' || key === 'wd' || key === 'tj'
           const panelDUrl = key === 'mtq'
-            ? '/charts/module2-mtq-d-summary.html'
+            ? './module2-mtq-d-summary.html'
             : (key === 'fq'
-              ? '/charts/module2-fq-d-structure.html'
+              ? './module2-fq-d-structure.html'
               : (key === 'tj'
-                ? '/charts/module2-tj-d-thermal.html'
-                : '/charts/module2-wd-d-radar.html'))
+                ? './module2-tj-d-thermal.html'
+                : './module2-wd-d-radar.html'))
           mountFrame(frameD, panelDUrl, panelDVisible)
           if (phD) {
             phD.style.display = panelDVisible ? 'none' : 'flex'
@@ -795,10 +799,10 @@
 
         async function runEntryAnimation() {
           const urls = [
-            '/charts/module2-fan-images/tj.jpeg',
-            '/charts/module2-fan-images/fq.jpg',
-            '/charts/module2-fan-images/mtq.jpg',
-            '/charts/module2-fan-images/wd.jpg'
+            './module2-fan-images/tj.jpeg',
+            './module2-fan-images/fq.jpg',
+            './module2-fan-images/mtq.jpg',
+            './module2-fan-images/wd.jpg'
           ]
           await Promise.race([
             preloadImages(urls),
@@ -874,6 +878,16 @@
         window.addEventListener('resize', () => {
           setFanByAngles(currentAngles, currentKey)
         })
+
+        window.addEventListener('message', (event) => {
+          const data = event.data
+          if (!data || data.type !== 'hui-guide' || data.action !== 'setFan') return
+          const key = data.key
+          if (!KEYS.includes(key)) return
+          animateTo(key)
+        })
+
+        window.__HUI_MODULE2__ = { setFan: animateTo }
       })()
     </script>
   </body>

@@ -3,6 +3,7 @@ import styles from './Module3Page.module.css'
 
 export function Module3Page() {
   const wrapRef = useRef<HTMLDivElement>(null)
+  const chartsUrl = `${import.meta.env.BASE_URL}charts/module3.html`
 
   useEffect(() => {
     function fit() {
@@ -21,7 +22,7 @@ export function Module3Page() {
       <iframe
         title="module3"
         className={styles.iframe}
-        src="/charts/module3.html"
+        src={chartsUrl}
         loading="eager"
         referrerPolicy="no-referrer"
       />

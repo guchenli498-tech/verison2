@@ -15,7 +15,7 @@ export const HERO_TIMINGS = {
 } as const
 
 export const HERO_TITLE_ASSETS = [
-  '/homepage/huizhou-calligraphy-solid.svg',
+  'homepage/huizhou-calligraphy-solid.svg',
 ] as const
 
 export const GUIDE_CHAPTERS = [

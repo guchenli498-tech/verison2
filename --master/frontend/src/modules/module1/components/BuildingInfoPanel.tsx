@@ -21,8 +21,16 @@ const panelImages = panelImagesJson as {
 
 const DETAIL_META_LABELS = ['地区', '类型', '年代'] as const
 
+function resolvePublicPath(path: string) {
+  if (!path) return path
+  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:')) return path
+  const base = import.meta.env.BASE_URL ?? '/'
+  if (path.startsWith('/')) return `${base}${path.slice(1)}`
+  return `${base}${path}`
+}
+
 function buildingPanelPhoto(id: string) {
-  return `/module1/panel/building-${id}.jpg`
+  return resolvePublicPath(`/module1/panel/building-${id}.jpg`)
 }
 
 function splitFullWidthBar(s: string) {
@@ -111,7 +119,9 @@ export function BuildingInfoPanel(props: {
 
   if (city) {
     const n = countyNarratives[city.cityId]
-    const countyImg = panelImages.county[city.cityId] ?? panelImages.overview.hero
+    const countyImg = resolvePublicPath(
+      panelImages.county[city.cityId] ?? panelImages.overview.hero,
+    )
 
     return (
       <div className={styles.panelRoot}>
@@ -120,8 +130,9 @@ export function BuildingInfoPanel(props: {
             src={countyImg}
             alt={city.cityName}
             className={styles.countyHeroImg}
-            loading="lazy"
+            loading="eager"
             decoding="async"
+            fetchPriority="high"
           />
           <div className={styles.countyHeroFade} />
           <div className={styles.countyHeroTitle}>{city.cityName}</div>
@@ -164,17 +175,22 @@ export function BuildingInfoPanel(props: {
     )
   }
 
-  const [img1, img2] = panelImages.overview.paragraphImages
+  const [img1Raw, img2Raw] = panelImages.overview.paragraphImages
+  const img1 = resolvePublicPath(img1Raw)
+  const img2 = resolvePublicPath(img2Raw)
+  const overviewHero = resolvePublicPath(panelImages.overview.hero)
+  const hintStrip = resolvePublicPath(panelImages.overview.hintStrip)
 
   return (
     <div className={styles.panelRoot}>
       <div className={styles.heroWide}>
         <img
-          src={panelImages.overview.hero}
+          src={overviewHero}
           alt="皖南徽派村落"
           className={styles.heroWideImg}
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority="high"
         />
         <div className={styles.heroWideFade} />
       </div>
@@ -184,7 +200,7 @@ export function BuildingInfoPanel(props: {
       <div className={styles.prosePairs}>
         <div className={styles.copyPair}>
           <figure className={styles.copyPairFig}>
-            <img src={img1} alt="" loading="lazy" decoding="async" />
+            <img src={img1} alt="" loading="eager" decoding="async" />
           </figure>
           <p className={styles.copyPairText}>
             {parseBoldEmphasis(module1Overview.paragraphs[0], styles.emphasis)}
@@ -192,7 +208,7 @@ export function BuildingInfoPanel(props: {
         </div>
         <div className={styles.copyPair}>
           <figure className={styles.copyPairFig}>
-            <img src={img2} alt="" loading="lazy" decoding="async" />
+            <img src={img2} alt="" loading="eager" decoding="async" />
           </figure>
           <p className={styles.copyPairText}>
             {parseBoldEmphasis(module1Overview.paragraphs[1], styles.emphasis)}
@@ -204,7 +220,7 @@ export function BuildingInfoPanel(props: {
         <div className={styles.hintTitle}>怎样浏览</div>
         <div className={styles.hintMediaRow}>
           <img
-            src={panelImages.overview.hintStrip}
+            src={hintStrip}
             alt=""
             className={styles.hintThumb}
             loading="lazy"

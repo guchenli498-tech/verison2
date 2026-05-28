@@ -66,6 +66,7 @@ export function Module1Page() {
             title="建筑类型分布"
             className={styles.leftCard}
             bodyClassName={styles.noPadding}
+            guideId="module1-category"
           >
             <BuildingCategoryDonut data={buildingCategories} />
           </ChartPanel>
@@ -73,6 +74,7 @@ export function Module1Page() {
           <ChartPanel
             title="历朝徽派古建筑留存数量"
             bodyClassName={styles.noPadding}
+            guideId="module1-history"
           >
             <DynastyLineChart selectedCityId={selectedCityId} mode="area" />
           </ChartPanel>
@@ -83,6 +85,7 @@ export function Module1Page() {
             title="徽州古建筑空间分布"
             className={styles.leftCard}
             bodyClassName={styles.noPadding}
+            guideId="module1-map"
           >
             <ProvinceHeatMap
               cities={cities}
@@ -111,6 +114,7 @@ export function Module1Page() {
           <ChartPanel
             title="建筑信息与叙事"
             bodyClassName={styles.scrollBody}
+            guideId="module1-info"
           >
             <BuildingInfoPanel city={selectedCity} building={selectedBuilding} />
           </ChartPanel>
@@ -123,4 +127,3 @@ export function Module1Page() {
     </div>
   )
 }
-

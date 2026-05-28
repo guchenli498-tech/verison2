@@ -1,18 +1,18 @@
 {
   "nodes": [
-    { "id": "wood_root", "name": "木雕", "type": "craft", "craft": "wood", "level": "root", "desc": "雕种核心节点", "image": "/charts/三雕图片/木雕.png" },
-    { "id": "stone_root", "name": "石雕", "type": "craft", "craft": "stone", "level": "root", "desc": "雕种核心节点", "image": "/charts/三雕图片/石雕.png" },
-    { "id": "brick_root", "name": "砖雕", "type": "craft", "craft": "brick", "level": "root", "desc": "雕种核心节点", "image": "/charts/三雕图片/砖雕.png" },
+    { "id": "wood_root", "name": "木雕", "type": "craft", "craft": "wood", "level": "root", "desc": "雕种核心节点", "image": "./三雕图片/木雕.png" },
+    { "id": "stone_root", "name": "石雕", "type": "craft", "craft": "stone", "level": "root", "desc": "雕种核心节点", "image": "./三雕图片/石雕.png" },
+    { "id": "brick_root", "name": "砖雕", "type": "craft", "craft": "brick", "level": "root", "desc": "雕种核心节点", "image": "./三雕图片/砖雕.png" },
 
-    { "id": "wood_work", "name": "承志堂木雕", "type": "masterpiece", "craft": "wood", "level": "work", "desc": "木雕代表名作/建筑案例", "image": "/charts/module3-assets/unzipped-01.jpg", "workOf": ["蒯正华", "王金生", "曹永盛"] },
+    { "id": "wood_work", "name": "承志堂木雕", "type": "masterpiece", "craft": "wood", "level": "work", "desc": "木雕代表名作/建筑案例", "image": "./module3-assets/unzipped-01.jpg", "workOf": ["蒯正华", "王金生", "曹永盛"] },
     { "id": "wood_work_02", "name": "程氏三宅木雕名作", "type": "work", "craft": "wood", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["郑尧锦", "朱泓", "朱伟"] },
     { "id": "wood_work_03", "name": "潜口民宅木雕梁架案例", "type": "work", "craft": "wood", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["吴秋黎", "谢润初", "朱五牛"] },
 
-    { "id": "stone_work", "name": "棠樾牌坊群", "type": "masterpiece", "craft": "stone", "level": "work", "desc": "石雕代表名作/建筑案例", "image": "/charts/module3-assets/unzipped-09.jpg", "workOf": ["冯有进", "汪裕民", "江连生"] },
+    { "id": "stone_work", "name": "棠樾牌坊群", "type": "masterpiece", "craft": "stone", "level": "work", "desc": "石雕代表名作/建筑案例", "image": "./module3-assets/unzipped-09.jpg", "workOf": ["冯有进", "汪裕民", "江连生"] },
     { "id": "stone_work_02", "name": "王勇门楼石雕案例", "type": "work", "craft": "stone", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["王勇", "程佑富", "欧阳越峰"] },
     { "id": "stone_work_03", "name": "程氏宅与石雕构件", "type": "work", "craft": "stone", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["程华进", "程长进", "汪裕民"] },
 
-    { "id": "brick_work", "name": "门楼砖雕", "type": "masterpiece", "craft": "brick", "level": "work", "desc": "砖雕代表名作/门楼系统", "image": "/charts/module3-assets/unzipped-10.jpg", "workOf": ["方新中", "吴正辉", "吴林水"] },
+    { "id": "brick_work", "name": "门楼砖雕", "type": "masterpiece", "craft": "brick", "level": "work", "desc": "砖雕代表名作/门楼系统", "image": "./module3-assets/unzipped-10.jpg", "workOf": ["方新中", "吴正辉", "吴林水"] },
     { "id": "brick_work_02", "name": "徽州府衙门楼砖雕案例", "type": "work", "craft": "brick", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["方乐成", "王永强", "方惠雄"] },
     { "id": "brick_work_03", "name": "金紫祠门楼砖雕案例", "type": "work", "craft": "brick", "level": "work", "desc": "代表名作/建筑案例", "image": "", "workOf": ["方卫新", "余成龙", "江立云"] },
 

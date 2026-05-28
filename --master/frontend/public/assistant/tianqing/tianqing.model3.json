@@ -1,0 +1,27 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "tianqing.moc3",
+    "Textures": ["textures/texture_00.png"],
+    "Physics": "tianqing.physics3.json",
+    "DisplayInfo": "tianqing.cdi3.json",
+    "Expressions": [
+      {
+        "Name": "hide_watermark",
+        "File": "hide_watermark.exp3.json"
+      }
+    ]
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": ["ParamEyeROpen", "ParamEyeLOpen"]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": []
+    }
+  ]
+}

@@ -38,36 +38,73 @@ function mapIconToEchartsSymbol(mapIcon: string | undefined): string | undefined
   return `image://${url}`
 }
 
+function resolvePublicPath(path: string) {
+  if (!path) return path
+  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:')) return path
+  const base = import.meta.env.BASE_URL ?? '/'
+  if (path.startsWith('/')) return `${base}${path.slice(1)}`
+  return `${base}${path}`
+}
+
 const GEO_FILES = [
-  { name: '歙县', file: '/geo/歙县.geojson', cityId: 'sheXian' },
-  { name: '休宁县', file: '/geo/休宁县.geojson', cityId: 'xiuNing' },
-  { name: '绩溪县', file: '/geo/绩溪县.geojson', cityId: 'jiXi' },
-  { name: '徽州区', file: '/geo/徽州区.geojson', cityId: 'huiZhouQu' },
-  { name: '婺源县', file: '/geo/婺源县.geojson', cityId: 'wuYuan' },
-  { name: '黟县', file: '/geo/黟县.geojson', cityId: 'yiXian' },
-  { name: '祁门县', file: '/geo/祁门县.geojson', cityId: 'qiMen' },
-  { name: '黄山区', file: '/geo/黄山区.geojson', cityId: 'huangShanQu' },
-  { name: '屯溪区', file: '/geo/屯溪区.geojson', cityId: 'tunXiQu' },
+  { name: '歙县', file: resolvePublicPath('/geo/歙县.geojson'), cityId: 'sheXian' },
+  { name: '休宁县', file: resolvePublicPath('/geo/休宁县.geojson'), cityId: 'xiuNing' },
+  { name: '绩溪县', file: resolvePublicPath('/geo/绩溪县.geojson'), cityId: 'jiXi' },
+  { name: '徽州区', file: resolvePublicPath('/geo/徽州区.geojson'), cityId: 'huiZhouQu' },
+  { name: '婺源县', file: resolvePublicPath('/geo/婺源县.geojson'), cityId: 'wuYuan' },
+  { name: '黟县', file: resolvePublicPath('/geo/黟县.geojson'), cityId: 'yiXian' },
+  { name: '祁门县', file: resolvePublicPath('/geo/祁门县.geojson'), cityId: 'qiMen' },
+  { name: '黄山区', file: resolvePublicPath('/geo/黄山区.geojson'), cityId: 'huangShanQu' },
+  { name: '屯溪区', file: resolvePublicPath('/geo/屯溪区.geojson'), cityId: 'tunXiQu' },
 ]
 
 async function loadLocalGeoJson() {
-  const results = await Promise.all(
+  const settled = await Promise.allSettled(
     GEO_FILES.map(async (g) => {
-      const res = await fetch(g.file)
-      const json = await res.json()
-      return { ...g, geojson: json }
+      const res = await fetch(g.file, { cache: 'force-cache' })
+      if (!res.ok) {
+        throw new Error(`${res.status} ${res.statusText}`)
+      }
+      const geojson = await res.json()
+      return { g, geojson }
     }),
   )
-  const merged = {
-    type: 'FeatureCollection',
-    features: results.flatMap((r) =>
-      (r.geojson.features ?? []).map((f: any) => ({
-        ...f,
-        properties: { ...f.properties, cityId: r.cityId },
-      })),
-    ),
+
+  let failed = 0
+  const features = settled.flatMap((r, i) => {
+    if (r.status === 'rejected') {
+      failed++
+      console.warn(
+        '[ProvinceHeatMap] geo load failed:',
+        GEO_FILES[i]?.name,
+        r.reason,
+      )
+      return []
+    }
+    const { g, geojson } = r.value
+    return (geojson.features ?? []).map((f: any) => ({
+      ...f,
+      properties: { ...f.properties, cityId: g.cityId },
+    }))
+  })
+
+  if (features.length === 0) {
+    throw new Error(
+      failed === GEO_FILES.length
+        ? '县域边界数据全部加载失败，请检查网络后刷新页面'
+        : '县域边界数据为空',
+    )
   }
-  return merged
+  if (failed > 0) {
+    console.warn(
+      `[ProvinceHeatMap] ${failed}/${GEO_FILES.length} 个县边界未加载，地图可能不完整`,
+    )
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features,
+  }
 }
 
 /** 近距离遗产点：经纬度轻微散开，避免缩放叠成一坨（约 1.2–2km） */
@@ -139,20 +176,28 @@ export function ProvinceHeatMap(props: {
   )
 
   const [ready, setReady] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   /** 地图实例首次就绪后只设一次默认缩放；后续 option 合并不再写死 zoom，避免 roam 被刷新掉 */
   const didApplyInitialGeoZoom = useRef(false)
 
   useEffect(() => {
     let mounted = true
     async function run() {
+      setLoadError(null)
       try {
         if (!echarts.getMap('huizhou-counties')) {
           const geo = await loadLocalGeoJson()
+          if (!mounted) return
           echarts.registerMap('huizhou-counties', geo as any)
         }
         if (mounted) setReady(true)
       } catch (e) {
         console.error('Failed to load geo:', e)
+        if (mounted) {
+          setLoadError(
+            e instanceof Error ? e.message : '地图数据加载失败，请稍后刷新',
+          )
+        }
       }
     }
     run()
@@ -468,7 +513,7 @@ export function ProvinceHeatMap(props: {
       const file = mapIconFileFromPath(b.mapIcon)
       const label = HERITAGE_ICON_FILE_LABEL[file]
       if (!label || seen.has(file)) continue
-      const src = b.mapIcon.startsWith('/') ? b.mapIcon : `/${b.mapIcon}`
+      const src = resolvePublicPath(b.mapIcon)
       seen.set(file, { file, label, src })
     }
     return [...seen.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'))
@@ -526,7 +571,9 @@ export function ProvinceHeatMap(props: {
           ))}
         </div>
       </div>
-      {!ready ? (
+      {loadError ? (
+        <div className={styles.loadError}>{loadError}</div>
+      ) : !ready ? (
         <div className={styles.loading}>地图加载中</div>
       ) : (
         <div className={styles.chartInner}>

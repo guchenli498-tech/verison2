@@ -9,7 +9,8 @@ type HeroTitleProps = {
 
 export function HeroTitle({ className, showInkWash = true }: HeroTitleProps) {
   const [assetIndex, setAssetIndex] = useState(0)
-  const titleSrc = HERO_TITLE_ASSETS[assetIndex]
+  const base = import.meta.env.BASE_URL ?? '/'
+  const titleSrc = `${base}${HERO_TITLE_ASSETS[assetIndex]}`
 
   const titleClassName = useMemo(
     () => `${styles.titleWrap} ${className ?? ''}`.trim(),
@@ -25,7 +26,7 @@ export function HeroTitle({ className, showInkWash = true }: HeroTitleProps) {
   return (
     <div className={titleClassName} aria-label={HERO_COPY.titleAlt}>
       {showInkWash && (
-        <img className={styles.inkWash} src="/homepage/ink-wash.svg" alt="" />
+        <img className={styles.inkWash} src={`${base}homepage/ink-wash.svg`} alt="" />
       )}
       <img
         className={styles.calligraphyTitle}

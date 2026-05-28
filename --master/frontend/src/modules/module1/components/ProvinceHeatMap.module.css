@@ -294,6 +294,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+.loadError {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+  padding: 24px 20px;
+  color: #8b4513;
+  font-size: 13px;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  background: rgba(255, 248, 240, 0.92);
+}
+
 .loading {
   position: relative;
   z-index: 1;

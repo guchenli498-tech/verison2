@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './layouts/AppShell/AppShell'
 import { HeroHome } from './pages/HeroHome/HeroHome'
 import { Module1Page } from './modules/module1/pages/Module1Page'
@@ -7,7 +7,11 @@ import { Module3Page } from './modules/module3/pages/Module3Page'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    /**
+     * GitHub Pages 静态托管无法处理 `/verison2/module2` 这类“伪路径”刷新；
+     * HashRouter 将路由放在 `#/module2`，刷新始终落到 `index.html`，展示最稳。
+     */
+    <HashRouter>
       <Routes>
         <Route path="/" element={<HeroHome />} />
         <Route element={<AppShell />}>
@@ -17,6 +21,6 @@ export default function App() {
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }

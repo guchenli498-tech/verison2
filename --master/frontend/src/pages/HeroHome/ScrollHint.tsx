@@ -6,9 +6,10 @@ type ScrollHintProps = {
 }
 
 export function ScrollHint({ onClick }: ScrollHintProps) {
+  const base = import.meta.env.BASE_URL ?? '/'
   return (
     <button type="button" className={styles.scrollHint} onClick={onClick} aria-label="向下探索">
-      <img src="/homepage/scroll-hint.svg" alt="" aria-hidden="true" />
+      <img src={`${base}homepage/scroll-hint.svg`} alt="" aria-hidden="true" />
       <span>{HERO_COPY.scrollHint}</span>
     </button>
   )

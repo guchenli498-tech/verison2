@@ -1,15 +1,17 @@
 import styles from './HeroHome.module.css'
 
 export function HeroMistLayer() {
+  const base = import.meta.env.BASE_URL ?? '/'
+  const mist = `${base}homepage/mist-band.svg`
   return (
     <>
-      <img className={`${styles.mist} ${styles.mistFar}`} src="/homepage/mist-band.svg" alt="" />
+      <img className={`${styles.mist} ${styles.mistFar}`} src={mist} alt="" />
       <img
         className={`${styles.mist} ${styles.mistNear}`}
-        src="/homepage/mist-band.svg"
+        src={mist}
         alt=""
       />
-      <img className={`${styles.mist} ${styles.mistMiddle}`} src="/homepage/mist-band.svg" alt="" />
+      <img className={`${styles.mist} ${styles.mistMiddle}`} src={mist} alt="" />
     </>
   )
 }

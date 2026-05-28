@@ -222,6 +222,7 @@ export function HeritageRiverTimeline() {
       ref={wrapRef}
       className={styles.wrap}
       aria-label="徽派代表作编年时间轴"
+      data-guide-id="module1-river"
       style={{ position: 'relative' }}
       onMouseMove={moveTooltip}
     >

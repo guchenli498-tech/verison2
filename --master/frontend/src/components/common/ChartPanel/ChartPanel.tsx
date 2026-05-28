@@ -7,10 +7,11 @@ export function ChartPanel(props: {
   children: ReactNode
   className?: string
   bodyClassName?: string
+  guideId?: string
 }) {
-  const { title, subtitle, children, className, bodyClassName } = props
+  const { title, subtitle, children, className, bodyClassName, guideId } = props
   return (
-    <section className={`${styles.panel} ${className ?? ''}`}>
+    <section className={`${styles.panel} ${className ?? ''}`} data-guide-id={guideId}>
       {title ? (
         <div className={styles.header}>
           <div className={styles.title}>{title}</div>
@@ -21,4 +22,3 @@ export function ChartPanel(props: {
     </section>
   )
 }
-

@@ -55,7 +55,7 @@ export function TopNav() {
           ))}
         </nav>
 
-        <div className={styles.rightSpacer} />
+        <div className={styles.rightSpacer} aria-hidden />
       </div>
     </header>
   )
