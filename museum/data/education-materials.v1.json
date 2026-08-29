@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-28",
+  "title": "徽州三雕研学开放素材目录",
+  "usageNote": "使用前请逐条核对作者、来源页、许可地址与处理说明。所有衍生使用须遵守原许可。",
+  "items": [
+    {
+      "id": "wood-three-kingdoms-girder",
+      "title": "三国人物梁柁",
+      "type": "木雕",
+      "period": "清代",
+      "assetPath": "museum/media/wood-three-kingdoms-girder-original.jpg",
+      "width": 4032,
+      "height": 3024,
+      "author": "白色瑰宝",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E4%B8%89%E5%9B%BD%E4%BA%BA%E7%89%A9%E6%A2%81%E6%9F%81AM.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "brick-spring-outing-gateway",
+      "title": "游春图人物门罩砖雕",
+      "type": "砖雕",
+      "period": "清代",
+      "assetPath": "museum/media/brick-spring-outing-gateway-original.jpg",
+      "width": 3788,
+      "height": 1608,
+      "author": "白色瑰宝",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E6%B8%B8%E6%98%A5%E5%9B%BE%E4%BA%BA%E7%89%A9%E9%97%A8%E7%BD%A9%E7%A0%96%E9%9B%95AM.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "stone-tianlu-panel",
+      "title": "石雕天禄献瑞华板",
+      "type": "石雕",
+      "period": "明代",
+      "assetPath": "museum/media/stone-tianlu-panel-source-3840.jpg",
+      "width": 3840,
+      "height": 1493,
+      "author": "白色瑰宝",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E7%9F%B3%E9%9B%95%E5%A4%A9%E7%A6%84%E7%8C%AE%E7%91%9E%E5%8D%8E%E6%9D%BFAM.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  ]
+}

@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>屋顶关键词词云</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+    <title>屋顶词云图</title>
+    <script src="../d3.min.js"></script>
+    <script src="../d3.layout.cloud.js"></script>
     <style>
       :root {
         --paper-bg: #f2eee6;
         --title-color: #2b333e;
         --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -20,8 +20,8 @@
         height: 100%;
         margin: 0;
         overflow: hidden;
-        background-color: var(--paper-bg);
-        font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
+        background: var(--paper-bg);
+        font-family: Georgia, "KaiTi", STKaiti, serif;
       }
 
       .wrap {
@@ -97,7 +97,7 @@
         pointer-events: none;
         opacity: 0;
         z-index: 100;
-        color: #4A4638;
+        color: #4a4638;
         line-height: 1.6;
         backdrop-filter: blur(4px);
         transition: opacity 0.2s ease;
@@ -108,20 +108,20 @@
         font-weight: bold;
         color: #222;
         margin-bottom: 4px;
-        border-bottom: 1px dashed #DDD;
+        border-bottom: 1px dashed #ddd;
         padding-bottom: 2px;
       }
 
       .custom-tooltip span {
         font-weight: 600;
-        color: #C97E5A;
+        color: #c97e5a;
       }
     </style>
   </head>
   <body>
     <div class="wrap">
       <div class="header">
-        <div class="title">屋顶 · 关键词词云图</div>
+        <div class="title">屋顶 · 如鸟斯飞</div>
         <div class="subtitle">Keyword Cloud of Huizhou Roof Architecture</div>
       </div>
       <div id="cloud"></div>
@@ -131,43 +131,54 @@
 
     <script>
       (function () {
-        // 数据来源：模块二数据汇总（屋顶）2.2.3（频率为文献出现次数）
         const words = [
-          { text: "小青瓦", value: 10, cat: "类型" },
-          { text: "硬山顶", value: 10, cat: "类型" },
-          { text: "举架/分水", value: 8, cat: "结构做法" },
-          { text: "梁架", value: 7, cat: "结构做法" },
-          { text: "四水归堂", value: 6, cat: "文化寓意" },
-          { text: "坡屋顶", value: 6, cat: "类型" },
-          { text: "歇山顶", value: 6, cat: "类型" },
-          { text: "木雕", value: 5, cat: "类型" },
-          { text: "砖雕", value: 5, cat: "类型" },
-          { text: "天人合一", value: 5, cat: "文化寓意" },
-          { text: "正脊", value: 5, cat: "结构做法" },
-          { text: "防水", value: 5, cat: "功能需求" },
-          { text: "悬山顶", value: 5, cat: "类型" },
-          { text: "望砖", value: 5, cat: "结构做法" },
-          { text: "屋脊", value: 5, cat: "结构做法" },
-          { text: "石雕", value: 4, cat: "类型" },
-          { text: "装饰", value: 4, cat: "功能需求" },
-          { text: "雀替", value: 4, cat: "结构做法" },
-          { text: "檐口", value: 4, cat: "结构做法" },
-          { text: "瓦当", value: 4, cat: "结构做法" },
-          { text: "聚族而居", value: 4, cat: "文化寓意" },
-          { text: "攒尖顶", value: 4, cat: "类型" },
-          { text: "重檐顶", value: 4, cat: "类型" },
-          { text: "垂脊", value: 4, cat: "结构做法" },
-          { text: "戗脊", value: 4, cat: "结构做法" },
-          { text: "飞檐翘角", value: 4, cat: "结构做法" },
-          { text: "隔热", value: 4, cat: "功能需求" },
-          { text: "组合式屋顶", value: 4, cat: "类型" },
+          { text: "屋顶", value: 18, cat: "主体" },
+          { text: "覆瓦", value: 15, cat: "构造" },
+          { text: "屋脊", value: 14, cat: "构造" },
+          { text: "挑檐", value: 13, cat: "构造" },
+          { text: "滴水", value: 12, cat: "功能" },
+          { text: "飞檐", value: 12, cat: "形态" },
+          { text: "坡面", value: 11, cat: "形态" },
+          { text: "脊饰", value: 10, cat: "装饰" },
+          { text: "如鸟斯飞", value: 10, cat: "意象" },
+          { text: "轻盈", value: 9, cat: "意象" },
+          { text: "压檐", value: 9, cat: "构造" },
+          { text: "檐口", value: 8, cat: "构造" },
+          { text: "起翘", value: 8, cat: "形态" },
+          { text: "瓦当", value: 8, cat: "装饰" },
+          { text: "避雨", value: 8, cat: "功能" },
+          { text: "收脊", value: 7, cat: "构造" },
+          { text: "舒展", value: 7, cat: "意象" },
+          { text: "木构支撑", value: 7, cat: "背景" },
+          { text: "排水", value: 7, cat: "功能" },
+          { text: "天际线", value: 6, cat: "意象" },
+          { text: "瓦面纹理", value: 6, cat: "质感" },
+          { text: "阴影层次", value: 6, cat: "质感" },
+          { text: "檐影", value: 5, cat: "意象" },
+          { text: "山雨来风", value: 5, cat: "背景" },
+          { text: "灰瓦", value: 5, cat: "质感" },
+          { text: "小青瓦", value: 5, cat: "构造" },
+          { text: "硬山顶", value: 4, cat: "形态" },
+          { text: "悬山顶", value: 4, cat: "形态" },
+          { text: "歇山顶", value: 4, cat: "形态" },
+          { text: "攒尖顶", value: 4, cat: "形态" },
+          { text: "正脊", value: 4, cat: "构造" },
+          { text: "垂脊", value: 4, cat: "构造" },
+          { text: "戗脊", value: 4, cat: "构造" },
+          { text: "防水", value: 4, cat: "功能" },
+          { text: "隔热", value: 4, cat: "功能" },
+          { text: "深出檐", value: 4, cat: "形态" },
+          { text: "举架", value: 4, cat: "构造" },
+          { text: "翘角", value: 4, cat: "意象" },
+          { text: "天人合一", value: 4, cat: "意象" }
         ];
 
         function colorByCat(cat) {
-          if (cat === "功能需求") return "#2F5A50";
-          if (cat === "类型") return "#A84638";
-          if (cat === "结构做法") return "#566C7A";
-          return "#C48B47"; // 文化寓意
+          if (cat === "主体") return "#bf6744";
+          if (cat === "构造") return "#c57d4f";
+          if (cat === "形态") return "#8f6848";
+          if (cat === "功能") return "#6c7a84";
+          return "#a68d67";
         }
 
         const tooltip = d3.select("#tooltip");
@@ -175,95 +186,74 @@
         function renderCloud() {
           const cloud = document.getElementById("cloud");
           const rect = cloud.getBoundingClientRect();
-          const width = Math.max(300, Math.floor(rect.width));
-          const height = Math.max(300, Math.floor(rect.height));
-
+          const width = Math.max(320, Math.floor(rect.width));
+          const height = Math.max(320, Math.floor(rect.height));
           cloud.innerHTML = "";
+          const maxWords = height < 420 ? 26 : height < 520 ? 30 : 34;
+          const visibleWords = [...words].sort((a, b) => b.value - a.value).slice(0, maxWords);
 
           const svg = d3.select("#cloud").append("svg").attr("viewBox", `0 0 ${width} ${height}`);
           const g = svg.append("g").attr("transform", `translate(${width / 2},${height / 2})`);
-
-          // 动态计算基础字体大小，防止屏幕过小导致溢出
-          const baseScale = Math.min(width, height) / 400;
-          const maxValue = Math.max(...words.map((w) => w.value || 0), 1);
-          // 让“最大词”的视觉尺寸与马头墙（max≈16）接近，保持相对比例不变
-          const valueScale = 16 / maxValue;
-          const cloudWords = words.map((d) => ({
-            text: d.text,
-            size: (12 + d.value * 2.5 * valueScale) * baseScale, // 按比例缩放字体
-            cat: d.cat,
-            value: d.value,
-          }));
+          const baseScale = Math.min(width, height) / 420;
 
           const layout = d3.layout
             .cloud()
             .size([width, height])
-            .words(cloudWords)
-            .padding(6)
-            .rotate(() => (Math.random() > 0.9 ? 90 : 0))
+            .words(
+              visibleWords.map((d) => ({
+                ...d,
+                size: (11.5 + d.value * 1.95) * baseScale
+              }))
+            )
+            .padding(3)
+            .spiral("rectangular")
+            .rotate(() => (Math.random() > 0.97 ? 90 : 0))
             .font("KaiTi")
             .fontSize((d) => d.size)
             .on("end", (outWords) => {
-              const textNodes = g
-                .selectAll("text")
+              g.selectAll("text")
                 .data(outWords)
                 .enter()
                 .append("text")
                 .style("font-size", (d) => `${d.size}px`)
                 .style("fill", (d) => colorByCat(d.cat))
-                .style("opacity", 0) // 初始全透明，用于实现入场动画
-                .style("font-weight", (d) => ((d.value * valueScale) >= 12 ? 700 : 500))
-                .style("text-shadow", "1px 1px 0px rgba(255,255,255,0.5)")
+                .style("font-weight", (d) => (d.value >= 12 ? 700 : 500))
+                .style("text-shadow", "1px 1px 0 rgba(255,255,255,0.45)")
                 .attr("text-anchor", "middle")
                 .attr("transform", (d) => `translate(${d.x},${d.y}) rotate(${d.rotate})`)
                 .text((d) => d.text)
-                .style("cursor", "pointer");
-
-              textNodes
-                .transition()
-                .duration(800)
-                .delay((d, i) => i * 15) // 瀑布流依次显现
-                .style("opacity", 0.95);
-
-              textNodes
-                .on("mouseover", function (event, d) {
-                  g.selectAll("text")
-                    .transition()
-                    .duration(300)
-                    .style("opacity", (x) => (x.cat === d.cat ? 1 : 0.15))
-                    .style("filter", (x) => (x.cat === d.cat ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.15))" : "none"));
-
-                  tooltip.html(`
-                    <div class="word-title">${d.text}</div>
-                    类别：${d.cat}<br/>
-                    频次：<span>${d.value}</span>
-                  `);
-                  tooltip.style("opacity", 1);
+                .on("mousemove", function (event, d) {
+                  tooltip
+                    .style("opacity", 1)
+                    .html(`<div class="word-title">${d.text}</div><div><span>类别：</span>${d.cat}</div>`)
+                    .style("left", `${event.pageX + 14}px`)
+                    .style("top", `${event.pageY + 14}px`);
                 })
-                .on("mousemove", function (event) {
-                  tooltip.style("left", event.pageX + 15 + "px").style("top", event.pageY - 15 + "px");
-                })
-                .on("mouseout", function () {
-                  g.selectAll("text")
-                    .transition()
-                    .duration(400)
-                    .style("opacity", 0.95)
-                    .style("filter", "none");
-                  tooltip.style("opacity", 0);
-                });
+                .on("mouseout", () => tooltip.style("opacity", 0));
+
+              const bbox = g.node().getBBox();
+              const fitWidth = width - 30;
+              const fitHeight = height - 28;
+              const rawScale = Math.min(
+                fitWidth / Math.max(bbox.width, 1),
+                fitHeight / Math.max(bbox.height, 1)
+              );
+              const scale = Math.min(rawScale * 0.96, 1.85);
+              const centerX = bbox.x + bbox.width / 2;
+              const centerY = bbox.y + bbox.height / 2;
+
+              g.attr(
+                "transform",
+                `translate(${width / 2 - centerX * scale},${height / 2 - centerY * scale}) scale(${scale})`
+              );
             });
 
           layout.start();
         }
 
         renderCloud();
-        let resizeTimer;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(renderCloud, 200);
-        });
+        window.addEventListener("resize", renderCloud);
       })();
     </script>
   </body>
 </html>
-

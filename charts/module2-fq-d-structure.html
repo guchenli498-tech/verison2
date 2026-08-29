@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>粉墙相关防热贡献结构</title>
-  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script src="../echarts.min.js"></script>
   <style>
     :root {
       --paper-bg: #F8F6F0;
@@ -104,6 +104,12 @@
       overflow: hidden;
     }
 
+    .guide-anchor {
+      position: absolute;
+      pointer-events: none;
+      z-index: 12;
+    }
+
   </style>
 </head>
 <body>
@@ -119,7 +125,12 @@
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel" style="position: relative;">
+        <div
+          class="guide-anchor"
+          data-guide-id="module2-fq-d-ring"
+          style="left: 10%; top: 14%; width: 78%; height: 72%;"
+        ></div>
         <div id="chart"></div>
       </section>
     </div>

@@ -39,6 +39,7 @@
         display: grid;
         grid-template-rows: 1fr;
         position: relative;
+        overflow: hidden;
       }
 
       .content {
@@ -63,7 +64,7 @@
       .topRow {
         min-height: 0;
         display: grid;
-        /* 上层：A 占 3/7，B 占 4/7（宽度比例） */
+        /* 上层：给关系图更多横向空间，减少标签挤压 */
         grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
         gap: 10px;
       }
@@ -148,6 +149,12 @@
         overflow: hidden;
         height: 100%;
         background: linear-gradient(145deg, rgba(250, 246, 239, 0.6), rgba(241, 233, 222, 0.42));
+      }
+
+      .guide-anchor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 8;
       }
 
       .fanSwitch {
@@ -278,9 +285,10 @@
       </div>
       <div class="content">
         <div class="topRow">
-          <div class="panel panelA" id="panelA">
+          <div class="panel panelA" id="panelA" data-guide-id="module2-panel-a">
             <iframe
               id="frameA"
+              data-guide-id="module2-chart-a"
               class="panel-iframe"
               title="module2-panelA"
               src=""
@@ -288,9 +296,10 @@
             ></iframe>
             <div class="placeholder" id="phA">图A占位</div>
           </div>
-          <div class="panel panelB" id="panelB">
+          <div class="panel panelB" id="panelB" data-guide-id="module2-panel-b">
             <iframe
               id="frameB"
+              data-guide-id="module2-chart-b"
               class="panel-iframe"
               title="module2-panelB"
               src=""
@@ -301,7 +310,7 @@
         </div>
 
         <div class="bottomRow">
-          <div class="panel fanWrap" id="fanWrap">
+          <div class="panel fanWrap" id="fanWrap" data-guide-id="module2-fan">
             <svg
               class="fanSwitch"
               id="fanSwitch"
@@ -386,11 +395,16 @@
               <path id="seg-wd" class="fan-path" data-key="wd" d=""></path>
               <text class="fan-label" data-key="wd" text-anchor="middle">屋顶</text>
             </svg>
+            <div class="guide-anchor" data-guide-id="module2-fan-tj" style="left:6%; bottom:6%; width:23%; height:23%;"></div>
+            <div class="guide-anchor" data-guide-id="module2-fan-fq" style="left:30%; bottom:18%; width:20%; height:22%;"></div>
+            <div class="guide-anchor" data-guide-id="module2-fan-mtq" style="left:52%; bottom:34%; width:19%; height:20%;"></div>
+            <div class="guide-anchor" data-guide-id="module2-fan-wd" style="left:71%; bottom:54%; width:18%; height:18%;"></div>
           </div>
 
-          <div class="panel panelC" id="panelC">
+          <div class="panel panelC" id="panelC" data-guide-id="module2-panel-c">
             <iframe
               id="frameC"
+              data-guide-id="module2-chart-c"
               class="panel-iframe"
               title="module2-panelC"
               src=""
@@ -399,9 +413,10 @@
             <div class="placeholder" id="phC">词云C占位</div>
           </div>
 
-          <div class="panel panelD" id="panelD">
+          <div class="panel panelD" id="panelD" data-guide-id="module2-panel-d">
             <iframe
               id="frameD"
+              data-guide-id="module2-chart-d"
               class="panel-iframe"
               title="module2-panelD"
               src=""
@@ -522,17 +537,7 @@
           })
         }
 
-        function render(key) {
-          const name = names[key] || key
-
-          function applyUnifiedChartStyle(frameEl) {
-            if (!frameEl) return
-            const doc = frameEl.contentDocument
-            if (!doc) return
-            if (doc.getElementById('m2-unified-title-style')) return
-            const style = doc.createElement('style')
-            style.id = 'm2-unified-title-style'
-            style.textContent = `
+        const unifiedChartStyleText = `
               html, body {
                 background: #f4efe6 !important;
               }
@@ -596,7 +601,23 @@
                 background: #f4efe6 !important;
               }
             `
-            doc.head.appendChild(style)
+
+        function injectUnifiedChartStyle(doc) {
+          if (!doc || doc.getElementById('m2-unified-title-style')) return
+          const head = doc.head || doc.querySelector('head')
+          if (!head) return
+          const style = doc.createElement('style')
+          style.id = 'm2-unified-title-style'
+          style.textContent = unifiedChartStyleText
+          head.appendChild(style)
+        }
+
+        function render(key) {
+          const name = names[key] || key
+
+          function applyUnifiedChartStyle(frameEl) {
+            if (!frameEl) return
+            injectUnifiedChartStyle(frameEl.contentDocument)
           }
 
           function mountFrame(frameEl, url, visible) {
@@ -706,6 +727,28 @@
         setFanByAngles(currentAngles, currentKey)
         render(currentKey)
 
+        let pendingSubviewMessage = null
+        let pendingChartModeMessage = null
+
+        function getPanelFrame(panel) {
+          if (panel === 'A') return frameA
+          if (panel === 'B') return frameB
+          if (panel === 'C') return frameC
+          if (panel === 'D') return frameD
+          return null
+        }
+
+        function forwardSubviewMessage(message) {
+          if (!message || message.type !== 'hui-guide' || message.action !== 'setModule2Subview') return
+          const targetFrame = getPanelFrame(message.panel)
+          targetFrame?.contentWindow?.postMessage(message, '*')
+        }
+
+        function forwardChartModeMessage(message) {
+          if (!message || message.type !== 'hui-guide' || message.action !== 'setModule2ChartMode') return
+          frameA?.contentWindow?.postMessage(message, '*')
+        }
+
         ;[frameA, frameB, frameC, frameD].forEach((f) => {
           if (!f) return
           f.addEventListener('load', () => {
@@ -779,6 +822,13 @@
               }
             `
             doc.head.appendChild(style)
+
+            if (pendingSubviewMessage) {
+              window.setTimeout(() => forwardSubviewMessage(pendingSubviewMessage), 0)
+            }
+            if (pendingChartModeMessage) {
+              window.setTimeout(() => forwardChartModeMessage(pendingChartModeMessage), 0)
+            }
           })
         })
 
@@ -871,11 +921,47 @@
           })
         })
 
+        function fitViewport() {
+          setFanByAngles(currentAngles, currentKey)
+        }
+
         window.addEventListener('resize', () => {
+          fitViewport()
           setFanByAngles(currentAngles, currentKey)
         })
+
+        window.addEventListener('message', (event) => {
+          const data = event.data
+          if (!data || data.type !== 'hui-guide') return
+
+          if (data.action === 'setFan') {
+            const key = data.key
+            if (!KEYS.includes(key)) return
+            animateTo(key)
+            return
+          }
+
+          if (data.action === 'setModule2Subview') {
+            pendingSubviewMessage = data
+            forwardSubviewMessage(data)
+            window.setTimeout(() => forwardSubviewMessage(data), 160)
+            window.setTimeout(() => forwardSubviewMessage(data), 420)
+            return
+          }
+
+          if (data.action === 'setModule2ChartMode') {
+            pendingChartModeMessage = data
+            forwardChartModeMessage(data)
+            window.setTimeout(() => forwardChartModeMessage(data), 160)
+            window.setTimeout(() => forwardChartModeMessage(data), 420)
+          }
+        })
+
+        window.__HUI_MODULE2__ = {
+          setFan: animateTo,
+          getCurrentKey: () => currentKey,
+        }
       })()
     </script>
   </body>
 </html>
-

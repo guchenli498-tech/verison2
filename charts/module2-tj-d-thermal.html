@@ -71,6 +71,12 @@
         width: 100%;
         min-height: 0;
       }
+
+      .guide-anchor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+      }
     </style>
   </head>
   <body>
@@ -79,7 +85,14 @@
         <div class="title">天井 · 冬季热环境影响分析</div>
         <div class="subtitle">Thermal Environment Analysis of Courtyard in Winter</div>
       </div>
-      <div id="chart"></div>
+      <div style="position: relative; display: flex; flex: 1; min-height: 0;">
+        <div
+          class="guide-anchor"
+          data-guide-id="module2-tj-d-column"
+          style="left: 44%; top: 16%; width: 14%; height: 66%;"
+        ></div>
+        <div id="chart"></div>
+      </div>
     </div>
 
     <script>

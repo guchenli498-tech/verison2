@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>马头墙关键词词云 · 典雅版</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+    <title>马头墙词云图</title>
+    <script src="../d3.min.js"></script>
+    <script src="../d3.layout.cloud.js"></script>
     <style>
       :root {
         --paper-bg: #f2eee6;
         --title-color: #2b333e;
         --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -20,8 +20,8 @@
         height: 100%;
         margin: 0;
         overflow: hidden;
-        background-color: var(--paper-bg);
-        font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
+        background: var(--paper-bg);
+        font-family: Georgia, "KaiTi", STKaiti, serif;
       }
 
       .wrap {
@@ -71,7 +71,6 @@
         width: 100%;
         flex: 1;
         min-height: 0;
-        /* 给词云容器增加质感边框和阴影 */
         border: 1px solid rgba(214, 203, 184, 0.6);
         border-radius: 12px;
         background: #f2eee6;
@@ -85,7 +84,6 @@
         display: block;
       }
 
-      /* 自定义 Tooltip 样式 */
       .custom-tooltip {
         position: absolute;
         text-align: left;
@@ -99,7 +97,7 @@
         pointer-events: none;
         opacity: 0;
         z-index: 100;
-        color: #4A4638;
+        color: #4a4638;
         line-height: 1.6;
         backdrop-filter: blur(4px);
         transition: opacity 0.2s ease;
@@ -110,21 +108,21 @@
         font-weight: bold;
         color: #222;
         margin-bottom: 4px;
-        border-bottom: 1px dashed #DDD;
+        border-bottom: 1px dashed #ddd;
         padding-bottom: 2px;
       }
 
       .custom-tooltip span {
         font-weight: 600;
-        color: #C97E5A;
+        color: #c97e5a;
       }
     </style>
   </head>
   <body>
     <div class="wrap">
       <div class="header">
-        <div class="title">马头墙 · 关键词词云图</div>
-        <div class="subtitle">Keyword Cloud of Ma-Tau Wall Architecture</div>
+        <div class="title">马头墙 · 五岳朝天</div>
+        <div class="subtitle">Keyword Cloud of Ma-Tou Wall Architecture</div>
       </div>
       <div id="cloud"></div>
     </div>
@@ -134,46 +132,53 @@
     <script>
       (function () {
         const words = [
-          { text: "防火", value: 16, cat: "功能需求" },
-          { text: "阶梯状", value: 15, cat: "类型" },
-          { text: "徽商", value: 15, cat: "文化寓意" },
-          { text: "印斗式", value: 14, cat: "类型" },
-          { text: "鹊尾式", value: 14, cat: "类型" },
-          { text: "读书做官", value: 14, cat: "文化寓意" },
-          { text: "坐吻式", value: 13, cat: "类型" },
-          { text: "朝笏式", value: 12, cat: "类型" },
-          { text: "小青砖", value: 12, cat: "结构做法" },
-          { text: "白灰粉刷", value: 12, cat: "结构做法" },
-          { text: "青瓦", value: 11, cat: "结构做法" },
-          { text: "粉墙黛瓦", value: 11, cat: "结构做法" },
-          { text: "五岳朝天", value: 10, cat: "类型" },
-          { text: "座头", value: 10, cat: "结构做法" },
-          { text: "三叠式", value: 9, cat: "类型" },
-          { text: "程朱理学", value: 9, cat: "文化寓意" },
-          { text: "两叠式", value: 8, cat: "类型" },
-          { text: "防风", value: 8, cat: "功能需求" },
-          { text: "拔檐", value: 8, cat: "结构做法" },
-          { text: "博风板", value: 8, cat: "结构做法" },
-          { text: "天人合一", value: 8, cat: "文化寓意" },
-          { text: "吉祥寓意", value: 8, cat: "文化寓意" },
-          { text: "宗族", value: 7, cat: "文化寓意" },
-          { text: "风水", value: 7, cat: "文化寓意" },
-          { text: "四水归堂", value: 6, cat: "文化寓意" },
-          { text: "审美价值", value: 6, cat: "文化寓意" },
-          { text: "马到成功", value: 5, cat: "文化寓意" },
-          { text: "贾而好儒", value: 5, cat: "文化寓意" },
-          { text: "叠涩", value: 5, cat: "结构做法" },
-          { text: "硬山顶", value: 5, cat: "结构做法" },
-          { text: "遮阳", value: 4, cat: "功能需求" },
-          { text: "中庸之道", value: 4, cat: "文化寓意" },
+          { text: "马头墙", value: 18, cat: "主体" },
+          { text: "五岳朝天", value: 16, cat: "主体" },
+          { text: "阶梯山墙", value: 14, cat: "形制" },
+          { text: "封檐", value: 12, cat: "构造" },
+          { text: "墙脊", value: 12, cat: "构造" },
+          { text: "印斗", value: 11, cat: "装饰" },
+          { text: "朝笏", value: 10, cat: "装饰" },
+          { text: "防火", value: 10, cat: "功能" },
+          { text: "防风", value: 9, cat: "功能" },
+          { text: "徽州民居", value: 9, cat: "背景" },
+          { text: "层层抬升", value: 9, cat: "形制" },
+          { text: "屋面衔接", value: 8, cat: "构造" },
+          { text: "白墙黛瓦", value: 8, cat: "背景" },
+          { text: "山墙轮廓", value: 8, cat: "形制" },
+          { text: "起翘", value: 7, cat: "构造" },
+          { text: "挑檐", value: 7, cat: "构造" },
+          { text: "收边", value: 7, cat: "构造" },
+          { text: "聚落天际线", value: 7, cat: "背景" },
+          { text: "秩序感", value: 6, cat: "意象" },
+          { text: "层级", value: 6, cat: "形制" },
+          { text: "护宅", value: 6, cat: "功能" },
+          { text: "仪式感", value: 6, cat: "意象" },
+          { text: "封火墙", value: 6, cat: "功能" },
+          { text: "砖木结构", value: 5, cat: "背景" },
+          { text: "高低错落", value: 5, cat: "意象" },
+          { text: "村落界面", value: 5, cat: "背景" },
+          { text: "山墙", value: 4, cat: "构造" },
+          { text: "垂脊", value: 4, cat: "构造" },
+          { text: "跌落式轮廓", value: 4, cat: "形制" },
+          { text: "座头", value: 4, cat: "装饰" },
+          { text: "印斗式", value: 4, cat: "装饰" },
+          { text: "朝笏式", value: 4, cat: "装饰" },
+          { text: "鹊尾式", value: 4, cat: "装饰" },
+          { text: "吻兽", value: 4, cat: "装饰" },
+          { text: "防盗", value: 4, cat: "功能" },
+          { text: "挡火", value: 4, cat: "功能" },
+          { text: "天际线", value: 4, cat: "意象" },
+          { text: "步步高升", value: 4, cat: "意象" },
+          { text: "村落识别", value: 4, cat: "背景" }
         ];
 
-        // 徽派传统色系定制
         function colorByCat(cat) {
-          if (cat === "功能需求") return "#2F5A50"; // 黛绿
-          if (cat === "类型") return "#A84638"; // 砖红
-          if (cat === "结构做法") return "#4A5559"; // 墨灰
-          return "#C48B47"; // 秋香色/琉璃黄 (文化寓意)
+          if (cat === "主体") return "#bf6744";
+          if (cat === "形制") return "#d88763";
+          if (cat === "构造") return "#7a6a55";
+          if (cat === "功能") return "#53636f";
+          return "#9b8566";
         }
 
         const tooltip = d3.select("#tooltip");
@@ -181,111 +186,73 @@
         function renderCloud() {
           const cloud = document.getElementById("cloud");
           const rect = cloud.getBoundingClientRect();
-          const width = Math.max(300, Math.floor(rect.width));
-          const height = Math.max(300, Math.floor(rect.height));
-          
-          // 每次重绘前清空容器
+          const width = Math.max(320, Math.floor(rect.width));
+          const height = Math.max(320, Math.floor(rect.height));
           cloud.innerHTML = "";
+          const maxWords = height < 420 ? 26 : height < 520 ? 30 : 34;
+          const visibleWords = [...words].sort((a, b) => b.value - a.value).slice(0, maxWords);
 
-          const svg = d3
-            .select("#cloud")
-            .append("svg")
-            .attr("viewBox", `0 0 ${width} ${height}`);
-
-          const g = svg
-            .append("g")
-            .attr("transform", `translate(${width / 2},${height / 2})`);
-
-          // 动态计算基础字体大小，防止屏幕过小导致溢出
-          const baseScale = Math.min(width, height) / 400;
-
-          const cloudWords = words.map((d) => ({
-            text: d.text,
-            size: (12 + d.value * 2.5) * baseScale, // 按比例缩放字体
-            cat: d.cat,
-            value: d.value,
-          }));
+          const svg = d3.select("#cloud").append("svg").attr("viewBox", `0 0 ${width} ${height}`);
+          const g = svg.append("g").attr("transform", `translate(${width / 2},${height / 2})`);
+          const baseScale = Math.min(width, height) / 420;
 
           const layout = d3.layout
             .cloud()
             .size([width, height])
-            .words(cloudWords)
-            .padding(6) // 增加词间距，让呼吸感更强
-            // 降低竖排文字的概率，中文横排阅读体验更好
-            .rotate(() => (Math.random() > 0.9 ? 90 : 0)) 
+            .words(
+              visibleWords.map((d) => ({
+                ...d,
+                size: (11.5 + d.value * 1.95) * baseScale
+              }))
+            )
+            .padding(3)
+            .spiral("rectangular")
+            .rotate(() => (Math.random() > 0.97 ? 90 : 0))
             .font("KaiTi")
             .fontSize((d) => d.size)
             .on("end", (outWords) => {
-              const textNodes = g
-                .selectAll("text")
+              g.selectAll("text")
                 .data(outWords)
                 .enter()
                 .append("text")
                 .style("font-size", (d) => `${d.size}px`)
                 .style("fill", (d) => colorByCat(d.cat))
-                .style("opacity", 0) // 初始全透明，用于实现入场动画
                 .style("font-weight", (d) => (d.value >= 12 ? 700 : 500))
-                // 添加细微的文字阴影，产生凸版印刷的效果
-                .style("text-shadow", "1px 1px 0px rgba(255,255,255,0.5)")
+                .style("text-shadow", "1px 1px 0 rgba(255,255,255,0.45)")
                 .attr("text-anchor", "middle")
                 .attr("transform", (d) => `translate(${d.x},${d.y}) rotate(${d.rotate})`)
                 .text((d) => d.text)
-                .style("cursor", "pointer");
-
-              // 入场渐显动画
-              textNodes.transition()
-                .duration(800)
-                .delay((d, i) => i * 15) // 瀑布流依次显现
-                .style("opacity", 0.95);
-
-              // 交互事件绑定 (Hover)
-              textNodes
-                .on("mouseover", function (event, d) {
-                  // 1. 同类别高亮平滑过渡
-                  g.selectAll("text")
-                   .transition()
-                   .duration(300)
-                   .style("opacity", (x) => (x.cat === d.cat ? 1 : 0.15))
-                   .style("filter", (x) => (x.cat === d.cat ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.15))" : "none"));
-
-                  // 2. 显示自定义 Tooltip
-                  tooltip.html(`
-                    <div class="word-title">${d.text}</div>
-                    类别：${d.cat}<br/>
-                    频次：<span>${d.value}</span>
-                  `);
-                  tooltip.style("opacity", 1);
-                })
-                .on("mousemove", function (event) {
-                  // 让 Tooltip 跟随鼠标
+                .on("mousemove", function (event, d) {
                   tooltip
-                    .style("left", (event.pageX + 15) + "px")
-                    .style("top", (event.pageY - 15) + "px");
+                    .style("opacity", 1)
+                    .html(`<div class="word-title">${d.text}</div><div><span>类别：</span>${d.cat}</div>`)
+                    .style("left", `${event.pageX + 14}px`)
+                    .style("top", `${event.pageY + 14}px`);
                 })
-                .on("mouseout", function () {
-                  // 1. 恢复所有词汇透明度
-                  g.selectAll("text")
-                   .transition()
-                   .duration(400)
-                   .style("opacity", 0.95)
-                   .style("filter", "none");
+                .on("mouseout", () => tooltip.style("opacity", 0));
 
-                  // 2. 隐藏 Tooltip
-                  tooltip.style("opacity", 0);
-                });
+              const bbox = g.node().getBBox();
+              const fitWidth = width - 30;
+              const fitHeight = height - 28;
+              const rawScale = Math.min(
+                fitWidth / Math.max(bbox.width, 1),
+                fitHeight / Math.max(bbox.height, 1)
+              );
+              const scale = Math.min(rawScale * 0.96, 1.85);
+              const centerX = bbox.x + bbox.width / 2;
+              const centerY = bbox.y + bbox.height / 2;
+
+              g.attr(
+                "transform",
+                `translate(${width / 2 - centerX * scale},${height / 2 - centerY * scale}) scale(${scale})`
+              );
             });
 
           layout.start();
         }
 
-        // 初始化并添加防抖的 resize 监听
         renderCloud();
-        
-        let resizeTimer;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(renderCloud, 200);
-        });
+        window.addEventListener("resize", renderCloud);
       })();
     </script>
   </body>

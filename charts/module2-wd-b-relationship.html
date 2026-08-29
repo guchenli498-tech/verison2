@@ -7,10 +7,10 @@
     <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #F8F6F0;
+        --paper-bg: #f8f6f0;
         --title-color: #2b333e;
         --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -51,7 +51,7 @@
 
       .title {
         font-size: 22px;
-        font-weight: bold;
+        font-weight: 700;
         letter-spacing: 2px;
         color: var(--title-color);
         margin: 0 0 4px 0;
@@ -66,10 +66,57 @@
         text-transform: uppercase;
       }
 
+      .chart-stage {
+        position: relative;
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
       #chart {
         flex: 1;
         width: 100%;
         min-height: 0;
+      }
+
+      .chart-legend {
+        position: absolute;
+        left: 16px;
+        bottom: 12px;
+        z-index: 12;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        max-width: 320px;
+        pointer-events: none;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #44515d;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .legend-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex: 0 0 auto;
+      }
+
+      .legend-swatch.circle {
+        border-radius: 999px;
+      }
+
+      .guide-anchor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
       }
     </style>
   </head>
@@ -79,7 +126,20 @@
         <div class="title">屋顶 · 形成逻辑关系图</div>
         <div class="subtitle">Knowledge Graph of Roof Forming Logic</div>
       </div>
-      <div id="chart"></div>
+      <div class="chart-stage">
+        <div class="chart-legend" aria-hidden="true">
+          <span class="legend-item"><span class="legend-swatch" style="background:#26363E"></span>影响维度</span>
+          <span class="legend-item"><span class="legend-swatch circle" style="background:#A34343"></span>形成因素</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#566C7A"></span>屋顶类型</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#B58A52"></span>构造做法</span>
+        </div>
+        <div
+          class="guide-anchor"
+          data-guide-id="module2-wd-b-flow"
+          style="left: 18%; top: 20%; width: 56%; height: 54%;"
+        ></div>
+        <div id="chart"></div>
+      </div>
     </div>
 
     <script>
@@ -99,7 +159,6 @@
           edgeHi: "#C95B47",
         };
 
-        // 第一层：屋顶形成原因（4）
         const col1 = [
           { id: "g_env", name: "自然环境" },
           { id: "g_life", name: "生活需求" },
@@ -107,7 +166,6 @@
           { id: "g_cult", name: "地域文化" },
         ];
 
-        // 第二层：形成原因细分（11）
         const col2 = [
           { id: "r_rain", name: "多雨潮湿", freq: 12 },
           { id: "r_hot", name: "夏季炎热", freq: 10 },
@@ -123,7 +181,6 @@
           { id: "r_aesthetic", name: "审美情趣", freq: 7 },
         ];
 
-        // 第三层：屋顶主要类型（6）
         const col3 = [
           { id: "t_yingshan", name: "硬山顶（含马头墙）" },
           { id: "t_xuanshan", name: "悬山顶" },
@@ -133,26 +190,26 @@
           { id: "t_combo", name: "组合式屋顶" },
         ];
 
-        // 第四层：对应的结构做法（10）
         const col4 = [
           { id: "s_tailliang", name: "抬梁式构架" },
           { id: "s_chuandou", name: "穿斗式构架" },
           { id: "s_chaliang", name: "插梁式构架" },
-          { id: "s_purlin", name: "檩椽体系" },
+          { id: "s_purlin", name: "檩榫体系" },
           { id: "s_wang", name: "望砖/望板铺设" },
           { id: "s_tile", name: "屋面瓦作（小青瓦）" },
           { id: "s_hewa", name: "合瓦屋面" },
           { id: "s_lengtan", name: "冷摊瓦屋面" },
-          { id: "s_eave", name: "檐口做法（飞椽、滴水、花边）" },
+          { id: "s_eave", name: "檐口做法（飞檐、滴水、花边）" },
           { id: "s_ridge", name: "屋脊构造" },
         ];
 
-        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize) {
+        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize, labelWidth) {
           const out = [];
           const n = items.length;
           const step = Math.min(45, (containerH * 0.9) / Math.max(n - 1, 1));
           const totalHeight = (n - 1) * step;
           const startY = (containerH - totalHeight) / 2;
+          const labelAlign = labelPos === "left" ? "right" : "left";
 
           items.forEach((it, idx) => {
             const nodeSize = it.freq ? fixedSize + (it.freq / 12) * 5 : fixedSize;
@@ -176,10 +233,14 @@
               label: {
                 show: true,
                 position: labelPos,
-                color: "#2B333E",
-                fontSize: 12.5,
-                fontWeight: 600,
                 distance: 10,
+                color: "#2B333E",
+                fontSize: 11.5,
+                fontWeight: 600,
+                width: labelWidth,
+                overflow: "break",
+                lineHeight: 17,
+                align: labelAlign,
                 fontFamily: "Georgia, 'KaiTi', '楷体', serif",
               },
             });
@@ -188,7 +249,6 @@
         }
 
         const links = [
-          // 第一层 -> 第二层（对应关系见屋顶数据汇总 2.2.2）
           ["g_env", "r_rain"],
           ["g_env", "r_mountain"],
           ["g_life", "r_vent"],
@@ -201,7 +261,6 @@
           ["g_cult", "r_fengshui"],
           ["g_cult", "r_aesthetic"],
 
-          // 第二层 -> 第三层
           ["r_rain", "t_yingshan"],
           ["r_rain", "t_xuanshan"],
           ["r_rain", "t_xieshan"],
@@ -229,8 +288,6 @@
           ["r_aesthetic", "t_zanjian"],
           ["r_aesthetic", "t_combo"],
 
-          // 第三层 -> 第四层（按各类型常用构造汇总）
-          // 硬山顶（含马头墙）
           ["t_yingshan", "s_tailliang"],
           ["t_yingshan", "s_chuandou"],
           ["t_yingshan", "s_chaliang"],
@@ -241,7 +298,6 @@
           ["t_yingshan", "s_lengtan"],
           ["t_yingshan", "s_eave"],
           ["t_yingshan", "s_ridge"],
-          // 悬山顶
           ["t_xuanshan", "s_tailliang"],
           ["t_xuanshan", "s_chuandou"],
           ["t_xuanshan", "s_purlin"],
@@ -250,7 +306,6 @@
           ["t_xuanshan", "s_hewa"],
           ["t_xuanshan", "s_eave"],
           ["t_xuanshan", "s_ridge"],
-          // 歇山顶
           ["t_xieshan", "s_tailliang"],
           ["t_xieshan", "s_chaliang"],
           ["t_xieshan", "s_purlin"],
@@ -258,20 +313,17 @@
           ["t_xieshan", "s_tile"],
           ["t_xieshan", "s_eave"],
           ["t_xieshan", "s_ridge"],
-          // 攒尖顶
           ["t_zanjian", "s_tailliang"],
           ["t_zanjian", "s_purlin"],
           ["t_zanjian", "s_tile"],
           ["t_zanjian", "s_eave"],
           ["t_zanjian", "s_ridge"],
-          // 重檐顶
           ["t_chongyan", "s_tailliang"],
           ["t_chongyan", "s_purlin"],
           ["t_chongyan", "s_wang"],
           ["t_chongyan", "s_tile"],
           ["t_chongyan", "s_eave"],
           ["t_chongyan", "s_ridge"],
-          // 组合式屋顶
           ["t_combo", "s_tailliang"],
           ["t_combo", "s_chaliang"],
           ["t_combo", "s_purlin"],
@@ -284,16 +336,23 @@
         function buildOption() {
           const w = chart.getWidth();
           const h = chart.getHeight();
-          const x1 = w * 0.06;
-          const x2 = w * 0.28;
-          const x3 = w * 0.53;
-          const x4 = w * 0.8;
+          const col1LabelWidth = Math.max(112, w * 0.12);
+          const col2LabelWidth = Math.max(100, w * 0.1);
+          const col3LabelWidth = Math.max(140, w * 0.12);
+          const col4LabelWidth = Math.max(172, w * 0.16);
+          const edgePad = 10;
+          const labelGap = 8;
+          const x1 = edgePad + col1LabelWidth + labelGap;
+          const x4 = w - edgePad - col4LabelWidth - labelGap;
+          const innerSpan = x4 - x1;
+          const x2 = x1 + innerSpan * 0.34;
+          const x3 = x1 + innerSpan * 0.68;
 
           const nodes = [
-            ...layoutColumn(col1, x1, h, "roundRect", colors.col1, "left", 18),
-            ...layoutColumn(col2, x2, h, "circle", colors.col2, "right", 12),
-            ...layoutColumn(col3, x3, h, "roundRect", colors.col3, "right", 14),
-            ...layoutColumn(col4, x4, h, "roundRect", colors.col4, "right", 13),
+            ...layoutColumn(col1, x1, h, "roundRect", colors.col1, "left", 18, col1LabelWidth),
+            ...layoutColumn(col2, x2, h, "circle", colors.col2, "right", 12, col2LabelWidth),
+            ...layoutColumn(col3, x3, h, "roundRect", colors.col3, "right", 14, col3LabelWidth),
+            ...layoutColumn(col4, x4, h, "roundRect", colors.col4, "right", 13, col4LabelWidth),
           ];
 
           return {
@@ -312,7 +371,10 @@
                 const d = p.data || {};
                 if (p.dataType === "edge") return null;
                 if (typeof d.value === "number") {
-                  return `<div style="font-weight:bold; margin-bottom:4px;">${d.name}</div><span style="color:#777;font-size:12px;">出现频率：<span style="color:#A34343;font-weight:bold">${d.value}</span></span>`;
+                  return (
+                    `<div style="font-weight:700; margin-bottom:4px;">${d.name}</div>` +
+                    `<span style="color:#777;font-size:12px;">关联频次：<span style="color:#A34343;font-weight:700">${d.value}</span></span>`
+                  );
                 }
                 return `<b style="font-size:14px;">${d.name}</b>`;
               },
@@ -327,7 +389,7 @@
                   width: 1.5,
                   color: colors.edge,
                   opacity: 0.9,
-                  curveness: 0.35,
+                  curveness: 0.18,
                 },
                 emphasis: {
                   focus: "adjacency",
@@ -343,7 +405,13 @@
                     shadowOffsetY: 6,
                     shadowColor: "rgba(0,0,0,0.25)",
                   },
-                  label: { show: true, color: "#111", fontWeight: 900, textShadowColor: "#fff", textShadowBlur: 4 },
+                  label: {
+                    show: true,
+                    color: "#111",
+                    fontWeight: 900,
+                    textShadowColor: "#fff",
+                    textShadowBlur: 4,
+                  },
                 },
                 blur: {
                   itemStyle: { opacity: 0.2 },
@@ -376,4 +444,3 @@
     </script>
   </body>
 </html>
-

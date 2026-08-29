@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>马头墙关系图 · 终极质感版</title>
-    <script src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <title>马头墙关系图</title>
+    <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #F7F5EE;
+        --paper-bg: #f7f5ee;
         --title-color: #2b333e;
         --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -20,7 +20,6 @@
         margin: 0;
         overflow: hidden;
         background-color: var(--paper-bg);
-        /* 核心升级 1：纯 CSS 实现的宣纸微噪点肌理 */
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
         font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
       }
@@ -34,7 +33,6 @@
         flex-direction: column;
       }
 
-      /* 核心升级 2：学术感排版 */
       .header {
         margin-bottom: 20px;
         position: relative;
@@ -54,7 +52,7 @@
 
       .title {
         font-size: 22px;
-        font-weight: bold;
+        font-weight: 700;
         letter-spacing: 2px;
         color: var(--title-color);
         margin: 0 0 4px 0;
@@ -69,9 +67,57 @@
         text-transform: uppercase;
       }
 
+      .chart-stage {
+        position: relative;
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
       #chart {
         flex: 1;
         width: 100%;
+        min-height: 0;
+      }
+
+      .chart-legend {
+        position: absolute;
+        left: 16px;
+        bottom: 12px;
+        z-index: 12;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        max-width: 320px;
+        pointer-events: none;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #44515d;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .legend-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex: 0 0 auto;
+      }
+
+      .legend-swatch.circle {
+        border-radius: 999px;
+      }
+
+      .guide-anchor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
       }
     </style>
   </head>
@@ -81,27 +127,39 @@
         <div class="title">马头墙 · 关键词关系图</div>
         <div class="subtitle">Knowledge Graph of Ma-Tau Wall Architecture</div>
       </div>
-      <div id="chart"></div>
+      <div class="chart-stage">
+        <div class="chart-legend" aria-hidden="true">
+          <span class="legend-item"><span class="legend-swatch" style="background:#26363E"></span>影响维度</span>
+          <span class="legend-item"><span class="legend-swatch circle" style="background:#A34343"></span>关键因素</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#566C7A"></span>形态特征</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#B58A52"></span>构造做法</span>
+        </div>
+        <div
+          class="guide-anchor"
+          data-guide-id="module2-mtq-b-flow"
+          style="left: 18%; top: 20%; width: 58%; height: 56%;"
+        ></div>
+        <div id="chart"></div>
+      </div>
     </div>
 
     <script>
       (function () {
         const dom = document.getElementById("chart");
-        // 开启高分屏支持，提升抗锯齿效果
-        const chart = echarts.init(dom, null, { renderer: "canvas", devicePixelRatio: window.devicePixelRatio || 2 });
+        const chart = echarts.init(dom, null, {
+          renderer: "canvas",
+          devicePixelRatio: Math.max(1, window.devicePixelRatio || 2),
+        });
 
-        // 色盘微调：加深了一点点饱和度，使其在复杂大屏中压得住阵脚
         const colors = {
-          col1: "#26363E", // 深黛色
-          col2: "#A34343", // 浓胭脂
-          col3: "#566C7A", // 苍青
-          col4: "#B58A52", // 古铜/秋香
-          col5: "#4E6E5D", // 墨绿
-          edge: "rgba(150, 145, 135, 0.28)", // 静态连线
-          edgeHi: "#C95B47", // 高亮连线：朱砂红
+          col1: "#26363E",
+          col2: "#A34343",
+          col3: "#566C7A",
+          col4: "#B58A52",
+          edge: "rgba(150, 145, 135, 0.28)",
+          edgeHi: "#C95B47",
         };
 
-        // 数据2：四层结构（影响因素 -> 核心细分 -> 特征类型 -> 构造做法）
         const col1 = [
           { id: "f_env", name: "自然环境" },
           { id: "f_life", name: "生活需求" },
@@ -142,44 +200,63 @@
         ];
 
         const links = [
-          // 第一层 -> 第二层
-          ["f_env", "c_mountain"], ["f_env", "c_rain"], ["f_env", "c_timber"],
-          ["f_life", "c_fire"], ["f_life", "c_windsun"],
-          ["f_tech", "c_hardroof"], ["f_tech", "c_brickprod"],
-          ["f_culture", "c_clan"], ["f_culture", "c_huishang"], ["f_culture", "c_aesthetic"],
+          ["f_env", "c_mountain"],
+          ["f_env", "c_rain"],
+          ["f_env", "c_timber"],
+          ["f_life", "c_fire"],
+          ["f_life", "c_windsun"],
+          ["f_tech", "c_hardroof"],
+          ["f_tech", "c_brickprod"],
+          ["f_culture", "c_clan"],
+          ["f_culture", "c_huishang"],
+          ["f_culture", "c_aesthetic"],
 
-          // 第二层 -> 第三层
-          ["c_mountain", "t_step"], ["c_mountain", "t_combo"],
+          ["c_mountain", "t_step"],
+          ["c_mountain", "t_combo"],
           ["c_rain", "t_blackwhite"],
           ["c_timber", "t_step"],
           ["c_fire", "t_step"],
           ["c_windsun", "t_step"],
-          ["c_hardroof", "t_step"], ["c_hardroof", "t_wuyue"], ["c_hardroof", "t_combo"],
-          ["c_brickprod", "t_step"], ["c_brickprod", "t_wuyue"], ["c_brickprod", "t_ridge"], ["c_brickprod", "t_combo"],
-          ["c_clan", "t_wuyue"], ["c_clan", "t_zuotou"],
-          ["c_huishang", "t_wuyue"], ["c_huishang", "t_zuotou"], ["c_huishang", "t_blackwhite"], ["c_huishang", "t_ridge"],
-          ["c_aesthetic", "t_combo"], ["c_aesthetic", "t_blackwhite"],
+          ["c_hardroof", "t_step"],
+          ["c_hardroof", "t_wuyue"],
+          ["c_hardroof", "t_combo"],
+          ["c_brickprod", "t_step"],
+          ["c_brickprod", "t_wuyue"],
+          ["c_brickprod", "t_ridge"],
+          ["c_brickprod", "t_combo"],
+          ["c_clan", "t_wuyue"],
+          ["c_clan", "t_zuotou"],
+          ["c_huishang", "t_wuyue"],
+          ["c_huishang", "t_zuotou"],
+          ["c_huishang", "t_blackwhite"],
+          ["c_huishang", "t_ridge"],
+          ["c_aesthetic", "t_combo"],
+          ["c_aesthetic", "t_blackwhite"],
 
-          // 第三层 -> 第四层
-          ["t_step", "m_brick"], ["t_step", "m_stepdrop"], ["t_step", "m_scale"],
-          ["t_blackwhite", "m_white"], ["t_blackwhite", "m_eave"],
-          ["t_wuyue", "m_stepdrop"], ["t_wuyue", "m_scale"],
+          ["t_step", "m_brick"],
+          ["t_step", "m_stepdrop"],
+          ["t_step", "m_scale"],
+          ["t_blackwhite", "m_white"],
+          ["t_blackwhite", "m_eave"],
+          ["t_wuyue", "m_stepdrop"],
+          ["t_wuyue", "m_scale"],
           ["t_zuotou", "m_zuotou"],
-          ["t_ridge", "m_eave"], ["t_ridge", "m_ridge"],
-          ["t_combo", "m_stepdrop"], ["t_combo", "m_scale"],
+          ["t_ridge", "m_eave"],
+          ["t_ridge", "m_ridge"],
+          ["t_combo", "m_stepdrop"],
+          ["t_combo", "m_scale"],
         ].map(([source, target]) => ({ source, target, value: 1 }));
 
-        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize) {
+        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize, labelWidth) {
           const out = [];
           const n = items.length;
-          // 留出上下边距，计算步长
-          const step = Math.min(45, (containerH * 0.9) / Math.max(n - 1, 1)); 
+          const step = Math.min(45, (containerH * 0.9) / Math.max(n - 1, 1));
           const totalHeight = (n - 1) * step;
           const startY = (containerH - totalHeight) / 2;
+          const labelAlign = labelPos === "left" ? "right" : "left";
 
           items.forEach((it, idx) => {
             const nodeSize = it.freq ? fixedSize + (it.freq / 16) * 5 : fixedSize;
-
             out.push({
               id: it.id,
               name: it.name,
@@ -188,23 +265,27 @@
               value: it.freq,
               symbol,
               symbolSize: nodeSize,
-              itemStyle: { 
-                color, 
+              itemStyle: {
+                color,
                 opacity: 0.95,
-                borderColor: '#F7F5EE', // 核心升级 4：强化白边，像棋子落在纸上
+                borderColor: "#F7F5EE",
                 borderWidth: 2,
                 shadowBlur: 10,
                 shadowOffsetY: 4,
-                shadowColor: 'rgba(0, 0, 0, 0.12)' 
+                shadowColor: "rgba(0, 0, 0, 0.12)",
               },
               label: {
                 show: true,
                 position: labelPos,
+                distance: 10,
                 color: "#2B333E",
-                fontSize: 12.5,
+                fontSize: 11.5,
                 fontWeight: 600,
-                distance: 10, 
-                fontFamily: "Georgia, 'KaiTi', '楷体', serif"
+                width: labelWidth,
+                overflow: "break",
+                lineHeight: 17,
+                align: labelAlign,
+                fontFamily: "Georgia, 'KaiTi', '楷体', serif",
               },
             });
           });
@@ -214,27 +295,30 @@
         function buildOption() {
           const w = chart.getWidth();
           const h = chart.getHeight();
-          const activeHeight = h; 
-
-          const x1 = w * 0.08;
-          const x2 = w * 0.34;
-          const x3 = w * 0.60;
-          const x4 = w * 0.88;
+          const col1LabelWidth = Math.max(120, w * 0.13);
+          const col2LabelWidth = Math.max(118, w * 0.11);
+          const col3LabelWidth = Math.max(156, w * 0.14);
+          const col4LabelWidth = Math.max(176, w * 0.16);
+          const edgePad = 10;
+          const labelGap = 8;
+          const x1 = edgePad + col1LabelWidth + labelGap;
+          const x4 = w - edgePad - col4LabelWidth - labelGap;
+          const innerSpan = x4 - x1;
+          const x2 = x1 + innerSpan * 0.36;
+          const x3 = x1 + innerSpan * 0.70;
 
           const nodes = [
-            ...layoutColumn(col1, x1, activeHeight, "roundRect", colors.col1, "left", 18),
-            ...layoutColumn(col2, x2, activeHeight, "circle", colors.col2, "right", 12),
-            ...layoutColumn(col3, x3, activeHeight, "roundRect", colors.col3, "right", 15),
-            ...layoutColumn(col4, x4, activeHeight, "roundRect", colors.col4, "right", 13),
+            ...layoutColumn(col1, x1, h, "roundRect", colors.col1, "left", 18, col1LabelWidth),
+            ...layoutColumn(col2, x2, h, "circle", colors.col2, "right", 12, col2LabelWidth),
+            ...layoutColumn(col3, x3, h, "roundRect", colors.col3, "right", 15, col3LabelWidth),
+            ...layoutColumn(col4, x4, h, "roundRect", colors.col4, "right", 13, col4LabelWidth),
           ];
 
           return {
-            animationDurationUpdate: 1200, // 更平滑的动画过渡
-            animationEasingUpdate: 'quinticInOut',
+            animationDurationUpdate: 1200,
+            animationEasingUpdate: "quinticInOut",
             backgroundColor: "transparent",
-            tooltip: {
-              show: false,
-            },
+            tooltip: { show: false },
             series: [
               {
                 type: "graph",
@@ -246,27 +330,33 @@
                   width: 1.5,
                   color: colors.edge,
                   opacity: 0.9,
-                  curveness: 0.35, // 核心升级 3：更加柔和流畅的水波纹曲率
+                  curveness: 0.18,
                 },
                 emphasis: {
                   focus: "adjacency",
-                  lineStyle: { 
-                    width: 3.5, 
-                    color: colors.edgeHi, 
+                  lineStyle: {
+                    width: 3.5,
+                    color: colors.edgeHi,
                     opacity: 0.9,
                     shadowBlur: 12,
-                    shadowColor: "rgba(201, 91, 71, 0.4)" // 连线发光特效
+                    shadowColor: "rgba(201, 91, 71, 0.4)",
                   },
                   itemStyle: {
-                     shadowBlur: 20,
-                     shadowOffsetY: 6,
-                     shadowColor: 'rgba(0,0,0,0.25)'
+                    shadowBlur: 20,
+                    shadowOffsetY: 6,
+                    shadowColor: "rgba(0,0,0,0.25)",
                   },
-                  label: { show: true, color: "#111", fontWeight: 900, textShadowColor: '#fff', textShadowBlur: 4 },
+                  label: {
+                    show: true,
+                    color: "#111",
+                    fontWeight: 900,
+                    textShadowColor: "#fff",
+                    textShadowBlur: 4,
+                  },
                 },
                 blur: {
                   itemStyle: { opacity: 0.2 },
-                  lineStyle: { opacity: 0.05 }
+                  lineStyle: { opacity: 0.05 },
                 },
                 label: { show: true },
                 data: nodes,
@@ -277,14 +367,12 @@
         }
 
         function render() {
-          chart.clear(); 
+          chart.clear();
           chart.setOption(buildOption(), true);
         }
 
-        // 初始渲染
-        setTimeout(render, 100); 
+        setTimeout(render, 100);
 
-        // 监听窗口大小变化
         let resizeTimer;
         window.addEventListener("resize", () => {
           clearTimeout(resizeTimer);

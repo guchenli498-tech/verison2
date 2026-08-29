@@ -23,8 +23,8 @@
 
       .toolbar {
         position: absolute;
-        top: 10px;
-        right: 12px;
+        top: 18px;
+        right: 18px;
         display: flex;
         gap: 10px;
         z-index: 10;
@@ -36,8 +36,8 @@
         background: rgba(247, 241, 231, 0.65);
         color: rgba(74, 74, 72, 0.95);
         border-radius: 999px;
-        padding: 7px 12px;
-        font-size: 12px;
+        padding: 5px 10px;
+        font-size: 11px;
         cursor: pointer;
         transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
         white-space: nowrap;
@@ -63,9 +63,9 @@
   </head>
   <body>
     <div class="wrap">
-      <div class="toolbar">
+      <div class="toolbar" data-guide-id="module2-tj-a-toolbar">
         <div id="btnA" class="btn active" role="button" tabindex="0">气泡图</div>
-        <div id="btnB" class="btn" role="button" tabindex="0">平行坐标</div>
+        <div id="btnB" class="btn" role="button" tabindex="0" data-guide-id="module2-tj-a-btn-parallel">平行坐标</div>
       </div>
 
       <iframe
@@ -114,6 +114,10 @@
               padding: 8px 12px 8px 14px !important;
               box-shadow: none !important;
             }
+            .header > *:first-child, .headerRow > *:first-child {
+              flex: 1 1 auto !important;
+              min-width: 0 !important;
+            }
             .title, .header h1 {
               margin-bottom: 0 !important;
               font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif !important;
@@ -146,6 +150,12 @@
           if (frameA) frameA.style.display = isA ? "block" : "none";
           if (frameB) frameB.style.display = isA ? "none" : "block";
         }
+
+        window.addEventListener("message", (event) => {
+          const data = event.data;
+          if (!data || data.type !== "hui-guide" || data.action !== "setModule2ChartMode") return;
+          setMode(data.key === "parallel" ? "B" : "A");
+        });
 
         btnA && btnA.addEventListener("click", () => setMode("A"));
         btnB && btnB.addEventListener("click", () => setMode("B"));

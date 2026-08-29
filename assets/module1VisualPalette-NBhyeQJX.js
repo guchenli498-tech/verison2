@@ -1,0 +1,1 @@
+var e=[`#e8d3ae`,`#dfc399`,`#c3865a`,`#aa5b46`],t={land:e[0],ink:`#6f4b3f`,border:`rgba(170, 91, 70, 0.22)`,focus:`#aa5b46`,hoverLine:`rgba(195, 134, 90, 0.9)`,pinDefault:`#c3865a`,pinHover:`#dfc399`,pinSel:`#aa5b46`,pinBorder:`#ffffff`,pinAccent:`#e8d3ae`},n={民居:`#9a5c4a`,祠堂:`#b7825f`,牌坊:`#d6b77a`,桥梁:`#7c6a45`,"综合用途/建筑群":`#c5ab86`,其他:`#938577`};export{t as n,n as r,e as t};

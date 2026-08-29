@@ -7,10 +7,10 @@
     <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #F8F6F0;
+        --paper-bg: #f8f6f0;
         --title-color: #2b333e;
         --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
 
       html,
@@ -99,152 +99,140 @@
           edgeHi: "#7A9EB0",
         };
 
-        // 第一层：天井四大影响因素（4）
         const col1 = [
-          { id: "g_env",  name: "自然环境" },
+          { id: "g_env", name: "自然环境" },
           { id: "g_life", name: "生活需求" },
           { id: "g_tech", name: "建筑技术" },
           { id: "g_cult", name: "地域文化" },
         ];
 
-        // 第二层：影响因素细分（9）
         const col2 = [
-          { id: "r_climate",  name: "气候条件",  freq: 14 },
-          { id: "r_terrain",  name: "地形地貌",  freq: 10 },
-          { id: "r_light",    name: "采光需求",  freq: 16 },
-          { id: "r_vent",     name: "通风需求",  freq: 17 },
-          { id: "r_social",   name: "社交需求",  freq: 8  },
-          { id: "r_material", name: "材料特性",  freq: 9  },
-          { id: "r_struct",   name: "结构体系",  freq: 10 },
-          { id: "r_fengshui", name: "风水观念",  freq: 14 },
-          { id: "r_philo",    name: "哲学思想",  freq: 15 },
+          { id: "r_climate", name: "气候条件", freq: 14 },
+          { id: "r_terrain", name: "地形地貌", freq: 10 },
+          { id: "r_light", name: "采光需求", freq: 16 },
+          { id: "r_vent", name: "通风需求", freq: 17 },
+          { id: "r_social", name: "社交需求", freq: 8 },
+          { id: "r_material", name: "材料特性", freq: 9 },
+          { id: "r_struct", name: "结构体系", freq: 10 },
+          { id: "r_fengshui", name: "风水观念", freq: 14 },
+          { id: "r_philo", name: "哲学思想", freq: 15 },
         ];
 
-        // 第三层：天井主要类型（5）
         const col3 = [
-          { id: "t_ao",   name: "凹字型" },
-          { id: "t_hui",  name: "回字型" },
-          { id: "t_h",    name: "H字型"  },
-          { id: "t_ri",   name: "日字型" },
-          { id: "t_yi",   name: "一字型" },
+          { id: "t_ao", name: "凹字型" },
+          { id: "t_hui", name: "回字型" },
+          { id: "t_h", name: "H字型" },
+          { id: "t_ri", name: "日字型" },
+          { id: "t_yi", name: "一字型" },
         ];
 
-        // 第四层：构造做法（10）
         const col4 = [
-          { id: "s_qingshi",  name: "青石铺地"   },
-          { id: "s_mugou",    name: "木构隔扇"   },
-          { id: "s_shuiti",   name: "水体蒸发池" },
-          { id: "s_paishui",  name: "排水明沟"   },
-          { id: "s_xushui",   name: "蓄水缸"     },
-          { id: "s_louhua",   name: "镂空花窗"   },
-          { id: "s_tiaoeyan", name: "挑檐遮阳"   },
-          { id: "s_huodong",  name: "活动格栅"   },
-          { id: "s_qingzhi",  name: "轻质围护"   },
-          { id: "s_poding",   name: "坡顶内向"   },
+          { id: "s_qingshi", name: "青石铺地" },
+          { id: "s_mugou", name: "木构隔扇" },
+          { id: "s_shuiti", name: "水体蒸发池" },
+          { id: "s_paishui", name: "排水明沟" },
+          { id: "s_xushui", name: "蓄水缸" },
+          { id: "s_louhua", name: "镂空花窗" },
+          { id: "s_tiaoeyan", name: "挑檐遮阳" },
+          { id: "s_huodong", name: "活动格栅" },
+          { id: "s_qingzhi", name: "轻质围护" },
+          { id: "s_poding", name: "坡顶内向" },
         ];
 
-        const links = [
-          // 第一层 -> 第二层
-          ["g_env",  "r_climate"],
-          ["g_env",  "r_terrain"],
-          ["g_life", "r_light"],
-          ["g_life", "r_vent"],
-          ["g_life", "r_social"],
-          ["g_tech", "r_material"],
-          ["g_tech", "r_struct"],
-          ["g_cult", "r_fengshui"],
-          ["g_cult", "r_philo"],
+        const baseLinks = [
+          ["g_env", "r_climate"], ["g_env", "r_terrain"], ["g_life", "r_light"], ["g_life", "r_vent"],
+          ["g_life", "r_social"], ["g_tech", "r_material"], ["g_tech", "r_struct"], ["g_cult", "r_fengshui"], ["g_cult", "r_philo"],
 
-          // 第二层 -> 第三层
-          ["r_climate",  "t_ao"],
-          ["r_climate",  "t_hui"],
-          ["r_climate",  "t_h"],
-          ["r_climate",  "t_ri"],
-          ["r_climate",  "t_yi"],
-          ["r_terrain",  "t_ao"],
-          ["r_terrain",  "t_hui"],
-          ["r_terrain",  "t_h"],
-          ["r_terrain",  "t_ri"],
-          ["r_terrain",  "t_yi"],
-          ["r_light",    "t_ao"],
-          ["r_light",    "t_hui"],
-          ["r_light",    "t_h"],
-          ["r_light",    "t_ri"],
-          ["r_light",    "t_yi"],
-          ["r_vent",     "t_ao"],
-          ["r_vent",     "t_hui"],
-          ["r_vent",     "t_h"],
-          ["r_vent",     "t_ri"],
-          ["r_vent",     "t_yi"],
-          ["r_social",   "t_ao"],
-          ["r_social",   "t_hui"],
-          ["r_social",   "t_h"],
-          ["r_social",   "t_ri"],
-          ["r_material", "t_ao"],
-          ["r_material", "t_hui"],
-          ["r_material", "t_h"],
-          ["r_material", "t_ri"],
-          ["r_material", "t_yi"],
-          ["r_struct",   "t_ao"],
-          ["r_struct",   "t_hui"],
-          ["r_struct",   "t_h"],
-          ["r_struct",   "t_ri"],
-          ["r_struct",   "t_yi"],
-          ["r_fengshui", "t_hui"],
-          ["r_fengshui", "t_h"],
-          ["r_fengshui", "t_ri"],
-          ["r_philo",    "t_ao"],
-          ["r_philo",    "t_hui"],
-          ["r_philo",    "t_h"],
-          ["r_philo",    "t_ri"],
-          ["r_philo",    "t_yi"],
+          ["r_climate", "t_ao"], ["r_climate", "t_hui"], ["r_climate", "t_h"], ["r_climate", "t_ri"], ["r_climate", "t_yi"],
+          ["r_terrain", "t_ao"], ["r_terrain", "t_hui"], ["r_terrain", "t_h"], ["r_terrain", "t_ri"], ["r_terrain", "t_yi"],
+          ["r_light", "t_ao"], ["r_light", "t_hui"], ["r_light", "t_h"], ["r_light", "t_ri"], ["r_light", "t_yi"],
+          ["r_vent", "t_ao"], ["r_vent", "t_hui"], ["r_vent", "t_h"], ["r_vent", "t_ri"], ["r_vent", "t_yi"],
+          ["r_social", "t_ao"], ["r_social", "t_hui"], ["r_social", "t_h"], ["r_social", "t_ri"],
+          ["r_material", "t_ao"], ["r_material", "t_hui"], ["r_material", "t_h"], ["r_material", "t_ri"], ["r_material", "t_yi"],
+          ["r_struct", "t_ao"], ["r_struct", "t_hui"], ["r_struct", "t_h"], ["r_struct", "t_ri"], ["r_struct", "t_yi"],
+          ["r_fengshui", "t_hui"], ["r_fengshui", "t_h"], ["r_fengshui", "t_ri"],
+          ["r_philo", "t_ao"], ["r_philo", "t_hui"], ["r_philo", "t_h"], ["r_philo", "t_ri"], ["r_philo", "t_yi"],
 
-          // 第三层 -> 第四层
-          // 凹字型
-          ["t_ao",  "s_qingshi"],
-          ["t_ao",  "s_mugou"],
-          ["t_ao",  "s_paishui"],
-          ["t_ao",  "s_xushui"],
-          ["t_ao",  "s_louhua"],
-          ["t_ao",  "s_tiaoeyan"],
-          ["t_ao",  "s_poding"],
-          // 回字型
-          ["t_hui", "s_qingshi"],
-          ["t_hui", "s_shuiti"],
-          ["t_hui", "s_paishui"],
-          ["t_hui", "s_xushui"],
-          ["t_hui", "s_louhua"],
-          ["t_hui", "s_tiaoeyan"],
-          ["t_hui", "s_huodong"],
-          ["t_hui", "s_poding"],
-          // H字型
-          ["t_h",   "s_qingshi"],
-          ["t_h",   "s_paishui"],
-          ["t_h",   "s_xushui"],
-          ["t_h",   "s_louhua"],
-          ["t_h",   "s_tiaoeyan"],
-          ["t_h",   "s_poding"],
-          // 日字型
-          ["t_ri",  "s_qingshi"],
-          ["t_ri",  "s_paishui"],
-          ["t_ri",  "s_xushui"],
-          ["t_ri",  "s_louhua"],
-          ["t_ri",  "s_tiaoeyan"],
-          ["t_ri",  "s_poding"],
-          // 一字型
-          ["t_yi",  "s_qingshi"],
-          ["t_yi",  "s_qingzhi"],
-          ["t_yi",  "s_paishui"],
-          ["t_yi",  "s_louhua"],
-          ["t_yi",  "s_tiaoeyan"],
+          ["t_ao", "s_qingshi"], ["t_ao", "s_mugou"], ["t_ao", "s_paishui"], ["t_ao", "s_xushui"], ["t_ao", "s_louhua"], ["t_ao", "s_tiaoeyan"], ["t_ao", "s_poding"],
+          ["t_hui", "s_qingshi"], ["t_hui", "s_shuiti"], ["t_hui", "s_paishui"], ["t_hui", "s_xushui"], ["t_hui", "s_louhua"], ["t_hui", "s_tiaoeyan"], ["t_hui", "s_huodong"], ["t_hui", "s_poding"],
+          ["t_h", "s_qingshi"], ["t_h", "s_paishui"], ["t_h", "s_xushui"], ["t_h", "s_louhua"], ["t_h", "s_tiaoeyan"], ["t_h", "s_poding"],
+          ["t_ri", "s_qingshi"], ["t_ri", "s_paishui"], ["t_ri", "s_xushui"], ["t_ri", "s_louhua"], ["t_ri", "s_tiaoeyan"], ["t_ri", "s_poding"],
+          ["t_yi", "s_qingshi"], ["t_yi", "s_qingzhi"], ["t_yi", "s_paishui"], ["t_yi", "s_louhua"], ["t_yi", "s_tiaoeyan"],
         ].map(([source, target]) => ({ source, target, value: 1 }));
 
-        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize) {
+        const TERMINAL_STUB = 8;
+        const TERMINAL_RIGHT_PAD = 72;
+        const TERMINAL_LABEL_SCALE = 1.16;
+        let measureCtx;
+
+        function measureTextWidth(text, fontSize) {
+          if (!measureCtx) {
+            measureCtx = document.createElement("canvas").getContext("2d");
+          }
+          measureCtx.font = `600 ${fontSize}px Georgia, "KaiTi", "楷体", serif`;
+          return measureCtx.measureText(text).width;
+        }
+
+        function formatLabelName(name) {
+          const slash = name.indexOf("/");
+          if (slash > 0 && slash < name.length - 1) {
+            return name.slice(0, slash) + "\n" + name.slice(slash);
+          }
+          if (name.length > 10) {
+            const mid = Math.ceil(name.length / 2);
+            return name.slice(0, mid) + "\n" + name.slice(mid);
+          }
+          return name;
+        }
+
+        function countLines(name) {
+          return formatLabelName(name).split("\n").length;
+        }
+
+        function maxLabelWidth(items, fontSize) {
+          return Math.max(
+            ...items.flatMap((it) => formatLabelName(it.name).split("\n").map((line) => measureTextWidth(line, fontSize))),
+            72
+          );
+        }
+
+        function computeLayoutStep(columns, containerH, bounds) {
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 78;
+          const usable = Math.max(containerH - topInset - bottomInset, 120);
+          const maxN = Math.max(...columns.map((col) => col.items.length));
+          const fitStep = (usable * 0.9) / Math.max(maxN - 1, 1);
+          let minStep = 34;
+
+          columns.forEach((col) => {
+            const fontSize = col.fontSize || 12;
+            const lineHeight = fontSize * 1.45;
+            const maxLines = col.items.reduce((max, item) => Math.max(max, countLines(item.name)), 1);
+            minStep = Math.max(minStep, maxLines * lineHeight + 14);
+          });
+
+          return Math.min(Math.max(minStep, 34), fitStep);
+        }
+
+        function computeTerminalStep(items, containerH, fontSize, bounds) {
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 78;
+          const usable = Math.max(containerH - topInset - bottomInset, 120);
+          let minStep = 38;
+          items.forEach((it) => {
+            minStep = Math.max(minStep, countLines(it.name) * fontSize * 1.45 + 16);
+          });
+          const fitStep = (usable * 0.93) / Math.max(items.length - 1, 1);
+          return Math.min(Math.max(minStep, 38), fitStep);
+        }
+
+        function layoutColumn(items, x, containerH, step, symbol, color, labelPos, fixedSize, fontSize, bounds, multiline = true) {
           const out = [];
-          const n = items.length;
-          const step = Math.min(45, (containerH * 0.9) / Math.max(n - 1, 1));
-          const totalHeight = (n - 1) * step;
-          const startY = (containerH - totalHeight) / 2;
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 78;
+          const usableHeight = Math.max(containerH - topInset - bottomInset, 120);
+          const totalHeight = (items.length - 1) * step;
+          const startY = topInset + (usableHeight - totalHeight) / 2;
 
           items.forEach((it, idx) => {
             const nodeSize = it.freq ? fixedSize + (it.freq / 17) * 5 : fixedSize;
@@ -269,35 +257,129 @@
                 show: true,
                 position: labelPos,
                 color: "#2B333E",
-                fontSize: 12.5,
+                fontSize,
                 fontWeight: 600,
                 distance: 10,
-                fontFamily: "Georgia, 'KaiTi', '楷体', serif",
+                overflow: "none",
+                lineHeight: fontSize * 1.35,
+                formatter: multiline ? (params) => formatLabelName(params.data.name) : undefined,
+                fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },
             });
           });
           return out;
         }
 
+        function buildTerminalAnchors(nodes, xBus) {
+          return nodes.map((node) => ({
+            id: `_bus_${node.id}`,
+            name: "",
+            x: xBus,
+            y: node.y,
+            symbol: "circle",
+            symbolSize: 1,
+            itemStyle: { opacity: 0, borderWidth: 0 },
+            label: { show: false },
+            emphasis: { disabled: true },
+          }));
+        }
+
+        function expandLinksForBus(rawLinks, terminalIds) {
+          const terminalSet = new Set(terminalIds);
+          const out = [];
+          rawLinks.forEach((link) => {
+            if (!terminalSet.has(link.target)) {
+              out.push(link);
+              return;
+            }
+            const busId = `_bus_${link.target}`;
+            out.push({ source: link.source, target: busId, lineStyle: { curveness: 0.16 } });
+            out.push({ source: busId, target: link.target, lineStyle: { curveness: 0, width: 1.5 } });
+          });
+          return out;
+        }
+
+        function buildIconLegend() {
+          const iconSize = 18;
+          const items = [
+            { type: "rect", color: colors.col1, label: "影响因素" },
+            { type: "circle", color: colors.col2, label: "形成条件" },
+            { type: "rect", color: colors.col3, label: "天井类型" },
+            { type: "rect", color: colors.col4, label: "构造做法" },
+          ];
+          const itemWidth = 84;
+          const children = [];
+
+          items.forEach((item, index) => {
+            const baseX = 10 + index * itemWidth;
+            if (item.type === "circle") {
+              children.push({
+                type: "circle",
+                shape: { cx: baseX + iconSize / 2, cy: 19, r: iconSize / 2 },
+                style: { fill: item.color, stroke: "#F8F6F0", lineWidth: 2, shadowBlur: 6, shadowColor: "rgba(0,0,0,0.08)" },
+              });
+            } else {
+              children.push({
+                type: "rect",
+                shape: { x: baseX, y: 10, width: iconSize, height: iconSize, r: 5 },
+                style: { fill: item.color, stroke: "#F8F6F0", lineWidth: 2, shadowBlur: 6, shadowColor: "rgba(0,0,0,0.08)" },
+              });
+            }
+            children.push({
+              type: "text",
+              style: {
+                x: baseX + iconSize + 8,
+                y: 19,
+                text: item.label,
+                fill: "#2B333E",
+                font: '600 12px Georgia, "KaiTi", STKaiti, serif',
+                textVerticalAlign: "middle",
+              },
+            });
+          });
+
+          return [{ type: "group", left: 18, bottom: 6, silent: true, children }];
+        }
+
         function buildOption() {
           const w = chart.getWidth();
           const h = chart.getHeight();
+          const layoutBounds = { top: 16, bottom: 78 };
+          const step = computeLayoutStep(
+            [
+              { items: col1, fontSize: 12 },
+              { items: col2, fontSize: 12 },
+              { items: col3, fontSize: 12 },
+            ],
+            h,
+            layoutBounds
+          );
+          const terminalFontSize = 12.5;
+          const terminalStep = computeTerminalStep(col4, h, terminalFontSize, layoutBounds);
+
           const x1 = w * 0.10;
           const x2 = w * 0.34;
-          const x3 = w * 0.62;
-          const x4 = w * 0.90;
+          const x3 = w * 0.58;
+          const x4 = w - TERMINAL_RIGHT_PAD - 13 / 2 - 10 - maxLabelWidth(col4, terminalFontSize) * TERMINAL_LABEL_SCALE - TERMINAL_STUB;
+          const xBus = x4 - TERMINAL_STUB;
+
+          const terminalNodes = layoutColumn(col4, x4, h, terminalStep, "roundRect", colors.col4, "right", 13, terminalFontSize, layoutBounds, true);
+          const busNodes = buildTerminalAnchors(terminalNodes, xBus);
+          const routedLinks = expandLinksForBus(baseLinks, col4.map((item) => item.id));
 
           const nodes = [
-            ...layoutColumn(col1, x1, h, "roundRect", colors.col1, "left",  18),
-            ...layoutColumn(col2, x2, h, "circle",    colors.col2, "right", 12),
-            ...layoutColumn(col3, x3, h, "roundRect", colors.col3, "right", 14),
-            ...layoutColumn(col4, x4, h, "roundRect", colors.col4, "right", 13),
+            ...layoutColumn(col1, x1, h, step, "roundRect", colors.col1, "left", 18, 12, layoutBounds, false),
+            ...layoutColumn(col2, x2, h, step, "circle", colors.col2, "right", 12, 12, layoutBounds, true),
+            ...layoutColumn(col3, x3, h, step, "roundRect", colors.col3, "right", 14, 12, layoutBounds, true),
+            ...busNodes,
+            ...terminalNodes,
           ];
 
           return {
             backgroundColor: "transparent",
             animationDurationUpdate: 900,
             animationEasingUpdate: "quinticInOut",
+            graphic: buildIconLegend(),
             tooltip: {
               trigger: "item",
               backgroundColor: "rgba(250, 247, 240, 0.98)",
@@ -307,7 +389,9 @@
               textStyle: { color: "#2B333E", fontSize: 13 },
               extraCssText: "box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-radius: 6px;",
               formatter: function (p) {
+                if (p.dataType === "edge") return "";
                 const d = p.data || {};
+                if (!d.name) return "";
                 if (typeof d.value === "number") {
                   return `<div style="font-weight:bold; margin-bottom:4px;">${d.name}</div><span style="color:#777;font-size:12px;">出现频率：<span style="color:#4A6B7A;font-weight:bold">${d.value}</span></span>`;
                 }
@@ -320,11 +404,12 @@
                 layout: "none",
                 roam: false,
                 draggable: false,
+                clip: false,
                 lineStyle: {
                   width: 1.5,
                   color: colors.edge,
                   opacity: 0.9,
-                  curveness: 0.35,
+                  curveness: 0.16,
                 },
                 emphasis: {
                   focus: "adjacency",
@@ -348,7 +433,7 @@
                 },
                 label: { show: true },
                 data: nodes,
-                links,
+                links: routedLinks,
               },
             ],
           };

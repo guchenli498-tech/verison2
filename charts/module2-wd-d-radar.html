@@ -57,7 +57,7 @@
       }
 
       .title {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: bold;
         letter-spacing: 2px;
         color: var(--title-color);
@@ -242,6 +242,12 @@
         border-top: 2px dashed currentColor;
         opacity: 0.8;
       }
+
+      .guide-anchor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 12;
+      }
     </style>
   </head>
   <body>
@@ -250,14 +256,19 @@
         <div class="header">
           <div class="title">屋顶 · 举架关键参数雷达图</div>
         </div>
-        <div class="toolbar" aria-label="架屋切换">
+        <div class="toolbar" aria-label="架屋切换" data-guide-id="module2-wd-d-toolbar">
           <div id="btn5" class="btn active" role="button" tabindex="0">五架屋</div>
           <div id="btn7" class="btn" role="button" tabindex="0">七架屋</div>
           <div id="btn9" class="btn" role="button" tabindex="0">九架屋</div>
         </div>
       </div>
 
-      <div class="content">
+      <div class="content" style="position: relative;">
+        <div
+          class="guide-anchor"
+          data-guide-id="module2-wd-d-radar"
+          style="left: 4%; top: 10%; width: 52%; height: 76%;"
+        ></div>
         <div id="chart"></div>
         <aside class="sketchPanel" aria-label="举折做法示意">
           <div class="sketchTitle">举折做法示意</div>
@@ -592,7 +603,7 @@
             radar: {
               indicator: indicators,
               center: ["50%", "48%"],
-              radius: "58%",
+              radius: "52%",
               axisName: {
                 color: "rgba(43, 51, 62, 0.82)",
                 fontSize: 12,
@@ -607,7 +618,7 @@
               show: true,
               orient: "horizontal",
               left: "center",
-              bottom: 6,
+              bottom: -4,
               itemWidth: 10,
               itemHeight: 10,
               itemGap: 10,
@@ -694,4 +705,3 @@
     </script>
   </body>
 </html>
-

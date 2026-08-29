@@ -7,11 +7,11 @@
     <script src="../echarts.min.js"></script>
     <style>
       :root {
-        --paper-bg: #F8F6F0;
+        --paper-bg: #f8f6f0;
         --title-color: #2b333e;
-        --subtitle-color: #8c939d;
-        --line-color: #6C7A89;
+        --line-color: #6c7a89;
       }
+
       html,
       body {
         width: 100%;
@@ -21,6 +21,7 @@
         background-color: var(--paper-bg);
         font-family: Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif;
       }
+
       .wrap {
         width: 100%;
         height: 100%;
@@ -29,11 +30,13 @@
         display: flex;
         flex-direction: column;
       }
+
       .header {
         margin-bottom: 10px;
         position: relative;
         padding-left: 14px;
       }
+
       .header::before {
         content: "";
         position: absolute;
@@ -44,6 +47,7 @@
         background: var(--line-color);
         border-radius: 2px;
       }
+
       .title {
         font-size: 22px;
         font-weight: bold;
@@ -51,6 +55,7 @@
         color: var(--title-color);
         margin: 0 0 4px 0;
       }
+
       #chart {
         flex: 1;
         width: 100%;
@@ -129,7 +134,7 @@
           { id: "c_aesthetic", name: "粉墙黛瓦", freq: 9 },
         ];
 
-        const links = [
+        const baseLinks = [
           ["g_perf", "k_r"], ["g_perf", "k_k"], ["g_perf", "k_reflect"], ["g_perf", "k_shade"], ["g_perf", "k_storage"],
           ["g_env", "k_vent"], ["g_env", "k_evap"], ["g_env", "k_humi"],
           ["g_mat", "k_reflect"], ["g_mat", "k_k"], ["g_cul", "k_humi"],
@@ -148,12 +153,79 @@
           ["s_shiqi", "c_winter"], ["s_huijiang", "c_humidity"],
         ].map(([source, target]) => ({ source, target, value: 1 }));
 
-        function layoutColumn(items, x, containerH, symbol, color, labelPos, fixedSize) {
+        const TERMINAL_STUB = 8;
+        const TERMINAL_RIGHT_PAD = 72;
+        const TERMINAL_LABEL_SCALE = 1.16;
+        let measureCtx;
+
+        function measureTextWidth(text, fontSize) {
+          if (!measureCtx) {
+            measureCtx = document.createElement("canvas").getContext("2d");
+          }
+          measureCtx.font = `600 ${fontSize}px Georgia, "KaiTi", "楷体", serif`;
+          return measureCtx.measureText(text).width;
+        }
+
+        function formatLabelName(name) {
+          const slash = name.indexOf("/");
+          if (slash > 0 && slash < name.length - 1) {
+            return name.slice(0, slash) + "\n" + name.slice(slash);
+          }
+          if (name.length > 10) {
+            const mid = Math.ceil(name.length / 2);
+            return name.slice(0, mid) + "\n" + name.slice(mid);
+          }
+          return name;
+        }
+
+        function countLines(name) {
+          return formatLabelName(name).split("\n").length;
+        }
+
+        function maxLabelWidth(items, fontSize) {
+          return Math.max(
+            ...items.flatMap((it) => formatLabelName(it.name).split("\n").map((line) => measureTextWidth(line, fontSize))),
+            72
+          );
+        }
+
+        function computeLayoutStep(columns, containerH, bounds) {
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 74;
+          const usable = Math.max(containerH - topInset - bottomInset, 120);
+          const maxN = Math.max(...columns.map((col) => col.items.length));
+          const fitStep = (usable * 0.9) / Math.max(maxN - 1, 1);
+          let minStep = 34;
+
+          columns.forEach((col) => {
+            const fontSize = col.fontSize || 12;
+            const lineHeight = fontSize * 1.45;
+            const maxLines = col.items.reduce((max, item) => Math.max(max, countLines(item.name)), 1);
+            minStep = Math.max(minStep, maxLines * lineHeight + 14);
+          });
+
+          return Math.min(Math.max(minStep, 34), fitStep);
+        }
+
+        function computeTerminalStep(items, containerH, fontSize, bounds) {
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 74;
+          const usable = Math.max(containerH - topInset - bottomInset, 120);
+          let minStep = 38;
+          items.forEach((it) => {
+            minStep = Math.max(minStep, countLines(it.name) * fontSize * 1.45 + 16);
+          });
+          const fitStep = (usable * 0.93) / Math.max(items.length - 1, 1);
+          return Math.min(Math.max(minStep, 38), fitStep);
+        }
+
+        function layoutColumn(items, x, containerH, step, symbol, color, labelPos, fixedSize, fontSize, bounds, multiline = true) {
           const out = [];
-          const n = items.length;
-          const step = Math.min(45, (containerH * 0.9) / Math.max(n - 1, 1));
-          const totalHeight = (n - 1) * step;
-          const startY = (containerH - totalHeight) / 2;
+          const topInset = bounds.top ?? 16;
+          const bottomInset = bounds.bottom ?? 74;
+          const usableHeight = Math.max(containerH - topInset - bottomInset, 120);
+          const totalHeight = (items.length - 1) * step;
+          const startY = topInset + (usableHeight - totalHeight) / 2;
 
           items.forEach((it, idx) => {
             const nodeSize = it.freq ? fixedSize + (it.freq / 16) * 5 : fixedSize;
@@ -178,9 +250,12 @@
                 show: true,
                 position: labelPos,
                 color: "#2B333E",
-                fontSize: 12.5,
+                fontSize,
                 fontWeight: 600,
                 distance: 10,
+                overflow: "none",
+                lineHeight: fontSize * 1.35,
+                formatter: multiline ? (params) => formatLabelName(params.data.name) : undefined,
                 fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },
             });
@@ -188,27 +263,112 @@
           return out;
         }
 
+        function buildTerminalAnchors(nodes, xBus) {
+          return nodes.map((node) => ({
+            id: `_bus_${node.id}`,
+            name: "",
+            x: xBus,
+            y: node.y,
+            symbol: "circle",
+            symbolSize: 1,
+            itemStyle: { opacity: 0, borderWidth: 0 },
+            label: { show: false },
+            emphasis: { disabled: true },
+          }));
+        }
+
+        function expandLinksForBus(rawLinks, terminalIds) {
+          const terminalSet = new Set(terminalIds);
+          const out = [];
+          rawLinks.forEach((link) => {
+            if (!terminalSet.has(link.target)) {
+              out.push(link);
+              return;
+            }
+            const busId = `_bus_${link.target}`;
+            out.push({ source: link.source, target: busId, lineStyle: { curveness: 0.16 } });
+            out.push({ source: busId, target: link.target, lineStyle: { curveness: 0, width: 1.5 } });
+          });
+          return out;
+        }
+
+        function buildIconLegend() {
+          const iconSize = 18;
+          const items = [
+            { color: colors.col1, label: "性能维度" },
+            { color: colors.col2, label: "评价指标" },
+            { color: colors.col3, label: "作用机制" },
+            { color: colors.col4, label: "墙体做法" },
+            { color: colors.col5, label: "综合表现" },
+          ];
+          const itemWidth = 84;
+          const children = [];
+
+          items.forEach((item, index) => {
+            const baseX = 10 + index * itemWidth;
+            children.push({
+              type: "circle",
+              shape: { cx: baseX + iconSize / 2, cy: 19, r: iconSize / 2 },
+              style: { fill: item.color, stroke: "#F7F5EE", lineWidth: 2, shadowBlur: 6, shadowColor: "rgba(0,0,0,0.08)" },
+            });
+            children.push({
+              type: "text",
+              style: {
+                x: baseX + iconSize + 8,
+                y: 19,
+                text: item.label,
+                fill: "#2B333E",
+                font: '600 12px Georgia, "KaiTi", STKaiti, serif',
+                textVerticalAlign: "middle",
+              },
+            });
+          });
+
+          return [{ type: "group", left: 18, bottom: 6, silent: true, children }];
+        }
+
         function buildOption() {
           const w = chart.getWidth();
           const h = chart.getHeight();
+          const layoutBounds = { top: 16, bottom: 74 };
+          const step = computeLayoutStep(
+            [
+              { items: col1, fontSize: 12 },
+              { items: col2, fontSize: 12 },
+              { items: col3, fontSize: 12 },
+              { items: col4, fontSize: 12 },
+            ],
+            h,
+            layoutBounds
+          );
+          const terminalFontSize = 12.5;
+          const terminalStep = computeTerminalStep(col5, h, terminalFontSize, layoutBounds);
+
           const x1 = w * 0.08;
           const x2 = w * 0.26;
           const x3 = w * 0.46;
-          const x4 = w * 0.67;
-          const x5 = w * 0.88;
+          const x4 = w * 0.62;
+          const x5 = w - TERMINAL_RIGHT_PAD - 11 / 2 - 10 - maxLabelWidth(col5, terminalFontSize) * TERMINAL_LABEL_SCALE - TERMINAL_STUB;
+          const xBus = x5 - TERMINAL_STUB;
+
+          const terminalNodes = layoutColumn(col5, x5, h, terminalStep, "circle", colors.col5, "right", 11, terminalFontSize, layoutBounds, true);
+          const busNodes = buildTerminalAnchors(terminalNodes, xBus);
+          const routedLinks = expandLinksForBus(baseLinks, col5.map((item) => item.id));
 
           const nodes = [
-            ...layoutColumn(col1, x1, h, "circle", colors.col1, "left", 12),
-            ...layoutColumn(col2, x2, h, "circle", colors.col2, "right", 11),
-            ...layoutColumn(col3, x3, h, "circle", colors.col3, "right", 13),
-            ...layoutColumn(col4, x4, h, "circle", colors.col4, "right", 12),
-            ...layoutColumn(col5, x5, h, "circle", colors.col5, "right", 11),
+            ...layoutColumn(col1, x1, h, step, "circle", colors.col1, "left", 12, 12, layoutBounds, false),
+            ...layoutColumn(col2, x2, h, step, "circle", colors.col2, "right", 11, 12, layoutBounds, true),
+            ...layoutColumn(col3, x3, h, step, "circle", colors.col3, "right", 13, 12, layoutBounds, true),
+            ...layoutColumn(col4, x4, h, step, "circle", colors.col4, "right", 12, 12, layoutBounds, true),
+            ...busNodes,
+            ...terminalNodes,
           ];
 
           return {
             backgroundColor: "transparent",
             animationDurationUpdate: 1000,
             animationEasingUpdate: "quinticInOut",
+            graphic: buildIconLegend(),
             tooltip: {
               trigger: "item",
               backgroundColor: "rgba(250,247,240,0.98)",
@@ -220,9 +380,7 @@
                 fontFamily: 'Georgia, "KaiTi", "楷体", "华文楷体", STKaiti, serif',
               },
               formatter: function (p) {
-                if (p.dataType === "edge") {
-                  return "";
-                }
+                if (p.dataType === "edge") return "";
                 const d = p.data || {};
                 if (!d.name) return "";
                 if (typeof d.value === "number") {
@@ -237,12 +395,13 @@
                 layout: "none",
                 roam: false,
                 draggable: false,
+                clip: false,
                 edgeSymbol: ["none", "none"],
                 lineStyle: {
                   width: 1.5,
                   color: colors.edge,
                   opacity: 0.9,
-                  curveness: 0.35,
+                  curveness: 0.16,
                 },
                 emphasis: {
                   focus: "adjacency",
@@ -255,7 +414,7 @@
                 },
                 label: { show: true },
                 data: nodes,
-                links,
+                links: routedLinks,
               },
             ],
           };
